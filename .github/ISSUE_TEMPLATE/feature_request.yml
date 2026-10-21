@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or goal
+      description: What are you trying to do, and what is in the way?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How should it work?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How do we know it is done?
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Issues that block this one, if any. Also set them as "blocked by" links on the issue.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Mockups, links, or related designs from `.renders/`.

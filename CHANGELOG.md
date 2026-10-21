@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- GitHub pull request template and issue forms (bug report, feature request, task) in `.github/`.
 - Stitch design exports in `.renders/` as the reference for the dashboard redesign.
 - Rarity value-mix donut chart on the dashboard.
 - `sealed_products` and `sealed_price_snapshots` tables (name, product type, set/series group, SKU, quantity, per-unit purchase price, notes; daily market/low/mid/high prices) with a Drizzle migration; existing card tables are untouched.
