@@ -19,7 +19,8 @@ Next.js dashboard for tracking a Pokémon card collection and its value. Read `R
 3. **Use Conventional Commits 1.0.0** for commit messages and **Conventional Branches** for branch names. See `.agents/skills/commit/SKILL.md`.
 4. Do not commit directly to `main` or `dev`. Open a pull request into `dev`.
 5. Before starting any issue, claim it (check it is not already In Progress, then set it In Progress on the project board) so only one agent works on it. See `start-issue`.
-6. Do not push, create issues, or open pull requests unless asked.
+6. Dependencies are GitHub "blocked by" links. Branch from `dev`, unless a blocker is still unmerged: then chain off its branch and target the PR at that branch. Never start an issue whose blocker has no branch. See `start-issue`.
+7. Do not push, create issues, or open pull requests unless asked.
 
 ## Conventions
 
