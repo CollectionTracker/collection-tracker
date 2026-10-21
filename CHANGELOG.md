@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stitch design exports in `.renders/` as the reference for the dashboard redesign.
 - Rarity value-mix donut chart on the dashboard.
 - `sealed_products` and `sealed_price_snapshots` tables (name, product type, set/series group, SKU, quantity, per-unit purchase price, notes; daily market/low/mid/high prices) with a Drizzle migration; existing card tables are untouched.
+- Sealed product CSV import (`POST /api/import/sealed`, `docs/sealed-sample.csv`): maps name, type, set, SKU, quantity and purchase price, merges duplicate rows, adds quantity to existing products, and reports invalid rows by row number.
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
 - Project README with a preview of the target design, and this changelog.
 
