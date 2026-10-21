@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { costBasisOf, getSealed } from "./sealed-stats";
+import { DEFAULT_SPREAD, rangeOf, sumRanges } from "./valuation";
 
 type EntryRow = {
   id: number;
@@ -125,14 +126,17 @@ export async function getDashboard() {
   const movers = holdings.filter((h) => h.change !== 0).sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
 
   const sealed = await getSealed();
+  const rawValuation = rangeOf(totalValue, DEFAULT_SPREAD.raw);
   const combined = {
     value: totalValue + sealed.value,
+    valuation: sumRanges([rawValuation, sealed.valuation]),
     ...costBasisOf([...holdings, ...sealed.holdings]),
   };
 
   return {
     sealed,
     combined,
+    rawValuation,
     holdings,
     history,
     totalValue,

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { DEFAULT_SPREAD, type Range, rangeOf, sumRanges } from "./valuation";
 
 type SealedRow = {
   id: number;
@@ -10,6 +11,8 @@ type SealedRow = {
   quantity: number;
   purchase_price: number | null;
   unit: number | null;
+  low: number | null;
+  high: number | null;
 };
 
 export type SealedHolding = {
@@ -25,6 +28,7 @@ export type SealedHolding = {
   cost: number | null; // total paid, null when unknown
   gain: number | null;
   gainPct: number | null;
+  valuation: Range; // whole stack: entered low/high, else the default spread around value
 };
 
 export type CostBasis = {
@@ -53,10 +57,10 @@ export async function getSealed() {
   const db = await getDb();
   const { rows } = await db.execute<SealedRow>(sql`
     select p.id, p.name, p.product_type, p.set_group, p.sku, p.quantity, p.purchase_price,
-           cur.market as unit
+           cur.market as unit, cur.low, cur.high
     from sealed_products p
     left join lateral (
-      select market from sealed_price_snapshots s
+      select market, low, high from sealed_price_snapshots s
       where s.sealed_product_id = p.id and s.market is not null
       order by day desc limit 1) cur on true`);
 
@@ -77,12 +81,14 @@ export async function getSealed() {
       cost,
       gain: cost == null ? null : value - cost,
       gainPct: cost ? ((value - cost) / cost) * 100 : null,
+      valuation: rangeOf(value, DEFAULT_SPREAD.sealed, r.low == null ? null : r.low * r.quantity, r.high == null ? null : r.high * r.quantity),
     };
   });
   return {
     holdings,
     units: holdings.reduce((a, h) => a + h.quantity, 0),
     value: holdings.reduce((a, h) => a + h.value, 0),
+    valuation: sumRanges(holdings.map((h) => h.valuation)),
     ...costBasisOf(holdings),
   };
 }
