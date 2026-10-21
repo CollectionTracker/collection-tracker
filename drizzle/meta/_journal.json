@@ -15,6 +15,13 @@
       "when": 1792611648834,
       "tag": "0001_sealed_products",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792614910776,
+      "tag": "0002_sealed_price_source",
+      "breakpoints": true
     }
   ]
 }

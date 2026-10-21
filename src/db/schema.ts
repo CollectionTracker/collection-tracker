@@ -115,6 +115,8 @@ export const sealedPriceSnapshots = pgTable(
     low: doublePrecision("low"),
     mid: doublePrecision("mid"),
     high: doublePrecision("high"),
+    // Where the price came from: "manual" for hand-entered values, a service name once an API is wired in.
+    priceSource: text("price_source").notNull().default("manual"),
   },
   (t) => [primaryKey({ columns: [t.sealedProductId, t.day] })],
 );
