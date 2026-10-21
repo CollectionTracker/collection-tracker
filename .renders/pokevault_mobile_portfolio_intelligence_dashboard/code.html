@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary-fixed": "#62fae3", "surface-bright": "#313852", "on-primary": "#003731", "surface-variant": "#2c344d", "secondary-fixed": "#c4e7ff", "surface-container-highest": "#2c344d", "on-primary-container": "#00574d", "secondary-fixed-dim": "#7bd0ff", "surface-container-high": "#212942", "on-secondary-container": "#00374d", "surface-dim": "#0a122a", "on-primary-fixed": "#00201c", "surface-container-lowest": "#050d25", "outline": "#859490", "inverse-on-surface": "#282f49", "primary": "#57f1db", "tertiary-fixed-dim": "#ddb7ff", "tertiary-container": "#d7acff", "on-tertiary-container": "#7003bf", "primary-fixed-dim": "#3cddc7", "secondary": "#7bd0ff", "primary-container": "#2dd4bf", "on-background": "#dbe1ff", "background": "#0a122a", "on-surface-variant": "#bacac5", "on-primary-fixed-variant": "#005047", "on-secondary-fixed-variant": "#004c69", "secondary-container": "#00a6e0", "error": "#ffb4ab", "on-tertiary-fixed-variant": "#6900b3", "tertiary-fixed": "#f0dbff", "outline-variant": "#3c4a46", "surface-container": "#171e37", "on-surface": "#dbe1ff", "on-error-container": "#ffdad6", "on-secondary": "#00354a", "error-container": "#93000a", "inverse-primary": "#006b5f", "on-secondary-fixed": "#001e2c", "inverse-surface": "#dbe1ff", "surface": "#0a122a", "tertiary": "#eacfff", "on-tertiary": "#490080", "on-error": "#690005", "surface-tint": "#3cddc7", "surface-container-low": "#131a33", "on-tertiary-fixed": "#2c0051" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-lg": "1.5rem", "space-xs": "0.25rem", "margin": "2rem", "space-sm": "0.5rem", "space-md": "1rem", "margin-mobile": "1rem", "gutter-mobile": "0.75rem", "gutter": "1.25rem", "space-xl": "2.25rem" }, fontFamily: { "body-sm": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "metric-display": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "label-md": ["Space Grotesk"], "headline-xl-mobile": ["Plus Jakarta Sans"], "label-eyebrow": ["Space Grotesk"], "label-sm": ["Space Grotesk"], "headline-md": ["Plus Jakarta Sans"] }, fontSize: { "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "metric-display": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "800" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "label-eyebrow": ["11px", { "lineHeight": "14px", "letterSpacing": "0.12em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }] } } } }</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_rgba(5,13,37,0.45)]"><div class="flex items-center justify-between px-margin-mobile h-6 text-on-surface-variant font-label-sm text-label-sm"><span class="tracking-tight font-medium">09:41</span><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">signal_cellular_alt</span><span class="material-symbols-outlined text-[14px]">wifi</span><span class="material-symbols-outlined text-[16px]">battery_full</span></div></div><div class="h-14 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[20px]">token</span></div><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">PokeVault</span><span class="px-1.5 py-0.5 rounded bg-primary-container/15 text-primary font-label-eyebrow text-label-eyebrow uppercase">ANALYTICS</span></div><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant">Verified Sync</span></div></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button aria-label="Settings" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">tune</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-margin-mobile pt-20 pb-28 bg-surface"><div class="flex flex-col w-full gap-space-md">
+<!-- 1. Top Context & Snapshot Bar -->
+<div class="flex flex-col gap-space-xs pt-1">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-container/15 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-eyebrow text-label-eyebrow uppercase tracking-wider">Executive Dashboard</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">verified</span> Tier-1 Custody
+      </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight mt-1">
+      Collection, at a glance
+    </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+      Market-value estimates • 34 sealed products/cases • 262 raw cards • 21 sealed product types
+    </p>
+<!-- Filters & Selectors Row -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 mt-1 no-scrollbar">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md active:bg-surface-container-highest transition-colors flex-shrink-0" id="currency-selector">
+<span class="material-symbols-outlined text-[16px] text-secondary">payments</span>
+<span>Raw: USD ($)</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">expand_more</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md active:bg-surface-container-highest transition-colors flex-shrink-0" id="snapshot-selector">
+<span class="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
+<span>16 Oct 2026 Snapshot</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">expand_more</span>
+</button>
+<div class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container-low text-primary font-label-sm text-label-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[14px]">sync</span>
+<span>Live PnL</span>
+</div>
+</div>
+</div>
+<!-- 2. Hero KPI Cards Stack -->
+<div class="flex flex-col gap-space-sm">
+<!-- Main Total Portfolio Card -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-high p-space-md shadow-md active:scale-[0.99] transition-transform cursor-pointer" onclick="openInspector('Total Portfolio', '$19,080.22', 'Calculated across 296 discrete asset positions with real-time liquidity scoring. Sealed weighting provides capital preservation, while Special Illustration Rares fuel upside convexity.')">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<div class="w-8 h-1 rounded-full bg-primary"></div>
+<span class="font-label-eyebrow text-label-eyebrow text-on-surface-variant uppercase tracking-wider">TOTAL PORTFOLIO VALUE</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +6.4% YTD
+        </span>
+</div>
+<div class="flex items-baseline justify-between mt-1 mb-3">
+<div class="font-metric-display text-metric-display text-on-surface tracking-tight">
+          $19,080.22
+        </div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Midpoint Valuation</span>
+</div>
+<!-- Ratio Bar Split -->
+<div class="flex flex-col gap-1.5 mt-2 pt-2 bg-surface-container-low p-2.5 rounded-lg">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Sealed: 74.1% ($14.1k)</span>
+</div>
+<div class="flex items-center gap-1.5 text-primary">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Raw: 25.9% ($4.9k)</span>
+</div>
+</div>
+<div class="w-full h-2.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-secondary transition-all duration-500" style="width: 74.1%"></div>
+<div class="h-full bg-primary transition-all duration-500" style="width: 25.9%"></div>
+</div>
+</div>
+</div>
+<!-- 2-Column Metric Grid -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Sealed Metric -->
+<div class="rounded-xl bg-surface-container p-space-sm flex flex-col justify-between shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="openInspector('Sealed Inventory', '$14,132.98', '34 sealed units total: 8 sealed booster cases, 13 premium collection boxes, 13 bundle packs. Primary driver is the 151 Pokemon Center ETB Case.')">
+<div>
+<div class="w-6 h-1 rounded-full bg-secondary mb-2"></div>
+<span class="font-label-eyebrow text-label-eyebrow text-on-surface-variant uppercase tracking-wider block">SEALED INVENTORY</span>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1">$14,132.98</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-low/60 rounded p-1.5 font-label-sm text-label-sm text-on-surface-variant flex flex-col gap-0.5">
+<span class="text-on-surface font-medium">34 units (8 Cases • 13 Boxes)</span>
+<span class="text-[10px]">Avg cost: $415.67 • 151 Lead</span>
+</div>
+</div>
+<!-- Raw Cards Metric -->
+<div class="rounded-xl bg-surface-container p-space-sm flex flex-col justify-between shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="openInspector('Raw Card Inventory', '$4,947.24', '262 copies covering 221 unique card entries across 27 distinct expansion sets. Heavy tilt towards Special Illustration Rares.')">
+<div>
+<div class="w-6 h-1 rounded-full bg-tertiary mb-2"></div>
+<span class="font-label-eyebrow text-label-eyebrow text-on-surface-variant uppercase tracking-wider block">RAW CARDS</span>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1">$4,947.24</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-low/60 rounded p-1.5 font-label-sm text-label-sm text-on-surface-variant flex flex-col gap-0.5">
+<span class="text-on-surface font-medium">262 copies (27 Sets)</span>
+<span class="text-[10px]">SIR Conc: $3.2k (64%)</span>
+</div>
+</div>
+</div>
+<!-- Valuation Range Card -->
+<div class="rounded-xl bg-surface-container-high p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-1.5">
+<div class="flex items-center gap-2">
+<div class="w-6 h-1 rounded-full bg-secondary-container"></div>
+<span class="font-label-eyebrow text-label-eyebrow text-on-surface-variant uppercase tracking-wider">VALUATION SPECTRUM</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">Spread Δ $4,609</span>
+</div>
+<div class="flex items-baseline justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">$16.8k — $21.4k</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">P10 to P90 Confidence</span>
+</div>
+<!-- Dual Slider Bar Range -->
+<div class="relative w-full h-2 bg-surface-container-lowest rounded-full mt-2.5 overflow-hidden">
+<div class="absolute left-[15%] right-[10%] h-full bg-gradient-to-r from-secondary-container via-primary to-secondary rounded-full"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mt-1.5">
+<span>Floor: $16,787</span>
+<span class="text-primary font-semibold">Mid: $19,080</span>
+<span>Ceiling: $21,396</span>
+</div>
+</div>
+</div>
+<!-- 3. Interactive Portfolio Value Mix & Allocation -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-eyebrow text-label-eyebrow text-primary uppercase tracking-wider">CAPITAL COMPOSITION</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Asset Allocation Mix</h2>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">donut_large</span>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-space-md my-1">
+<!-- Embedded Donut SVG -->
+<div class="relative w-36 h-36 flex items-center justify-center flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-highest" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-width="12"></circle>
+<!-- 74.1% Sealed (Circumference ~ 238.76, 74.1% is 176.9) -->
+<circle class="text-secondary" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="238.76" stroke-dashoffset="61.8" stroke-linecap="round" stroke-width="12"></circle>
+<!-- 25.9% Raw -->
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="238.76" stroke-dashoffset="200" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="font-headline-sm text-headline-sm text-on-surface">74.1%</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-tight">Sealed</span>
+</div>
+</div>
+<!-- Allocation Breakdown Legend -->
+<div class="flex flex-col gap-2 w-full">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Sealed Holdings</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cases, ETBs &amp; Bundles</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-md text-label-md text-on-surface block">$14,133</span>
+<span class="font-label-sm text-label-sm text-secondary">74.1%</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Raw Singles</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Modern &amp; Vintage SIRs</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-md text-label-md text-on-surface block">$4,947</span>
+<span class="font-label-sm text-label-sm text-primary">25.9%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Largest Asset Callout Highlight Box -->
+<div class="p-3 rounded-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-secondary-container/20 flex items-center justify-center flex-shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[20px]">package_2</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Top Portfolio Anchor</span>
+<span class="font-label-md text-label-md text-on-surface truncate">151 Pokémon Center ETB Case</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 ml-2">
+<span class="font-headline-sm text-headline-sm text-secondary">$7,000</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">36.7% Portfolio</span>
+</div>
+</div>
+</div>
+<!-- 4. Top Sealed Holdings Section -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Top Sealed Holdings</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Contribution by SKU including aggregate unit counts</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest font-label-sm text-label-sm text-on-surface-variant">
+        9 SKUs
+      </span>
+</div>
+<!-- Horizontal Bar Charts -->
+<div class="flex flex-col gap-2.5 mt-1">
+<!-- 1 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">Scarlet &amp; Violet 151 Center ETB case</span>
+<span class="font-label-md text-label-md text-secondary font-bold flex-shrink-0">$7,000</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- 2 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">Night UPC</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$1,250</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 17.8%"></div>
+</div>
+</div>
+<!-- 3 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">Day UPC</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$1,075</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 15.3%"></div>
+</div>
+</div>
+<!-- 4 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">Delta Reign Center ETB</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$720</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 10.2%"></div>
+</div>
+</div>
+<!-- 5 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">30th Center ETB</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$560</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary/80 rounded-full" style="width: 8.0%"></div>
+</div>
+</div>
+<!-- 6 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">30th Booster Bundle</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$546</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary/70 rounded-full" style="width: 7.8%"></div>
+</div>
+</div>
+<!-- 7 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">30th ETB Standard</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$522</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary/60 rounded-full" style="width: 7.4%"></div>
+</div>
+</div>
+<!-- 8 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">Prismatic Surprise Box + Booster</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$382</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary/50 rounded-full" style="width: 5.4%"></div>
+</div>
+</div>
+<!-- 9 -->
+<div class="flex flex-col gap-1 p-2 rounded-lg bg-surface-container-low">
+<div class="flex justify-between items-baseline font-body-sm text-body-sm">
+<span class="text-on-surface font-medium truncate pr-2">30th Display Tin Case</span>
+<span class="font-label-md text-label-md text-on-surface flex-shrink-0">$325</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary/40 rounded-full" style="width: 4.6%"></div>
+</div>
+</div>
+</div>
+<!-- Collection Structure Summary Sub-card -->
+<div class="rounded-xl bg-surface-container-highest/60 p-space-sm flex flex-col gap-2 mt-1">
+<div class="flex justify-between items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Sub-Grouping Weight</span>
+<span class="font-label-sm text-label-sm text-secondary">Range: $11.8k — $16.4k</span>
+</div>
+<div class="grid grid-cols-2 gap-2 font-label-sm text-label-sm">
+<div class="p-2 rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant">151 PC Case</span>
+<span class="text-on-surface font-bold mt-0.5">$7,000 <span class="text-secondary font-normal">(49.5%)</span></span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant">30th Celebration</span>
+<span class="text-on-surface font-bold mt-0.5">$4,278 <span class="text-secondary font-normal">(30.3%)</span></span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant">Delta Reign</span>
+<span class="text-on-surface font-bold mt-0.5">$1,050 <span class="text-secondary font-normal">(7.4%)</span></span>
+</div>
+<div class="p-2 rounded bg-surface-container-low flex flex-col">
+<span class="text-on-surface-variant">Other Sealed</span>
+<span class="text-on-surface font-bold mt-0.5">$1,804 <span class="text-secondary font-normal">(12.8%)</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Raw Card Portfolio Intelligence Section -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container/20 text-tertiary font-label-eyebrow text-label-eyebrow uppercase tracking-wider">
+          Card-Level Analytics
+        </span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-tertiary">category</span> 27 Sets
+        </div>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Raw card portfolio intelligence</h2>
+</div>
+<!-- Segmented Filter Mode for Breakdown -->
+<div class="flex p-1 bg-surface-container-low rounded-lg gap-1">
+<button class="flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all bg-surface-container-high text-on-surface shadow-sm" id="view-set-btn" onclick="toggleRawView('set')">
+        By Card Set
+      </button>
+<button class="flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all text-on-surface-variant" id="view-rarity-btn" onclick="toggleRawView('rarity')">
+        By Rarity Type
+      </button>
+</div>
+<!-- By Set View -->
+<div class="flex flex-col gap-2" id="raw-set-container">
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-semibold">Ascended Heroes</span>
+<span class="text-[11px] text-on-surface-variant">Lead set • 62.6% of raw single value</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold">$3,100</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-primary rounded-full" style="width: 100%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>ME: 30th Celebration Classic</span>
+<span class="font-label-md text-label-md text-on-surface">$229</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-primary/40 rounded-full" style="width: 7.4%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>Prismatic Evolutions</span>
+<span class="font-label-md text-label-md text-on-surface">$222</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-primary/40 rounded-full" style="width: 7.1%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>ME: 30th Celebration</span>
+<span class="font-label-md text-label-md text-on-surface">$211</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-primary/30 rounded-full" style="width: 6.8%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>SM Promos</span>
+<span class="font-label-md text-label-md text-on-surface">$157</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-primary/25 rounded-full" style="width: 5.0%"></div>
+</div>
+</div>
+<!-- By Rarity View (hidden initially) -->
+<div class="hidden flex-col gap-2" id="raw-rarity-container">
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-semibold text-tertiary">Special Illustration Rare</span>
+<span class="text-[11px] text-on-surface-variant">Top-tier investment grade</span>
+</div>
+<span class="font-label-md text-label-md text-tertiary font-bold">$3,200</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-tertiary rounded-full" style="width: 100%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>Holo Rare</span>
+<span class="font-label-md text-label-md text-on-surface">$585</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-tertiary/60 rounded-full" style="width: 18.2%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>Ultra Rare</span>
+<span class="font-label-md text-label-md text-on-surface">$243</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-tertiary/40 rounded-full" style="width: 7.6%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>Classic Collection</span>
+<span class="font-label-md text-label-md text-on-surface">$229</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-tertiary/35 rounded-full" style="width: 7.1%"></div>
+</div>
+<div class="flex justify-between items-center text-on-surface font-body-sm text-body-sm p-2 rounded bg-surface-container-low">
+<span>Promo</span>
+<span class="font-label-md text-label-md text-on-surface">$154</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden -mt-1">
+<div class="h-full bg-tertiary/30 rounded-full" style="width: 4.8%"></div>
+</div>
+</div>
+<!-- Top 8 Raw Card Holdings (Mobile ranked card list) -->
+<div class="flex flex-col gap-2 mt-2">
+<div class="flex justify-between items-center">
+<span class="font-label-eyebrow text-label-eyebrow text-on-surface-variant uppercase tracking-wider">Top 8 Ranked Raw Singles</span>
+<span class="font-label-sm text-label-sm text-primary">Live eBay/TCG Sync</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<!-- Card 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Mega Gengar ex', '$816.38', 'Rank #1 Raw Single. Expansion: Ascended Heroes. Special Illustration Rare. Mint condition target candidate for PSA 10 gem submittal.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-primary font-bold w-5">01</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Mega Gengar ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ascended Heroes • SIR</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold flex-shrink-0 ml-2">$816.38</span>
+</div>
+<!-- Card 2 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Pikachu ex', '$753.63', 'Rank #2 Raw Single. Expansion: Ascended Heroes. Gold foil treatment, highest liquidity velocity in the modern era.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-primary font-bold w-5">02</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Pikachu ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ascended Heroes • SAR</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold flex-shrink-0 ml-2">$753.63</span>
+</div>
+<!-- Card 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Mega Dragonite ex', '$477.42', 'Rank #3 Raw Single. Expansion: Ascended Heroes. Centering tested: 55/45. Strong potential for CGC Pristine.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">03</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Mega Dragonite ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ascended Heroes • SIR</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$477.42</span>
+</div>
+<!-- Card 4 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Pikachu ex (Variant)', '$300.27', 'Rank #4 Raw Single. Expansion: Ascended Heroes. Alternate art print.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">04</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Pikachu ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ascended Heroes • Alt Art</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$300.27</span>
+</div>
+<!-- Card 5 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Eevee ex', '$166.44', 'Rank #5 Raw Single. Expansion: Prismatic Evolutions. Core eeveelution fan staple.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">05</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Eevee ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Prismatic Evolutions • SIR</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$166.44</span>
+</div>
+<!-- Card 6 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Moltres &amp; Zapdos &amp; Articuno GX', '$156.58', 'Rank #6 Raw Single. Expansion: Sun &amp; Moon Promos. Legendary bird trio stained glass design.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">06</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Moltres &amp; Zapdos &amp; Articuno GX</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">SM Promos • Stained Glass</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$156.58</span>
+</div>
+<!-- Card 7 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('N\'s Zoroark ex', '$137.86', 'Rank #7 Raw Single. Expansion: Ascended Heroes. Fan favorite character rare.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">07</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">N's Zoroark ex</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Ascended Heroes • Ultra Rare</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$137.86</span>
+</div>
+<!-- Card 8 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-low active:bg-surface-container-high transition-colors cursor-pointer" onclick="openInspector('Charizard Classic', '$134.90', 'Rank #8 Raw Single. Expansion: ME: 30th Celebration. Reprised base art iconic foil.')">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="font-label-md text-label-md text-on-surface-variant font-bold w-5">08</span>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Charizard</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">ME: 30th Celebration • Classic</span>
+</div>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-semibold flex-shrink-0 ml-2">$134.90</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Asset Showcase: Physical Vault Inspection -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-eyebrow text-label-eyebrow text-secondary uppercase tracking-wider">Vault Verification</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Physical Asset Custody</h3>
+</div>
+<span class="material-symbols-outlined text-secondary text-[22px]">security</span>
+</div>
+<!-- Image Placeholder 1: Graded Booster Case in Safe -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="High security climate controlled vault with tamper proof acrylic cases storing rare Pokemon 151 sealed booster box case with holographic inspection security seal in dark moody blue and neon mint ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsFlocsQNYt1Rs7bB2xUL1nxFaALbzbIstfEbZRSr1XeY9irhJi-4Sbk-_AxvPqiYOJpbzaL3CXo06ts_lO6rOK_Joy5faxE67C8gTB2OptMS2dvJlGv5Y0TEZpa_ALtNd4Et4p3dRnoBk81o4NPPC-Iq_FIrRLGwTTjjlnHijHTmHSzzy3CUv1grAHVFQHWYWUvIqZBSWAwxWlAjdSCgrbjqX-oqocytFsY0lNc2pOqxbhsIREadF"/>
+<div class="absolute bottom-2 left-2 right-2 p-2 rounded bg-surface-container-lowest/85 backdrop-blur-md flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface truncate">Lot #SV-151-C01: Climate Lock A3</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary font-label-eyebrow text-label-eyebrow">SECURED</span>
+</div>
+</div>
+<!-- Image Placeholder 2: High End PSA/CGC Slab Trio -->
+<div class="grid grid-cols-2 gap-2">
+<div class="relative h-28 rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Ultra close up of pristine high grade holographic Mega Gengar trading card in acrylic grading slab under focused spotlight with sharp edges and purple shimmer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMs4c4BBN4TvzskONlr9iPIyHc3aTXARc4X_4B7oUsV6EUgSd4utMCrKQEfbcGYxlgkZtM58YpmwnFOwZKQGbyRh-XDvxMkNEW6xq9mB6xQk0Zfr9BzS7gYCiCzQ5aezL4eF6h1B2DwtCFAbSfAn_-g0RCfMzE9cgEFO2frNECAU9gd-owP4UIBRjzdO-PdYwiz8LQW9hKKJPMp5jyAkTxjKhtKL7yu09vXDGS0aluy3crS4FAPD-n"/>
+<div class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-surface-dim/80 text-[10px] font-label-sm text-on-surface">
+          Mega Gengar #1
+        </div>
+</div>
+<div class="relative h-28 rounded-lg overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover" data-alt="Luxury trading card display showing rare gold foil Pikachu ex card in thick magnetic holder with dark futuristic blue background and neon cyan reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz2NJg6WOXfG-2XgiwYzKQjL21K4ouVdnnBXQVdTpRUMeGypi3JrE4Ocj_K_55-WAppJBil7g3a5_GmDOQDzZHyh-OcHqvJw2hZEgspHIz_gjve_2dImQFVl7CB8WWwg0XN23fZOauBRX9MEPEfIJI97kpZykCKy19R8_OZ-xgtcC79YXlsJFGq0dAZPO4cmIneIC3ILliRAlv95JMpZ1XzTD_98PvY79Bp9mv3LZg7vSYm0SqBq-7"/>
+<div class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-surface-dim/80 text-[10px] font-label-sm text-on-surface">
+          Pikachu ex #2
+        </div>
+</div>
+</div>
+</div>
+<!-- 6. Forward Outlook & Scenarios Section -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-eyebrow text-label-eyebrow text-primary uppercase tracking-wider">Predictive Telemetry</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Projected portfolio scenarios</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Milestone simulations across a 10-year holding horizon</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[22px]">ssid_chart</span>
+</div>
+<!-- Multi-Curve Interactive Canvas Representation (Clean inline SVG) -->
+<div class="w-full h-44 bg-surface-container-low rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<!-- Grid reference lines -->
+<div class="absolute inset-0 flex flex-col justify-between p-3 pointer-events-none opacity-15">
+<div class="w-full h-px bg-on-surface"></div>
+<div class="w-full h-px bg-on-surface"></div>
+<div class="w-full h-px bg-on-surface"></div>
+<div class="w-full h-px bg-on-surface"></div>
+</div>
+<svg class="w-full h-full overflow-visible" fill="none" viewbox="0 0 300 120">
+<!-- High trajectory (Violet / Tertiary) -->
+<path class="text-tertiary-fixed-dim" d="M 10 100 Q 80 85 150 50 T 290 10" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Moderate trajectory (Cyan / Secondary) -->
+<path class="text-secondary" d="M 10 100 Q 80 92 150 75 T 290 48" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Conservative trajectory (Amber / Primary) -->
+<path class="text-primary-container" d="M 10 100 Q 80 105 150 96 T 290 82" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- End dot markers -->
+<circle class="fill-tertiary-fixed-dim" cx="290" cy="10" r="3.5"></circle>
+<circle class="fill-secondary" cx="290" cy="48" r="3.5"></circle>
+<circle class="fill-primary-container" cx="290" cy="82" r="3.5"></circle>
+</svg>
+<div class="flex justify-between items-center font-label-sm text-label-sm text-on-surface-variant z-10 pt-1">
+<span>Year 0 ($19.1k)</span>
+<span>Year 5</span>
+<span class="text-on-surface font-semibold">Year 10 Target</span>
+</div>
+</div>
+<!-- Scenario Cards Stack -->
+<div class="flex flex-col gap-2 mt-1">
+<!-- High Scenario -->
+<div class="p-2.5 rounded-lg bg-surface-container-low flex items-center justify-between border-l-2 border-tertiary">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-bold">Bullish Convexity</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary/20 text-tertiary text-[10px] font-label-sm">High</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Y1 +10%, then 15% annually</span>
+</div>
+<div class="text-right">
+<span class="font-headline-sm text-headline-sm text-tertiary">$73,834</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">3.87x Multiplier</span>
+</div>
+</div>
+<!-- Moderate Scenario -->
+<div class="p-2.5 rounded-lg bg-surface-container-low flex items-center justify-between border-l-2 border-secondary">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-bold">Base Market Pace</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/20 text-secondary text-[10px] font-label-sm">Moderate</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Y1 -5%, then 8% annually</span>
+</div>
+<div class="text-right">
+<span class="font-headline-sm text-headline-sm text-secondary">$36,234</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">1.90x Multiplier</span>
+</div>
+</div>
+<!-- Conservative Scenario -->
+<div class="p-2.5 rounded-lg bg-surface-container-low flex items-center justify-between border-l-2 border-primary-container">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-bold">Capital Preservation</span>
+<span class="px-1.5 py-0.2 rounded bg-primary-container/20 text-primary-container text-[10px] font-label-sm">Cons</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Y1 -15%, then 3% annually</span>
+</div>
+<div class="text-right">
+<span class="font-headline-sm text-headline-sm text-primary-container">$21,161</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">1.11x Multiplier</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 7. Valuation Context & Assumptions Footer Note -->
+<div class="rounded-xl bg-surface-container-low p-space-md shadow-sm mb-4">
+<div class="flex items-center gap-2 mb-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="font-label-eyebrow text-label-eyebrow uppercase tracking-wider">Methodology &amp; Assumptions</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+      Portfolio estimates calculate trimmed midpoints from recent recorded settled transactions across verified grading houses (PSA, BGS, CGC) and sealed distribution exchanges. A 6% liquidity haircut is factored into floor valuations to account for real-time order-book slippage.
+    </p>
+<div class="flex items-center justify-between mt-3 pt-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>Data freshness: 4 mins ago</span>
+<span class="text-primary cursor-pointer hover:underline" onclick="alert('Audit ledger verified via SHA-256 state hash.')">View Audit Hash</span>
+</div>
+</div>
+<!-- Micro-Interaction Dialog / Detail Inspector Modal -->
+<div class="fixed inset-0 z-50 bg-surface-dim/80 backdrop-blur-md hidden items-end justify-center p-space-mobile transition-opacity" id="inspector-modal">
+<div class="w-full max-w-lg bg-surface-container-high rounded-xl p-space-md shadow-2xl flex flex-col gap-space-sm transform transition-transform">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-eyebrow text-label-eyebrow text-primary uppercase" id="modal-eyebrow">Position Telemetry</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant" onclick="closeInspector()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface" id="modal-title">Asset Detail</h3>
+<span class="font-metric-display text-metric-display text-primary mt-1" id="modal-value">$0.00</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed bg-surface-container-low p-3 rounded-lg" id="modal-desc">
+        Telemetry information.
+      </p>
+<div class="flex gap-2 mt-1">
+<button class="flex-1 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-bold text-center" onclick="closeInspector()">
+          Dismiss
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function toggleRawView(view) {
+    const setBtn = document.getElementById('view-set-btn');
+    const rarityBtn = document.getElementById('view-rarity-btn');
+    const setContainer = document.getElementById('raw-set-container');
+    const rarityContainer = document.getElementById('raw-rarity-container');
+
+    if (view === 'set') {
+      setBtn.className = "flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all bg-surface-container-high text-on-surface shadow-sm";
+      rarityBtn.className = "flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all text-on-surface-variant";
+      setContainer.classList.remove('hidden');
+      setContainer.classList.add('flex');
+      rarityContainer.classList.add('hidden');
+      rarityContainer.classList.remove('flex');
+    } else {
+      rarityBtn.className = "flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all bg-surface-container-high text-on-surface shadow-sm";
+      setBtn.className = "flex-1 py-1.5 px-3 rounded text-center font-label-sm text-label-sm transition-all text-on-surface-variant";
+      rarityContainer.classList.remove('hidden');
+      rarityContainer.classList.add('flex');
+      setContainer.classList.add('hidden');
+      setContainer.classList.remove('flex');
+    }
+  }
+
+  function openInspector(title, value, description) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-value').innerText = value;
+    document.getElementById('modal-desc').innerText = description;
+    
+    const modal = document.getElementById('inspector-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeInspector() {
+    const modal = document.getElementById('inspector-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  // Currency quick toggle notification
+  document.getElementById('currency-selector').addEventListener('click', () => {
+    openInspector('Valuation Currency', 'USD ($)', 'Active pricing feed sourced from real-time USD transactions. Multi-currency conversions into JPY, EUR, and GBP are pegged to European Central Bank reference benchmarks.');
+  });
+
+  // Snapshot selector interaction
+  document.getElementById('snapshot-selector').addEventListener('click', () => {
+    openInspector('Historic Snapshot', '16 Oct 2026', 'You are viewing the frozen quarterly audit checkpoint. All pricing reflects recorded market closes on October 16.');
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(5,13,37,0.7)]" data-active-classes="text-primary font-semibold"><div class="flex items-center justify-around h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors text-primary font-semibold" data-path="overview" href="#"><span class="material-symbols-outlined text-[22px]">grid_view</span><span class="font-label-sm text-label-sm mt-0.5">Overview</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="sealed" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-sm text-label-sm mt-0.5">Sealed</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="raw-cards" href="#"><span class="material-symbols-outlined text-[22px]">auto_awesome</span><span class="font-label-sm text-label-sm mt-0.5">Raw Cards</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="scenarios" href="#"><span class="material-symbols-outlined text-[22px]">trending_up</span><span class="font-label-sm text-label-sm mt-0.5">Scenarios</span></a></div></nav></body></html>

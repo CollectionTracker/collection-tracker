@@ -1,0 +1,1649 @@
+<!DOCTYPE html><html lang="en" class="dark"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PokeVault Analytics - Executive Portfolio &amp; Collection Command Center</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            vault: {
+              bg: '#080d1a',
+              card: '#111d38',
+              cardHover: '#16264a',
+              border: '#1c2e56',
+              mint: '#2dd4bf',
+              mintDark: '#14b8a6',
+              blue: '#3b82f6',
+              sky: '#38bdf8',
+              amber: '#f59e0b',
+              amberLight: '#fbbf24',
+              purple: '#a855f7',
+              violet: '#8b5cf6',
+              muted: '#7a8ba6'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080d1a; }
+    ::-webkit-scrollbar-thumb { background: #1c2e56; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2dd4bf; }
+    .card-transition { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-ghost { opacity: 0.35; border: 2px dashed #38bdf8 !important; transform: scale(0.98); }
+    .drag-over { outline: 2px dashed #2dd4bf; outline-offset: -2px; }
+    .glow-mint:hover { box-shadow: 0 0 25px -5px rgba(45, 212, 191, 0.15); }
+    .glow-blue:hover { box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.15); }
+    .glow-purple:hover { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.15); }
+    .glow-amber:hover { box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.15); }
+    @keyframes metricPulse {
+      0% { color: #5eead4; text-shadow: 0 0 12px rgba(45, 212, 191, 0.8); transform: scale(1.03); }
+      100% { text-shadow: none; transform: scale(1); }
+    }
+    .metric-updated { animation: metricPulse 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .bar-updated { transition: width 0.75s cubic-bezier(0.16, 1, 0.3, 1); }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, Plus Jakarta Sans, system-ui, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}[type='text'],input:where(:not([type])),[type='email'],[type='url'],[type='password'],[type='number'],[type='date'],[type='datetime-local'],[type='month'],[type='search'],[type='tel'],[type='time'],[type='week'],[multiple],textarea,select{-webkit-appearance:none;appearance:none;background-color:#fff;border-color:#6b7280;border-width:1px;border-radius:0px;padding-top:0.5rem;padding-right:0.75rem;padding-bottom:0.5rem;padding-left:0.75rem;font-size:1rem;line-height:1.5rem;--tw-shadow:0 0 #0000;}[type='text']:focus, input:where(:not([type])):focus, [type='email']:focus, [type='url']:focus, [type='password']:focus, [type='number']:focus, [type='date']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='week']:focus, [multiple]:focus, textarea:focus, select:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);border-color:#2563eb}input::placeholder,textarea::placeholder{color:#6b7280;opacity:1}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-date-and-time-value{min-height:1.5em;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit,::-webkit-datetime-edit-year-field,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field,::-webkit-datetime-edit-second-field,::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}select{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 0.5rem center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:2.5rem;print-color-adjust:exact}[multiple],[size]:where(select:not([size="1"])){background-image:initial;background-position:initial;background-repeat:unset;background-size:initial;padding-right:0.75rem;print-color-adjust:unset}[type='checkbox'],[type='radio']{-webkit-appearance:none;appearance:none;padding:0;print-color-adjust:exact;display:inline-block;vertical-align:middle;background-origin:border-box;-webkit-user-select:none;user-select:none;flex-shrink:0;height:1rem;width:1rem;color:#2563eb;background-color:#fff;border-color:#6b7280;border-width:1px;--tw-shadow:0 0 #0000}[type='checkbox']{border-radius:0px}[type='radio']{border-radius:100%}[type='checkbox']:focus,[type='radio']:focus{outline:2px solid transparent;outline-offset:2px;--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:2px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}[type='checkbox']:checked,[type='radio']:checked{border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat}[type='checkbox']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='checkbox']:checked{-webkit-appearance:auto;appearance:auto}}[type='radio']:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");}@media (forced-colors: active) {[type='radio']:checked{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:checked:hover,[type='checkbox']:checked:focus,[type='radio']:checked:hover,[type='radio']:checked:focus{border-color:transparent;background-color:currentColor}[type='checkbox']:indeterminate{background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");border-color:transparent;background-color:currentColor;background-size:100% 100%;background-position:center;background-repeat:no-repeat;}@media (forced-colors: active) {[type='checkbox']:indeterminate{-webkit-appearance:auto;appearance:auto}}[type='checkbox']:indeterminate:hover,[type='checkbox']:indeterminate:focus{border-color:transparent;background-color:currentColor}[type='file']{background:unset;border-color:inherit;border-width:0;border-radius:0;padding:0;font-size:unset;line-height:inherit}[type='file']:focus{outline:1px solid ButtonText;outline:1px auto -webkit-focus-ring-color}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.left-2\.5{left:0.625rem}.right-2\.5{right:0.625rem}.right-3{right:0.75rem}.right-4{right:1rem}.right-5{right:1.25rem}.right-6{right:1.5rem}.top-0{top:0px}.top-20{top:5rem}.top-3{top:0.75rem}.top-4{top:1rem}.top-5{top:1.25rem}.z-10{z-index:10}.z-20{z-index:20}.z-40{z-index:40}.z-50{z-index:50}.col-span-2{grid-column:span 2 / span 2}.col-span-5{grid-column:span 5 / span 5}.mx-auto{margin-left:auto;margin-right:auto}.my-6{margin-top:1.5rem;margin-bottom:1.5rem}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.ml-2{margin-left:0.5rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.ml-1{margin-left:0.25rem}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1{height:0.25rem}.h-1\.5{height:0.375rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-48{height:12rem}.h-5{height:1.25rem}.h-64{height:16rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-\[921px\]{max-height:921px}.min-h-\[1024px\]{min-height:1024px}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-48{width:12rem}.w-5{width:1.25rem}.w-9{width:2.25rem}.w-\[25\.9\%\]{width:25.9%}.w-\[74\.1\%\]{width:74.1%}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-5xl{max-width:64rem}.max-w-\[1720px\]{max-width:1720px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-y-2{--tw-translate-y:-0.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-0{--tw-translate-y:0px;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-90{--tw-rotate:-90deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}.cursor-grab{cursor:grab}.cursor-pointer{cursor:pointer}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0\.5{gap:0.125rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.gap-x-8{column-gap:2rem}.gap-y-3{row-gap:0.75rem}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.375rem * var(--tw-space-x-reverse));margin-left:calc(0.375rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.625rem * var(--tw-space-x-reverse));margin-left:calc(0.625rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-3\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.875rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.875rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-visible{overflow:visible}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#172547\]{--tw-border-opacity:1;border-color:rgb(23 37 71 / var(--tw-border-opacity, 1))}.border-\[\#18294d\]{--tw-border-opacity:1;border-color:rgb(24 41 77 / var(--tw-border-opacity, 1))}.border-\[\#192b52\]{--tw-border-opacity:1;border-color:rgb(25 43 82 / var(--tw-border-opacity, 1))}.border-\[\#1b2b52\]{--tw-border-opacity:1;border-color:rgb(27 43 82 / var(--tw-border-opacity, 1))}.border-\[\#1c2e56\]{--tw-border-opacity:1;border-color:rgb(28 46 86 / var(--tw-border-opacity, 1))}.border-\[\#1d2d53\]{--tw-border-opacity:1;border-color:rgb(29 45 83 / var(--tw-border-opacity, 1))}.border-\[\#1e2f5b\]{--tw-border-opacity:1;border-color:rgb(30 47 91 / var(--tw-border-opacity, 1))}.border-\[\#213563\]{--tw-border-opacity:1;border-color:rgb(33 53 99 / var(--tw-border-opacity, 1))}.border-\[\#22396b\]{--tw-border-opacity:1;border-color:rgb(34 57 107 / var(--tw-border-opacity, 1))}.border-\[\#233869\]{--tw-border-opacity:1;border-color:rgb(35 56 105 / var(--tw-border-opacity, 1))}.border-teal-400\/60{border-color:rgb(45 212 191 / 0.6)}.border-teal-500\/30{border-color:rgb(20 184 166 / 0.3)}.border-teal-500\/40{border-color:rgb(20 184 166 / 0.4)}.bg-\[\#080d1a\]{--tw-bg-opacity:1;background-color:rgb(8 13 26 / var(--tw-bg-opacity, 1))}.bg-\[\#0b1328\]\/90{background-color:rgb(11 19 40 / 0.9)}.bg-\[\#0b1429\]{--tw-bg-opacity:1;background-color:rgb(11 20 41 / var(--tw-bg-opacity, 1))}.bg-\[\#0c162e\]{--tw-bg-opacity:1;background-color:rgb(12 22 46 / var(--tw-bg-opacity, 1))}.bg-\[\#0d1730\]{--tw-bg-opacity:1;background-color:rgb(13 23 48 / var(--tw-bg-opacity, 1))}.bg-\[\#0e172e\]{--tw-bg-opacity:1;background-color:rgb(14 23 46 / var(--tw-bg-opacity, 1))}.bg-\[\#0e1933\]{--tw-bg-opacity:1;background-color:rgb(14 25 51 / var(--tw-bg-opacity, 1))}.bg-\[\#0e1933\]\/70{background-color:rgb(14 25 51 / 0.7)}.bg-\[\#0f1d38\]{--tw-bg-opacity:1;background-color:rgb(15 29 56 / var(--tw-bg-opacity, 1))}.bg-\[\#101b33\]{--tw-bg-opacity:1;background-color:rgb(16 27 51 / var(--tw-bg-opacity, 1))}.bg-\[\#111e38\]{--tw-bg-opacity:1;background-color:rgb(17 30 56 / var(--tw-bg-opacity, 1))}.bg-\[\#142042\]{--tw-bg-opacity:1;background-color:rgb(20 32 66 / var(--tw-bg-opacity, 1))}.bg-\[\#152345\]{--tw-bg-opacity:1;background-color:rgb(21 35 69 / var(--tw-bg-opacity, 1))}.bg-\[\#17274f\]{--tw-bg-opacity:1;background-color:rgb(23 39 79 / var(--tw-bg-opacity, 1))}.bg-\[\#182b52\]{--tw-bg-opacity:1;background-color:rgb(24 43 82 / var(--tw-bg-opacity, 1))}.bg-amber-400{--tw-bg-opacity:1;background-color:rgb(251 191 36 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-purple-400{--tw-bg-opacity:1;background-color:rgb(192 132 252 / var(--tw-bg-opacity, 1))}.bg-sky-400{--tw-bg-opacity:1;background-color:rgb(56 189 248 / var(--tw-bg-opacity, 1))}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-teal-400{--tw-bg-opacity:1;background-color:rgb(45 212 191 / var(--tw-bg-opacity, 1))}.bg-teal-500{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.bg-teal-500\/20{background-color:rgb(20 184 166 / 0.2)}.bg-teal-950\/60{background-color:rgb(4 47 46 / 0.6)}.bg-\[\#16274e\]{--tw-bg-opacity:1;background-color:rgb(22 39 78 / var(--tw-bg-opacity, 1))}.bg-amber-300{--tw-bg-opacity:1;background-color:rgb(252 211 77 / var(--tw-bg-opacity, 1))}.bg-blue-400{--tw-bg-opacity:1;background-color:rgb(96 165 250 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-cyan-500{--tw-gradient-from:#06b6d4 var(--tw-gradient-from-position);--tw-gradient-to:rgb(6 182 212 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-teal-400{--tw-gradient-from:#2dd4bf var(--tw-gradient-from-position);--tw-gradient-to:rgb(45 212 191 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-teal-400{--tw-gradient-to:rgb(45 212 191 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #2dd4bf var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.to-teal-300{--tw-gradient-to:#5eead4 var(--tw-gradient-to-position)}.fill-slate-400{fill:#94a3b8}.stroke-\[\#18294d\]{stroke:#18294d}.p-0\.5{padding:0.125rem}.p-1{padding:0.25rem}.p-1\.5{padding:0.375rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-2\.5{padding:0.625rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-2{padding-bottom:0.5rem}.pb-3{padding-bottom:0.75rem}.pb-4{padding-bottom:1rem}.pl-8{padding-left:2rem}.pr-10{padding-right:2.5rem}.pr-8{padding-right:2rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.font-sans{font-family:Inter, Plus Jakarta Sans, system-ui, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-base{font-size:1rem;line-height:1.5rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-sky-300{--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-400\/80{color:rgb(148 163 184 / 0.8)}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-950{--tw-text-opacity:1;color:rgb(2 6 23 / var(--tw-text-opacity, 1))}.text-teal-200{--tw-text-opacity:1;color:rgb(153 246 228 / var(--tw-text-opacity, 1))}.text-teal-300{--tw-text-opacity:1;color:rgb(94 234 212 / var(--tw-text-opacity, 1))}.text-teal-300\/80{color:rgb(94 234 212 / 0.8)}.text-teal-400{--tw-text-opacity:1;color:rgb(45 212 191 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.opacity-100{opacity:1}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_12px_rgba\(45\2c 212\2c 191\2c 0\.6\)\]{--tw-shadow:0 0 12px rgba(45,212,191,0.6);--tw-shadow-colored:0 0 12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_6px_\#2dd4bf\]{--tw-shadow:0 0 6px #2dd4bf;--tw-shadow-colored:0 0 6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_6px_\#a855f7\]{--tw-shadow:0 0 6px #a855f7;--tw-shadow-colored:0 0 6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_6px_\#fbbf24\]{--tw-shadow:0 0 6px #fbbf24;--tw-shadow-colored:0 0 6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_\#2dd4bf\]{--tw-shadow:0 0 8px #2dd4bf;--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_\#3b82f6\]{--tw-shadow:0 0 8px #3b82f6;--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_rgba\(168\2c 85\2c 247\2c 0\.7\)\]{--tw-shadow:0 0 8px rgba(168,85,247,0.7);--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_rgba\(245\2c 158\2c 11\2c 0\.6\)\]{--tw-shadow:0 0 8px rgba(245,158,11,0.6);--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_rgba\(245\2c 158\2c 11\2c 0\.7\)\]{--tw-shadow:0 0 8px rgba(245,158,11,0.7);--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_rgba\(45\2c 212\2c 191\2c 0\.7\)\]{--tw-shadow:0 0 8px rgba(45,212,191,0.7);--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_8px_rgba\(56\2c 189\2c 248\2c 0\.7\)\]{--tw-shadow:0 0 8px rgba(56,189,248,0.7);--tw-shadow-colored:0 0 8px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-teal-500\/20{--tw-shadow-color:rgb(20 184 166 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.drop-shadow-\[0_0_10px_rgba\(168\2c 85\2c 247\2c 0\.7\)\]{--tw-drop-shadow:drop-shadow(0 0 10px rgba(168,85,247,0.7));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_10px_rgba\(59\2c 130\2c 246\2c 0\.5\)\]{--tw-drop-shadow:drop-shadow(0 0 10px rgba(59,130,246,0.5));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_6px_rgba\(251\2c 191\2c 36\2c 0\.6\)\]{--tw-drop-shadow:drop-shadow(0 0 6px rgba(251,191,36,0.6));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_8px_rgba\(45\2c 212\2c 191\2c 0\.5\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(45,212,191,0.5));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_8px_rgba\(45\2c 212\2c 191\2c 0\.6\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(45,212,191,0.6));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.duration-700{transition-duration:700ms}.selection\:bg-teal-500 *::selection{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-teal-500::selection{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-\[\#274078\]:hover{--tw-border-opacity:1;border-color:rgb(39 64 120 / var(--tw-border-opacity, 1))}.hover\:border-amber-400\/40:hover{border-color:rgb(251 191 36 / 0.4)}.hover\:border-blue-500\/40:hover{border-color:rgb(59 130 246 / 0.4)}.hover\:border-purple-400\/40:hover{border-color:rgb(192 132 252 / 0.4)}.hover\:border-teal-400\/40:hover{border-color:rgb(45 212 191 / 0.4)}.hover\:border-teal-400\/50:hover{border-color:rgb(45 212 191 / 0.5)}.hover\:border-teal-400\/60:hover{border-color:rgb(45 212 191 / 0.6)}.hover\:border-teal-500\/40:hover{border-color:rgb(20 184 166 / 0.4)}.hover\:bg-\[\#182852\]:hover{--tw-bg-opacity:1;background-color:rgb(24 40 82 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#1a2b52\]:hover{--tw-bg-opacity:1;background-color:rgb(26 43 82 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#1a2c52\]:hover{--tw-bg-opacity:1;background-color:rgb(26 44 82 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#1e346b\]:hover{--tw-bg-opacity:1;background-color:rgb(30 52 107 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#20366b\]:hover{--tw-bg-opacity:1;background-color:rgb(32 54 107 / var(--tw-bg-opacity, 1))}.hover\:bg-teal-400:hover{--tw-bg-opacity:1;background-color:rgb(45 212 191 / var(--tw-bg-opacity, 1))}.hover\:stroke-amber-300:hover{stroke:#fcd34d}.hover\:stroke-blue-400:hover{stroke:#60a5fa}.hover\:stroke-purple-300:hover{stroke:#d8b4fe}.hover\:stroke-teal-200:hover{stroke:#99f6e4}.hover\:stroke-teal-300:hover{stroke:#5eead4}.hover\:text-amber-300:hover{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.hover\:text-purple-300:hover{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.hover\:text-sky-300:hover{--tw-text-opacity:1;color:rgb(125 211 252 / var(--tw-text-opacity, 1))}.hover\:text-teal-300:hover{--tw-text-opacity:1;color:rgb(94 234 212 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-teal-400:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(45 212 191 / var(--tw-ring-opacity, 1))}.group:hover .group-hover\:opacity-100{opacity:1}@media (min-width: 640px){.sm\:col-span-4{grid-column:span 4 / span 4}.sm\:col-span-6{grid-column:span 6 / span 6}.sm\:inline{display:inline}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}}@media (min-width: 768px){.md\:flex{display:flex}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-end{align-items:flex-end}}@media (min-width: 1024px){.lg\:col-span-1{grid-column:span 1 / span 1}.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:col-span-3{grid-column:span 3 / span 3}.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+<body class="bg-[#080d1a] text-slate-100 min-h-[1024px] font-sans antialiased selection:bg-teal-500 selection:text-white" data-stitch-vh="min-h-[1024px]===min-h-screen" data-mode="connect">
+<div class="flex flex-col min-h-[1024px]" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+<!-- Top Navigation -->
+<header class="sticky top-0 z-40 bg-[#0b1328]/90 backdrop-blur-md border-b border-[#1c2e56]">
+  <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 via-teal-400 to-indigo-600 flex items-center justify-center shadow-lg shadow-teal-500/20">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="font-bold tracking-tight text-white text-base">PokeVault</span>
+          <span class="text-xs uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 border border-teal-500/30">Analytics</span>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-none">Executive Portfolio &amp; Collection Command Center</p>
+      </div>
+    </div>
+
+    <!-- Navigation Filter Tabs -->
+    <nav class="hidden md:flex items-center space-x-1 bg-[#101b33] p-1 rounded-xl border border-[#1e2f5b]" id="viewFilterBar">
+      <button class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-teal-500 text-slate-950 transition-all shadow-sm" data-filter="all">All Overview</button>
+      <button class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-[#1a2b52] transition-all" data-filter="sealed">Sealed Inventory</button>
+      <button class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-[#1a2b52] transition-all" data-filter="raw">Raw Cards</button>
+      <button class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-[#1a2b52] transition-all" data-filter="scenarios">Scenarios &amp; Growth</button>
+    </nav>
+
+    <!-- Controls -->
+    <div class="flex items-center space-x-3">
+      <button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#142042] border border-[#233869] text-slate-300 hover:text-teal-300 hover:border-teal-400/50 transition-all" id="toggleReorderBtn">
+        <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class=""></path>
+        </svg>
+        <span id="reorderBtnLabel" class="">Reorder Layout</span>
+      </button>
+
+      <!-- Snapshot Selector -->
+      <div class="relative flex items-center">
+        <div class="absolute left-2.5 pointer-events-none text-teal-400">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <select class="bg-[#142042] hover:bg-[#182852] text-xs font-semibold text-slate-200 border border-[#233869] hover:border-teal-400/60 rounded-lg py-1.5 pl-8 pr-8 focus:ring-2 focus:ring-teal-400 focus:outline-none transition-all cursor-pointer shadow-sm appearance-none" id="snapshotSelector">
+          <option selected="" value="16-oct-2026">16 Oct 2026 Snapshot (Current)</option>
+          <option value="15-sep-2026">15 Sep 2026 Snapshot</option>
+          <option value="15-jul-2026">15 Jul 2026 Snapshot</option>
+          <option value="q3-2026">Q3 2026 Milestone</option>
+          <option value="01-jan-2026">01 Jan 2026 (Baseline)</option>
+        </select>
+        <div class="absolute right-2.5 pointer-events-none text-slate-400">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Snapshot Notification Toast -->
+<div class="fixed top-20 right-6 z-50 pointer-events-none transition-all duration-300 transform opacity-0 -translate-y-2" id="snapshotToast">
+  <div class="bg-[#0f1d38] border border-teal-400/60 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center space-x-2.5 text-xs backdrop-blur-md">
+    <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+    <span class="text-teal-300 font-bold">Snapshot Loaded:</span>
+    <span class="text-slate-200 font-mono" id="toastSnapshotName">16 Oct 2026 Snapshot (Current)</span>
+  </div>
+</div>
+
+<!-- Main Dashboard -->
+<main class="flex-1 max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <!-- Reorder Mode Banner -->
+  <div class="hidden bg-teal-950/60 border border-teal-500/40 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs text-teal-200 backdrop-blur-sm" id="reorderBanner">
+    <div class="flex items-center space-x-2">
+      <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
+      <span class="font-medium">Layout Reorganizer Active:</span>
+      <span class="text-teal-300/80">Drag cards or use shift arrows to customize your view.</span>
+    </div>
+    <button class="underline hover:text-white transition-colors" id="resetLayoutBtn">Reset to Default Order</button>
+  </div>
+
+  <!-- Section Header -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-[#172547]">
+    <div>
+      <div class="inline-flex items-center space-x-2 text-[11px] font-bold tracking-widest uppercase text-teal-400 mb-1">
+        <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping" id="headerPingDot"></span>
+        <span id="currentPillCategory" class="">EXECUTIVE DASHBOARD</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight" id="mainDashboardTitle">Collection, at a glance</h1>
+      <p class="text-slate-400 text-sm mt-1" id="mainDashboardSubtitle">Market-value estimates • <span id="headerSummaryCounts">34 sealed products/cases + 262 raw cards • 21 sealed product types</span></p>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <span class="px-3 py-1.5 rounded-lg bg-[#111e38] border border-[#1e2f5b] text-slate-300">
+        Ungraded / Raw: <strong class="text-teal-300 font-semibold">USD</strong>
+      </span>
+      <span class="px-3 py-1.5 rounded-lg bg-[#111e38] border border-[#1e2f5b] text-slate-300 flex items-center space-x-1.5" id="holoSyncStatusBadge">
+        <span class="w-2 h-2 rounded-full bg-emerald-400" id="syncDotIndicator"></span>
+        <span class="text-slate-300">HoloDex Status:</span>
+        <strong class="text-emerald-400 font-semibold" id="holoStatusText">Verified Sync (16 OCT 2026)</strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- Reorderable Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5" id="dashboardGrid">
+    <!-- Card 1: TOTAL PORTFOLIO KPI -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-5 relative group glow-mint" data-card-id="kpi-total-portfolio" data-category="all overview sealed raw" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white" title="Move Left/Up">◀</button>
+        <span class="cursor-grab text-xs text-teal-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white" title="Move Right/Down">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-teal-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="w-9 h-1 rounded bg-teal-400 mb-3 shadow-[0_0_8px_rgba(45,212,191,0.7)]"></div>
+      <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Total Portfolio</div>
+      <div class="mt-2 text-3xl font-extrabold text-white tracking-tight leading-none metric-updated" id="valTotalPortfolio">$19,080.22</div>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-400">
+        <span>Midpoint of valuation range</span>
+        <span class="text-emerald-400 font-semibold flex items-center gap-0.5" id="valPortfolioYtd">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7l4 4-4 4V7zM8 13L4 9l4-4v8z" clip-rule="evenodd"></path></svg>
+          <span id="valPortfolioYtdText">+6.4% YTD</span>
+        </span>
+      </div>
+      <div class="mt-4 pt-3 border-t border-[#18294d]">
+        <div class="h-1.5 w-full bg-[#182b52] rounded-full overflow-hidden flex">
+          <div class="bg-teal-400 h-full w-[74.1%] bar-updated" id="kpiBarSealed" title="Sealed: 74.1%" style="width: 74.1%;"></div>
+          <div class="bg-sky-400 h-full w-[25.9%] bar-updated" id="kpiBarRaw" title="Raw: 25.9%" style="width: 25.9%;"></div>
+        </div>
+        <div class="flex justify-between items-center text-[11px] text-slate-400 mt-2">
+          <span>Sealed: <strong class="text-slate-200" id="kpiSealedPctLabel">74.1%</strong></span>
+          <span>Raw: <strong class="text-slate-200" id="kpiRawPctLabel">25.9%</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: SEALED INVENTORY KPI -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-5 relative group glow-blue" data-card-id="kpi-sealed-inventory" data-category="all sealed" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-sky-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-sky-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="w-9 h-1 rounded bg-sky-400 mb-3 shadow-[0_0_8px_rgba(56,189,248,0.7)]"></div>
+      <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Sealed Inventory</div>
+      <div class="mt-2 text-3xl font-extrabold text-white tracking-tight leading-none metric-updated" id="valSealedTotal">$14,132.98</div>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-400">
+        <span id="sealedUnitsSkusLabel">34 units across 21 SKUs</span>
+        <span class="text-sky-300 font-mono text-[11px]" id="sealedCasesBoxesLabel">8 Cases • 13 Boxes</span>
+      </div>
+      <div class="mt-4 pt-3 border-t border-[#18294d] flex items-center justify-between text-[11px] text-slate-400">
+        <span>Avg unit cost: <strong class="text-slate-200" id="valSealedAvgUnitCost">$415.67</strong></span>
+        <span class="text-sky-400 font-semibold" id="valSealedLeadSku">151 Case Lead</span>
+      </div>
+    </div>
+
+    <!-- Card 3: RAW CARDS KPI -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-5 relative group glow-purple" data-card-id="kpi-raw-cards" data-category="all raw" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-purple-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-purple-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="w-9 h-1 rounded bg-purple-400 mb-3 shadow-[0_0_8px_rgba(168,85,247,0.7)]"></div>
+      <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Raw Cards</div>
+      <div class="mt-2 text-3xl font-extrabold text-white tracking-tight leading-none metric-updated" id="valRawTotal">$4,947.24</div>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-400">
+        <span id="rawCopiesEntriesLabel">262 copies / 221 entries</span>
+        <span class="text-purple-300 font-mono text-[11px]" id="rawUniqueSetsLabel">27 Unique Sets</span>
+      </div>
+      <div class="mt-4 pt-3 border-t border-[#18294d] flex items-center justify-between text-[11px] text-slate-400">
+        <span>SIR Concentration: <strong class="text-purple-300" id="valRawSirConcentration">$3.2k (64%)</strong></span>
+        <span class="text-teal-400 font-semibold" id="valRawRarityCount">19 Rarities</span>
+      </div>
+    </div>
+
+    <!-- Card 4: VALUATION RANGE KPI -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-5 relative group glow-amber" data-card-id="kpi-valuation-range" data-category="all scenarios" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-amber-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-amber-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="w-9 h-1 rounded bg-amber-400 mb-3 shadow-[0_0_8px_rgba(245,158,11,0.7)]"></div>
+      <div class="text-[11px] font-bold tracking-wider uppercase text-slate-400">Valuation Range</div>
+      <div class="mt-2 text-3xl font-extrabold text-white tracking-tight leading-none metric-updated" id="valRangeTitle">$16.8k - $21.4k</div>
+      <div class="mt-2 flex items-center justify-between text-xs text-slate-400">
+        <span>Spread reflects sealed pricing</span>
+        <span class="text-amber-400 font-mono text-[11px]" id="valRangeDelta">Δ $4,609</span>
+      </div>
+      <div class="mt-4 pt-3 border-t border-[#18294d] flex items-center justify-between text-[11px] text-slate-400">
+        <span>Low: <strong class="text-slate-200" id="valRangeLow">$16,787</strong></span>
+        <span>High: <strong class="text-slate-200" id="valRangeHigh">$21,396</strong></span>
+      </div>
+    </div>
+
+    <!-- Card 5: PORTFOLIO VALUE MIX DONUT -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-2 relative group hover:border-[#274078]" data-card-id="card-value-mix" data-category="all overview sealed raw" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-teal-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-teal-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <h2 class="text-sm font-bold uppercase tracking-wider text-white mb-6">PORTFOLIO VALUE MIX</h2>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-8">
+        <div class="relative w-48 h-48 flex items-center justify-center shrink-0">
+          <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" fill="none" r="58" stroke="#16274e" stroke-width="22"></circle>
+            <circle class="cursor-pointer hover:stroke-teal-300 transition-all duration-500 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)]" cx="80" cy="80" fill="none" id="donutRawSlice" r="58" stroke="#2dd4bf" stroke-dasharray="94.4 364.4" stroke-dashoffset="0" stroke-width="22"></circle>
+            <circle class="cursor-pointer hover:stroke-blue-400 transition-all duration-500 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" cx="80" cy="80" fill="none" id="donutSealedSlice" r="58" stroke="#3b82f6" stroke-dasharray="270.0 364.4" stroke-dashoffset="-94.4" stroke-width="22"></circle>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+            <span class="text-2xl font-black text-white leading-tight" id="donutCenterPct">74.1%</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-300" id="donutCenterLabel">SEALED</span>
+          </div>
+        </div>
+        <div class="flex-1 w-full space-y-5">
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0e1933]/70 border border-[#1b2b52] hover:border-blue-500/40 transition-colors">
+            <div class="flex items-center space-x-3">
+              <span class="w-3.5 h-3.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></span>
+              <span class="text-sm font-medium text-slate-200">Sealed holdings</span>
+            </div>
+            <div class="text-right">
+              <span class="text-base font-bold text-white" id="mixSealedAmount">$14,133</span>
+              <span class="text-xs text-blue-400 ml-2 font-mono" id="mixSealedPct">74.1%</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#0e1933]/70 border border-[#1b2b52] hover:border-teal-500/40 transition-colors">
+            <div class="flex items-center space-x-3">
+              <span class="w-3.5 h-3.5 rounded-full bg-teal-400 shadow-[0_0_8px_#2dd4bf]"></span>
+              <span class="text-sm font-medium text-slate-200">Raw cards</span>
+            </div>
+            <div class="text-right">
+              <span class="text-base font-bold text-white" id="mixRawAmount">$4,947</span>
+              <span class="text-xs text-teal-400 ml-2 font-mono" id="mixRawPct">25.9%</span>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-[#18294d] flex items-center justify-between text-xs text-slate-400">
+            <span>Raw cards account for</span>
+            <span class="text-xl font-extrabold text-teal-400" id="mixRawBigPct">25.9%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: VALUATION & CONCENTRATION -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-2 relative group hover:border-[#274078]" data-card-id="card-concentration" data-category="all overview sealed" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-teal-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-teal-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <h2 class="text-sm font-bold uppercase tracking-wider text-white mb-6">VALUATION &amp; CONCENTRATION</h2>
+      <div class="space-y-2">
+        <div class="flex justify-between text-xs text-slate-300">
+          <span class="text-slate-400">Portfolio range</span>
+          <span class="font-bold text-white font-mono text-sm" id="concentrationRangeSpan">$16,787 — $21,396</span>
+        </div>
+        <div class="h-3 w-full bg-[#182b52] rounded-full overflow-hidden p-0.5">
+          <div class="h-full bg-gradient-to-r from-teal-400 to-teal-300 rounded-full bar-updated shadow-[0_0_12px_rgba(45,212,191,0.6)]" id="concentrationRangeBar" style="width: 65%;"></div>
+        </div>
+        <div class="flex justify-between text-[11px] text-slate-400">
+          <span id="concentrationLowLabel">Low $16,787</span>
+          <span id="concentrationHighLabel">High $21,396</span>
+        </div>
+      </div>
+      <div class="mt-6 pt-5 border-t border-[#18294d] space-y-2">
+        <div class="text-xs text-slate-400">Largest single holding</div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="text-base sm:text-lg font-bold text-white tracking-tight" id="largestHoldingName">151 Pokémon Center ETB sealed case</div>
+          <div class="text-xl sm:text-2xl font-black text-amber-400 metric-updated" id="largestHoldingVal">$7,000</div>
+        </div>
+        <div class="h-2 w-full bg-[#182b52] rounded-full overflow-hidden mt-2">
+          <div class="h-full bg-amber-400 rounded-full bar-updated shadow-[0_0_8px_rgba(245,158,11,0.6)]" id="largestHoldingBar" style="width: 36.7%;"></div>
+        </div>
+        <p class="text-xs text-slate-400 pt-1">
+          <strong class="text-slate-200" id="largestHoldingPctLabel">36.7% of the full portfolio</strong> — concentrated, low-confidence estimate
+        </p>
+        <p class="text-[11px] text-slate-400/80 italic">Snapshot value, not guaranteed realized sale proceeds</p>
+      </div>
+    </div>
+
+    <!-- Card 7: TOP SEALED HOLDINGS BREAKDOWN -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-3 relative group hover:border-[#274078]" data-card-id="card-sealed-breakdown" data-category="all sealed" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-sky-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-sky-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-sm font-bold uppercase tracking-wider text-white">TOP SEALED HOLDINGS BY ESTIMATED VALUE</h2>
+        <span class="text-[11px] text-slate-400 hidden sm:inline">Midpoint valuation • Units aggregated</span>
+      </div>
+      <p class="text-xs text-slate-400 mb-6">Contribution by SKU including all units</p>
+      <div class="space-y-3.5 text-xs" id="sealedHoldingsList">
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">Scarlet &amp; Violet 151 Center ETB sea...</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-300 rounded-full bar-updated" style="width: 100%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$7,000</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">Night UPC</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 17.8%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$1,250</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">Day UPC</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 15.3%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$1,075</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">Delta Reign Center ETB</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 10.2%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$720</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">30th Center ETB</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 8.0%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$560</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">30th Booster Bundle</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 7.8%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$546</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">30th ETB</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 7.4%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$522</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">Prismatic Surprise Box + Booster Bu...</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 5.4%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$382</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">30th Display Tin Case</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-400 rounded-full bar-updated" style="width: 4.6%"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">$325</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: COLLECTION STRUCTURE & SEALED MARKET READOUT -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between relative group hover:border-[#274078]" data-card-id="card-sealed-readout" data-category="all sealed" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-sky-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-sky-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wider text-white mb-4">COLLECTION STRUCTURE</h2>
+        <div class="space-y-3 text-xs" id="structureList">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-2 text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span>151 PC ETB case</span>
+          </span>
+          <span class="font-mono text-slate-200"><strong>$7,000</strong> <span class="text-amber-400 ml-1">49.5%</span></span>
+        </div>
+      
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-2 text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <span>30th Celebration</span>
+          </span>
+          <span class="font-mono text-slate-200"><strong>$4,278</strong> <span class="text-blue-400 ml-1">30.3%</span></span>
+        </div>
+      
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-2 text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
+            <span>Delta Reign</span>
+          </span>
+          <span class="font-mono text-slate-200"><strong>$1,050</strong> <span class="text-purple-400 ml-1">7.4%</span></span>
+        </div>
+      
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-2 text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>
+            <span>Other sealed</span>
+          </span>
+          <span class="font-mono text-slate-200"><strong>$1,804</strong> <span class="text-teal-400 ml-1">12.8%</span></span>
+        </div>
+      </div>
+      </div>
+      <div class="mt-6 pt-5 border-t border-[#18294d]">
+        <span class="text-[10px] font-bold tracking-wider uppercase text-slate-400">SEALED MARKET READOUT</span>
+        <div class="text-2xl font-black text-white mt-1" id="sealedReadoutRange">$11,840 – $16,449</div>
+        <p class="text-[11px] text-slate-400 mt-1">Low-high estimate across sealed holdings</p>
+        <div class="mt-4 p-3 rounded-xl bg-[#0c162e] border border-[#1d2d53] space-y-1">
+          <div class="flex justify-between text-xs">
+            <span class="text-slate-300">Value in 151 factory-sealed case</span>
+            <span class="text-amber-400 font-bold" id="sealedReadout151Share">49.5%</span>
+          </div>
+          <p class="text-[10px] text-slate-500">Preorders &amp; sealed cases carry pricing uncertainty</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 9: RAW CARD PORTFOLIO INTELLIGENCE -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-4 relative group hover:border-[#274078]" data-card-id="card-raw-card-intel" data-category="all raw" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-purple-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-purple-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#18294d] gap-2">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-teal-400">CARD-LEVEL ANALYTICS</span>
+          <h2 class="text-xl font-bold text-white tracking-tight">Raw card portfolio intelligence</h2>
+          <p class="text-xs text-slate-400" id="rawCardHeaderSubtitle">HoloDex export: 16 Oct 2026 Snapshot • Ungraded / raw only • values shown in USD</p>
+        </div>
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="px-2.5 py-1 bg-[#152345] text-slate-300 rounded border border-[#213563]" id="rawIntelSetDiversity">Set diversity: 27 sets</span>
+          <span class="px-2.5 py-1 bg-[#152345] text-slate-300 rounded border border-[#213563]" id="rawIntelRarityCategories">19 Rarity categories</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+        <div class="p-4 rounded-xl bg-[#0d1730] border border-[#1b2b52]">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4">VALUE BY CARD SET</h3>
+          <div class="space-y-3 text-xs" id="rawCardSetsList">
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Ascended Heroes</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: 95%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono font-bold text-teal-300">$3.1k</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">ME: 30th Celebration Clas...</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: 15%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$229</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Prismatic Evolutions</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: 14%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$222</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">ME: 30th Celebration</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: 13%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$211</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">SM Promos</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: 10%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$157</span>
+        </div>
+      </div>
+        </div>
+        <div class="p-4 rounded-xl bg-[#0d1730] border border-[#1b2b52]">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4">VALUE BY RARITY</h3>
+          <div class="space-y-3 text-xs" id="rawCardRaritiesList">
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Special Illustration Rare</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: 95%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono font-bold text-purple-300">$3.2k</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Holo Rare</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: 25%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$585</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Ultra Rare</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: 12%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$243</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Classic Collection</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: 11%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$229</span>
+        </div>
+      
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">Promo</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: 9%"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono text-slate-200">$154</span>
+        </div>
+      </div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t border-[#18294d]">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4">TOP 8 RAW CARD HOLDINGS</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-xs">
+          <div class="space-y-2.5" id="topRawColLeft">
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">01</span>
+            <span class="font-semibold text-white">Mega Gengar ex</span>
+            <span class="text-slate-400 text-[11px]">• Ascended Heroes</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$816.38</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">02</span>
+            <span class="font-semibold text-white">Pikachu ex</span>
+            <span class="text-slate-400 text-[11px]">• Ascended Heroes</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$753.63</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">03</span>
+            <span class="font-semibold text-white">Mega Dragonite ex</span>
+            <span class="text-slate-400 text-[11px]">• Ascended Heroes</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$477.42</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">04</span>
+            <span class="font-semibold text-white">Pikachu ex</span>
+            <span class="text-slate-400 text-[11px]">• Ascended Heroes</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$300.27</span>
+        </div>
+      </div>
+          <div class="space-y-2.5" id="topRawColRight">
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">05</span>
+            <span class="font-semibold text-white">Eevee ex</span>
+            <span class="text-slate-400 text-[11px]">• Prismatic Evolutions</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$166.44</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">06</span>
+            <span class="font-semibold text-white">Moltres &amp; Zapdos &amp; Articuno GX</span>
+            <span class="text-slate-400 text-[11px]">• SM P...</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$156.58</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">07</span>
+            <span class="font-semibold text-white">N's Zoroark ex</span>
+            <span class="text-slate-400 text-[11px]">• Ascended Heroes</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$137.86</span>
+        </div>
+      
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">08</span>
+            <span class="font-semibold text-white">Charizard</span>
+            <span class="text-slate-400 text-[11px]">• ME: 30th Celebration Clas...</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">$134.90</span>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 10: PROJECTED PORTFOLIO SCENARIOS -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-3 relative group hover:border-[#274078]" data-card-id="card-growth-scenarios" data-category="all scenarios" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-purple-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-purple-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-2">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-teal-400">FORWARD OUTLOOK</span>
+          <h2 class="text-xl font-bold text-white tracking-tight">Projected portfolio scenarios</h2>
+          <p class="text-xs text-slate-400" id="scenarioChartSubtitle">Illustrative, not a prediction • starting midpoint $19,080.22 • nominal values before transaction costs</p>
+        </div>
+        <div class="text-xs text-slate-400 font-mono">Milestones across 10 years</div>
+      </div>
+      <div class="mt-4 relative bg-[#0b1429] p-4 rounded-xl border border-[#192b52]">
+        <div class="h-64 w-full">
+          <svg class="w-full h-full overflow-visible" id="scenarioChartSvg" viewBox="0 0 760 260">
+            <g class="text-[11px] fill-slate-400 stroke-[#18294d]" stroke-dasharray="2 3">
+              <line stroke-width="1" x1="45" x2="740" y1="30" y2="30"></line>
+              <text class="fill-slate-400" stroke="none" text-anchor="end" x="35" y="34">$80k</text>
+              <line stroke-width="1" x1="45" x2="740" y1="85" y2="85"></line>
+              <text class="fill-slate-400" stroke="none" text-anchor="end" x="35" y="89">$60k</text>
+              <line stroke-width="1" x1="45" x2="740" y1="140" y2="140"></line>
+              <text class="fill-slate-400" stroke="none" text-anchor="end" x="35" y="144">$40k</text>
+              <line stroke-width="1" x1="45" x2="740" y1="195" y2="195"></line>
+              <text class="fill-slate-400" stroke="none" text-anchor="end" x="35" y="199">$20k</text>
+              <line stroke="#223968" stroke-dasharray="none" stroke-width="1" x1="45" x2="740" y1="230" y2="230"></line>
+              <text class="fill-slate-400" stroke="none" text-anchor="end" x="35" y="234">$0</text>
+            </g>
+            <path class="transition-all duration-700 hover:stroke-purple-300 drop-shadow-[0_0_10px_rgba(168,85,247,0.7)]" d="M 60 198 L 140 193 L 280 173 L 430 149 L 710 47" fill="none" id="scenarioHighPath" stroke="#a855f7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5"></path>
+            <path class="transition-all duration-700 hover:stroke-teal-200 drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]" d="M 60 198 L 140 200 L 280 193 L 430 182 L 710 150" fill="none" id="scenarioModPath" stroke="#2dd4bf" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+            <path class="transition-all duration-700 hover:stroke-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]" d="M 60 198 L 140 205 L 280 203 L 430 200 L 710 192" fill="none" id="scenarioConsPath" stroke="#fbbf24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+            <g class="text-[12px] fill-slate-400 font-mono" text-anchor="middle">
+              <text x="60" y="250">0Y</text>
+              <text x="140" y="250">1Y</text>
+              <text x="280" y="250">3Y</text>
+              <text x="430" y="250">5Y</text>
+              <text x="710" y="250">10Y</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 11: YEAR 10 OUTCOMES TARGETS -->
+    <div class="dash-card card-transition bg-[#111e38] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between relative group hover:border-[#274078]" data-card-id="card-outcomes-targets" data-category="all scenarios" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-purple-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <button class="inspect-btn opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4 text-slate-400 hover:text-purple-300 p-1.5 rounded-lg hover:bg-[#1a2c52] z-10" title="Inspect Deep Analytics">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <h2 class="text-sm font-bold uppercase tracking-wider text-white mb-4">YEAR 10 OUTCOMES</h2>
+      <div class="space-y-6">
+        <div class="p-3.5 rounded-xl bg-[#0e1933] border border-[#1b2b52] hover:border-amber-400/40 transition-colors">
+          <div class="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]"></span>
+            <span>Conservative</span>
+          </div>
+          <div class="text-2xl font-black text-white mt-1 font-mono tracking-tight metric-updated" id="outcomeConsVal">$21,161</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Y1 -15%, then 3% annually</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#0e1933] border border-[#1b2b52] hover:border-teal-400/40 transition-colors">
+          <div class="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_6px_#2dd4bf]"></span>
+            <span>Moderate</span>
+          </div>
+          <div class="text-2xl font-black text-white mt-1 font-mono tracking-tight metric-updated" id="outcomeModVal">$36,234</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Y1 -5%, then 8% annually</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[#0e1933] border border-[#1b2b52] hover:border-purple-400/40 transition-colors">
+          <div class="flex items-center space-x-2 text-xs font-semibold text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_6px_#a855f7]"></span>
+            <span>High</span>
+          </div>
+          <div class="text-2xl font-black text-white mt-1 font-mono tracking-tight metric-updated" id="outcomeHighVal">$73,834</div>
+          <div class="text-[11px] text-slate-400 mt-0.5">Y1 +10%, then 15% annually</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 12: VALUATION CONTEXT & ASSUMPTIONS -->
+    <div class="dash-card card-transition bg-[#0e172e] border border-[#1c2e56] rounded-2xl p-6 lg:col-span-4 relative group" data-card-id="card-assumptions" data-category="all scenarios" draggable="false">
+      <div class="card-reorder-handle hidden absolute top-3 right-3 flex items-center space-x-1 z-20 bg-[#0b1328]/90 rounded-md p-1 border border-[#22396b]">
+        <button class="shift-left p-1 text-slate-400 hover:text-white">◀</button>
+        <span class="cursor-grab text-xs text-teal-400 font-mono px-1">:::</span>
+        <button class="shift-right p-1 text-slate-400 hover:text-white">▶</button>
+      </div>
+      <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center space-x-2">
+        <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+        <span>VALUATION CONTEXT &amp; ASSUMPTIONS</span>
+      </h2>
+      <div class="space-y-1.5 text-xs text-slate-400 leading-relaxed max-w-5xl">
+        <p>Low/high portfolio estimates vary sealed-product prices; raw-card pricing is a single HoloDex snapshot.</p>
+        <p>Year 1 applies a separate market shift; years 2–10 compound at the scenario rate. Raw and sealed are modeled together.</p>
+        <p class="text-slate-500">Excludes seller fees, taxes, shipping, condition discounts and liquidity. Preorders and the sealed 151 case add material uncertainty.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[#080d1a] border-t border-[#172547] text-xs text-slate-500 py-4 px-4 sm:px-6 lg:px-8 mt-10">
+  <div class="max-w-[1720px] mx-auto flex flex-col md:flex-row items-center justify-between gap-3 font-mono text-[11px]">
+    <div class="flex items-center space-x-2 text-slate-400">
+      <span class="font-bold tracking-wider text-slate-300">POKÉMON PORTFOLIO</span>
+      <span>/</span>
+      <span>HOLODEX + SEALED INVENTORY</span>
+    </div>
+    <div class="flex items-center space-x-4">
+      <span id="footerSnapshotDate">16 OCT 2026</span>
+      <span>•</span>
+      <span class="text-teal-400 uppercase" id="footerActiveViewLabel">OVERVIEW</span>
+      <span>•</span>
+      <span>01 / 04</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<!-- Inspection Modal -->
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md transition-opacity" id="inspectModal">
+  <div class="bg-[#111e38] border border-[#22396b] rounded-2xl w-full max-w-4xl max-h-[921px] overflow-y-auto shadow-2xl p-6 sm:p-8 relative card-transition" data-stitch-vh="max-h-[921px]===max-h-[90vh]">
+    <button class="absolute top-5 right-5 text-slate-400 hover:text-white p-2 rounded-xl bg-[#17274f] hover:bg-[#1e346b] transition-colors" id="closeModalBtn" title="Close Modal (Esc)">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+    </button>
+    <div class="border-b border-[#1c2e56] pb-4 pr-10">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-teal-400" id="modalCategoryBadge">DETAIL INSPECTION</span>
+      <h2 class="text-2xl font-black text-white mt-1" id="modalCardTitle">Deep Itemized Analytics</h2>
+      <p class="text-xs text-slate-400 mt-1" id="modalCardSubtitle">Expanded metrics, historical volatility, and liquidation projections</p>
+    </div>
+    <div class="py-6 space-y-6" id="modalDynamicBody"></div>
+    <div class="border-t border-[#1c2e56] pt-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="text-slate-400">
+        Last verified sync: <span class="text-slate-200 font-mono" id="modalSyncTimestamp">16 Oct 2026 14:32:00 EST</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button class="px-4 py-2 bg-[#17274f] hover:bg-[#20366b] text-slate-200 rounded-lg font-medium transition-colors">Export CSV</button>
+        <button class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg transition-colors" id="modalDoneBtn">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Complete Dataset for all 5 Snapshot Options
+  const snapshotDatabase = {
+    '16-oct-2026': {
+      name: '16 Oct 2026 Snapshot (Current)',
+      shortDate: '16 OCT 2026',
+      syncDate: '16 Oct 2026 14:32:00 EST',
+      headerSubtitle: '34 sealed products/cases + 262 raw cards • 21 sealed product types',
+      totalPortfolio: '$19,080.22',
+      portfolioYtd: '+6.4% YTD',
+      portfolioYtdIsPositive: true,
+      sealedPct: 74.1,
+      rawPct: 25.9,
+      sealedTotal: '$14,132.98',
+      sealedUnitsSkus: '34 units across 21 SKUs',
+      sealedCasesBoxes: '8 Cases • 13 Boxes',
+      sealedAvgCost: '$415.67',
+      sealedLeadSku: '151 Case Lead',
+      rawTotal: '$4,947.24',
+      rawCopiesEntries: '262 copies / 221 entries',
+      rawUniqueSets: '27 Unique Sets',
+      rawSirConc: '$3.2k (64%)',
+      rawRaritiesCount: '19 Rarities',
+      valRangeTitle: '$16.8k - $21.4k',
+      valRangeDelta: 'Δ $4,609',
+      valRangeLow: '$16,787',
+      valRangeHigh: '$21,396',
+      concentrationRangeBarWidth: '65%',
+      largestHoldingName: '151 Pokémon Center ETB sealed case',
+      largestHoldingVal: '$7,000',
+      largestHoldingBarWidth: '36.7%',
+      largestHoldingPctText: '36.7% of the full portfolio',
+      sealedReadoutRange: '$11,840 – $16,449',
+      sealedReadout151Share: '49.5%',
+      topSealedHoldings: [
+        { name: 'Scarlet & Violet 151 Center ETB sea...', bar: '100%', val: '$7,000', color: 'bg-amber-300' },
+        { name: 'Night UPC', bar: '17.8%', val: '$1,250', color: 'bg-blue-400' },
+        { name: 'Day UPC', bar: '15.3%', val: '$1,075', color: 'bg-blue-400' },
+        { name: 'Delta Reign Center ETB', bar: '10.2%', val: '$720', color: 'bg-blue-400' },
+        { name: '30th Center ETB', bar: '8.0%', val: '$560', color: 'bg-blue-400' },
+        { name: '30th Booster Bundle', bar: '7.8%', val: '$546', color: 'bg-blue-400' },
+        { name: '30th ETB', bar: '7.4%', val: '$522', color: 'bg-blue-400' },
+        { name: 'Prismatic Surprise Box + Booster Bu...', bar: '5.4%', val: '$382', color: 'bg-blue-400' },
+        { name: '30th Display Tin Case', bar: '4.6%', val: '$325', color: 'bg-blue-400' }
+      ],
+      collectionStructure: [
+        { name: '151 PC ETB case', val: '$7,000', pct: '49.5%', dotColor: 'bg-amber-400', txtColor: 'text-amber-400' },
+        { name: '30th Celebration', val: '$4,278', pct: '30.3%', dotColor: 'bg-blue-500', txtColor: 'text-blue-400' },
+        { name: 'Delta Reign', val: '$1,050', pct: '7.4%', dotColor: 'bg-purple-400', txtColor: 'text-purple-400' },
+        { name: 'Other sealed', val: '$1,804', pct: '12.8%', dotColor: 'bg-teal-400', txtColor: 'text-teal-400' }
+      ],
+      rawCardSets: [
+        { name: 'Ascended Heroes', bar: '95%', val: '$3.1k', isHighlight: true },
+        { name: 'ME: 30th Celebration Clas...', bar: '15%', val: '$229', isHighlight: false },
+        { name: 'Prismatic Evolutions', bar: '14%', val: '$222', isHighlight: false },
+        { name: 'ME: 30th Celebration', bar: '13%', val: '$211', isHighlight: false },
+        { name: 'SM Promos', bar: '10%', val: '$157', isHighlight: false }
+      ],
+      rawCardRarities: [
+        { name: 'Special Illustration Rare', bar: '95%', val: '$3.2k', isHighlight: true },
+        { name: 'Holo Rare', bar: '25%', val: '$585', isHighlight: false },
+        { name: 'Ultra Rare', bar: '12%', val: '$243', isHighlight: false },
+        { name: 'Classic Collection', bar: '11%', val: '$229', isHighlight: false },
+        { name: 'Promo', bar: '9%', val: '$154', isHighlight: false }
+      ],
+      topRawLeft: [
+        { num: '01', name: 'Mega Gengar ex', set: '• Ascended Heroes', val: '$816.38' },
+        { num: '02', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$753.63' },
+        { num: '03', name: 'Mega Dragonite ex', set: '• Ascended Heroes', val: '$477.42' },
+        { num: '04', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$300.27' }
+      ],
+      topRawRight: [
+        { num: '05', name: 'Eevee ex', set: '• Prismatic Evolutions', val: '$166.44' },
+        { num: '06', name: 'Moltres & Zapdos & Articuno GX', set: '• SM P...', val: '$156.58' },
+        { num: '07', name: "N's Zoroark ex", set: '• Ascended Heroes', val: '$137.86' },
+        { num: '08', name: 'Charizard', set: '• ME: 30th Celebration Clas...', val: '$134.90' }
+      ],
+      scenarioStartingMidpoint: '$19,080.22',
+      outcomes: { cons: '$21,161', mod: '$36,234', high: '$73,834' }
+    },
+    '15-sep-2026': {
+      name: '15 Sep 2026 Snapshot',
+      shortDate: '15 SEP 2026',
+      syncDate: '15 Sep 2026 18:00:00 EST',
+      headerSubtitle: '33 sealed products/cases + 258 raw cards • 21 sealed product types',
+      totalPortfolio: '$18,240.50',
+      portfolioYtd: '+1.8% YTD',
+      portfolioYtdIsPositive: true,
+      sealedPct: 73.5,
+      rawPct: 26.5,
+      sealedTotal: '$13,406.77',
+      sealedUnitsSkus: '33 units across 21 SKUs',
+      sealedCasesBoxes: '8 Cases • 12 Boxes',
+      sealedAvgCost: '$406.26',
+      sealedLeadSku: '151 Case Lead',
+      rawTotal: '$4,833.73',
+      rawCopiesEntries: '258 copies / 218 entries',
+      rawUniqueSets: '26 Unique Sets',
+      rawSirConc: '$3.0k (62%)',
+      rawRaritiesCount: '19 Rarities',
+      valRangeTitle: '$16.1k - $20.5k',
+      valRangeDelta: 'Δ $4,380',
+      valRangeLow: '$16,110',
+      valRangeHigh: '$20,490',
+      concentrationRangeBarWidth: '61%',
+      largestHoldingName: '151 Pokémon Center ETB sealed case',
+      largestHoldingVal: '$6,650',
+      largestHoldingBarWidth: '36.4%',
+      largestHoldingPctText: '36.4% of the full portfolio',
+      sealedReadoutRange: '$11,200 – $15,620',
+      sealedReadout151Share: '49.6%',
+      topSealedHoldings: [
+        { name: 'Scarlet & Violet 151 Center ETB sea...', bar: '95%', val: '$6,650', color: 'bg-amber-300' },
+        { name: 'Night UPC', bar: '17.0%', val: '$1,190', color: 'bg-blue-400' },
+        { name: 'Day UPC', bar: '14.8%', val: '$1,040', color: 'bg-blue-400' },
+        { name: 'Delta Reign Center ETB', bar: '9.8%', val: '$690', color: 'bg-blue-400' },
+        { name: '30th Center ETB', bar: '7.8%', val: '$545', color: 'bg-blue-400' },
+        { name: '30th Booster Bundle', bar: '7.5%', val: '$525', color: 'bg-blue-400' },
+        { name: '30th ETB', bar: '7.1%', val: '$500', color: 'bg-blue-400' },
+        { name: 'Prismatic Surprise Box + Booster Bu...', bar: '5.2%', val: '$365', color: 'bg-blue-400' },
+        { name: '30th Display Tin Case', bar: '4.4%', val: '$310', color: 'bg-blue-400' }
+      ],
+      collectionStructure: [
+        { name: '151 PC ETB case', val: '$6,650', pct: '49.6%', dotColor: 'bg-amber-400', txtColor: 'text-amber-400' },
+        { name: '30th Celebration', val: '$4,060', pct: '30.3%', dotColor: 'bg-blue-500', txtColor: 'text-blue-400' },
+        { name: 'Delta Reign', val: '$995', pct: '7.4%', dotColor: 'bg-purple-400', txtColor: 'text-purple-400' },
+        { name: 'Other sealed', val: '$1,701', pct: '12.7%', dotColor: 'bg-teal-400', txtColor: 'text-teal-400' }
+      ],
+      rawCardSets: [
+        { name: 'Ascended Heroes', bar: '92%', val: '$2.9k', isHighlight: true },
+        { name: 'ME: 30th Celebration Clas...', bar: '15%', val: '$220', isHighlight: false },
+        { name: 'Prismatic Evolutions', bar: '14%', val: '$215', isHighlight: false },
+        { name: 'ME: 30th Celebration', bar: '13%', val: '$205', isHighlight: false },
+        { name: 'SM Promos', bar: '10%', val: '$150', isHighlight: false }
+      ],
+      rawCardRarities: [
+        { name: 'Special Illustration Rare', bar: '93%', val: '$3.0k', isHighlight: true },
+        { name: 'Holo Rare', bar: '25%', val: '$560', isHighlight: false },
+        { name: 'Ultra Rare', bar: '12%', val: '$235', isHighlight: false },
+        { name: 'Classic Collection', bar: '11%', val: '$220', isHighlight: false },
+        { name: 'Promo', bar: '9%', val: '$148', isHighlight: false }
+      ],
+      topRawLeft: [
+        { num: '01', name: 'Mega Gengar ex', set: '• Ascended Heroes', val: '$782.00' },
+        { num: '02', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$725.10' },
+        { num: '03', name: 'Mega Dragonite ex', set: '• Ascended Heroes', val: '$455.00' },
+        { num: '04', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$288.50' }
+      ],
+      topRawRight: [
+        { num: '05', name: 'Eevee ex', set: '• Prismatic Evolutions', val: '$159.20' },
+        { num: '06', name: 'Moltres & Zapdos & Articuno GX', set: '• SM P...', val: '$150.00' },
+        { num: '07', name: "N's Zoroark ex", set: '• Ascended Heroes', val: '$131.40' },
+        { num: '08', name: 'Charizard', set: '• ME: 30th Celebration Clas...', val: '$128.75' }
+      ],
+      scenarioStartingMidpoint: '$18,240.50',
+      outcomes: { cons: '$20,230', mod: '$34,635', high: '$70,580' }
+    },
+    '15-jul-2026': {
+      name: '15 Jul 2026 Snapshot',
+      shortDate: '15 JUL 2026',
+      syncDate: '15 Jul 2026 11:15:00 EST',
+      headerSubtitle: '31 sealed products/cases + 245 raw cards • 20 sealed product types',
+      totalPortfolio: '$16,920.00',
+      portfolioYtd: '-4.2% YTD',
+      portfolioYtdIsPositive: false,
+      sealedPct: 72.8,
+      rawPct: 27.2,
+      sealedTotal: '$12,317.76',
+      sealedUnitsSkus: '31 units across 20 SKUs',
+      sealedCasesBoxes: '7 Cases • 11 Boxes',
+      sealedAvgCost: '$397.34',
+      sealedLeadSku: '151 Case Lead',
+      rawTotal: '$4,602.24',
+      rawCopiesEntries: '245 copies / 205 entries',
+      rawUniqueSets: '25 Unique Sets',
+      rawSirConc: '$2.8k (60%)',
+      rawRaritiesCount: '18 Rarities',
+      valRangeTitle: '$14.9k - $18.8k',
+      valRangeDelta: 'Δ $3,920',
+      valRangeLow: '$14,940',
+      valRangeHigh: '$18,860',
+      concentrationRangeBarWidth: '55%',
+      largestHoldingName: '151 Pokémon Center ETB sealed case',
+      largestHoldingVal: '$6,150',
+      largestHoldingBarWidth: '36.3%',
+      largestHoldingPctText: '36.3% of the full portfolio',
+      sealedReadoutRange: '$10,250 – $14,400',
+      sealedReadout151Share: '49.9%',
+      topSealedHoldings: [
+        { name: 'Scarlet & Violet 151 Center ETB sea...', bar: '88%', val: '$6,150', color: 'bg-amber-300' },
+        { name: 'Night UPC', bar: '15.5%', val: '$1,080', color: 'bg-blue-400' },
+        { name: 'Day UPC', bar: '13.8%', val: '$960', color: 'bg-blue-400' },
+        { name: 'Delta Reign Center ETB', bar: '9.2%', val: '$640', color: 'bg-blue-400' },
+        { name: '30th Center ETB', bar: '7.1%', val: '$495', color: 'bg-blue-400' },
+        { name: '30th Booster Bundle', bar: '6.9%', val: '$480', color: 'bg-blue-400' },
+        { name: '30th ETB', bar: '6.6%', val: '$460', color: 'bg-blue-400' },
+        { name: 'Prismatic Surprise Box + Booster Bu...', bar: '4.8%', val: '$335', color: 'bg-blue-400' },
+        { name: '30th Display Tin Case', bar: '4.0%', val: '$280', color: 'bg-blue-400' }
+      ],
+      collectionStructure: [
+        { name: '151 PC ETB case', val: '$6,150', pct: '49.9%', dotColor: 'bg-amber-400', txtColor: 'text-amber-400' },
+        { name: '30th Celebration', val: '$3,680', pct: '29.9%', dotColor: 'bg-blue-500', txtColor: 'text-blue-400' },
+        { name: 'Delta Reign', val: '$910', pct: '7.4%', dotColor: 'bg-purple-400', txtColor: 'text-purple-400' },
+        { name: 'Other sealed', val: '$1,577', pct: '12.8%', dotColor: 'bg-teal-400', txtColor: 'text-teal-400' }
+      ],
+      rawCardSets: [
+        { name: 'Ascended Heroes', bar: '86%', val: '$2.7k', isHighlight: true },
+        { name: 'ME: 30th Celebration Clas...', bar: '14%', val: '$208', isHighlight: false },
+        { name: 'Prismatic Evolutions', bar: '13%', val: '$198', isHighlight: false },
+        { name: 'ME: 30th Celebration', bar: '12%', val: '$189', isHighlight: false },
+        { name: 'SM Promos', bar: '9%', val: '$142', isHighlight: false }
+      ],
+      rawCardRarities: [
+        { name: 'Special Illustration Rare', bar: '88%', val: '$2.8k', isHighlight: true },
+        { name: 'Holo Rare', bar: '23%', val: '$515', isHighlight: false },
+        { name: 'Ultra Rare', bar: '11%', val: '$218', isHighlight: false },
+        { name: 'Classic Collection', bar: '10%', val: '$208', isHighlight: false },
+        { name: 'Promo', bar: '8%', val: '$139', isHighlight: false }
+      ],
+      topRawLeft: [
+        { num: '01', name: 'Mega Gengar ex', set: '• Ascended Heroes', val: '$730.00' },
+        { num: '02', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$675.00' },
+        { num: '03', name: 'Mega Dragonite ex', set: '• Ascended Heroes', val: '$420.00' },
+        { num: '04', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$268.00' }
+      ],
+      topRawRight: [
+        { num: '05', name: 'Eevee ex', set: '• Prismatic Evolutions', val: '$148.00' },
+        { num: '06', name: 'Moltres & Zapdos & Articuno GX', set: '• SM P...', val: '$141.50' },
+        { num: '07', name: "N's Zoroark ex", set: '• Ascended Heroes', val: '$122.00' },
+        { num: '08', name: 'Charizard', set: '• ME: 30th Celebration Clas...', val: '$119.50' }
+      ],
+      scenarioStartingMidpoint: '$16,920.00',
+      outcomes: { cons: '$18,765', mod: '$32,130', high: '$65,470' }
+    },
+    'q3-2026': {
+      name: 'Q3 2026 Milestone',
+      shortDate: '30 SEP 2026',
+      syncDate: '30 Sep 2026 23:59:59 EST',
+      headerSubtitle: '34 sealed products/cases + 260 raw cards • 21 sealed product types',
+      totalPortfolio: '$17,890.15',
+      portfolioYtd: '+5.1% YTD',
+      portfolioYtdIsPositive: true,
+      sealedPct: 73.8,
+      rawPct: 26.2,
+      sealedTotal: '$13,202.93',
+      sealedUnitsSkus: '34 units across 21 SKUs',
+      sealedCasesBoxes: '8 Cases • 13 Boxes',
+      sealedAvgCost: '$388.32',
+      sealedLeadSku: '151 Case Lead',
+      rawTotal: '$4,687.22',
+      rawCopiesEntries: '260 copies / 220 entries',
+      rawUniqueSets: '27 Unique Sets',
+      rawSirConc: '$3.0k (63%)',
+      rawRaritiesCount: '19 Rarities',
+      valRangeTitle: '$15.8k - $19.9k',
+      valRangeDelta: 'Δ $4,150',
+      valRangeLow: '$15,810',
+      valRangeHigh: '$19,960',
+      concentrationRangeBarWidth: '60%',
+      largestHoldingName: '151 Pokémon Center ETB sealed case',
+      largestHoldingVal: '$6,500',
+      largestHoldingBarWidth: '36.3%',
+      largestHoldingPctText: '36.3% of the full portfolio',
+      sealedReadoutRange: '$11,040 – $15,280',
+      sealedReadout151Share: '49.2%',
+      topSealedHoldings: [
+        { name: 'Scarlet & Violet 151 Center ETB sea...', bar: '93%', val: '$6,500', color: 'bg-amber-300' },
+        { name: 'Night UPC', bar: '16.5%', val: '$1,160', color: 'bg-blue-400' },
+        { name: 'Day UPC', bar: '14.5%', val: '$1,020', color: 'bg-blue-400' },
+        { name: 'Delta Reign Center ETB', bar: '9.6%', val: '$675', color: 'bg-blue-400' },
+        { name: '30th Center ETB', bar: '7.6%', val: '$530', color: 'bg-blue-400' },
+        { name: '30th Booster Bundle', bar: '7.3%', val: '$515', color: 'bg-blue-400' },
+        { name: '30th ETB', bar: '6.9%', val: '$490', color: 'bg-blue-400' },
+        { name: 'Prismatic Surprise Box + Booster Bu...', bar: '5.1%', val: '$355', color: 'bg-blue-400' },
+        { name: '30th Display Tin Case', bar: '4.3%', val: '$305', color: 'bg-blue-400' }
+      ],
+      collectionStructure: [
+        { name: '151 PC ETB case', val: '$6,500', pct: '49.2%', dotColor: 'bg-amber-400', txtColor: 'text-amber-400' },
+        { name: '30th Celebration', val: '$3,990', pct: '30.2%', dotColor: 'bg-blue-500', txtColor: 'text-blue-400' },
+        { name: 'Delta Reign', val: '$970', pct: '7.3%', dotColor: 'bg-purple-400', txtColor: 'text-purple-400' },
+        { name: 'Other sealed', val: '$1,742', pct: '13.3%', dotColor: 'bg-teal-400', txtColor: 'text-teal-400' }
+      ],
+      rawCardSets: [
+        { name: 'Ascended Heroes', bar: '90%', val: '$2.9k', isHighlight: true },
+        { name: 'ME: 30th Celebration Clas...', bar: '14%', val: '$215', isHighlight: false },
+        { name: 'Prismatic Evolutions', bar: '13%', val: '$208', isHighlight: false },
+        { name: 'ME: 30th Celebration', bar: '12%', val: '$198', isHighlight: false },
+        { name: 'SM Promos', bar: '9%', val: '$148', isHighlight: false }
+      ],
+      rawCardRarities: [
+        { name: 'Special Illustration Rare', bar: '91%', val: '$2.9k', isHighlight: true },
+        { name: 'Holo Rare', bar: '24%', val: '$540', isHighlight: false },
+        { name: 'Ultra Rare', bar: '11%', val: '$228', isHighlight: false },
+        { name: 'Classic Collection', bar: '10%', val: '$215', isHighlight: false },
+        { name: 'Promo', bar: '8%', val: '$144', isHighlight: false }
+      ],
+      topRawLeft: [
+        { num: '01', name: 'Mega Gengar ex', set: '• Ascended Heroes', val: '$765.00' },
+        { num: '02', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$708.00' },
+        { num: '03', name: 'Mega Dragonite ex', set: '• Ascended Heroes', val: '$442.00' },
+        { num: '04', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$282.00' }
+      ],
+      topRawRight: [
+        { num: '05', name: 'Eevee ex', set: '• Prismatic Evolutions', val: '$155.00' },
+        { num: '06', name: 'Moltres & Zapdos & Articuno GX', set: '• SM P...', val: '$147.00' },
+        { num: '07', name: "N's Zoroark ex", set: '• Ascended Heroes', val: '$128.00' },
+        { num: '08', name: 'Charizard', set: '• ME: 30th Celebration Clas...', val: '$125.00' }
+      ],
+      scenarioStartingMidpoint: '$17,890.15',
+      outcomes: { cons: '$19,840', mod: '$33,970', high: '$69,220' }
+    },
+    '01-jan-2026': {
+      name: '01 Jan 2026 (Baseline)',
+      shortDate: '01 JAN 2026',
+      syncDate: '01 Jan 2026 00:00:00 EST',
+      headerSubtitle: '28 sealed products/cases + 220 raw cards • 18 sealed product types',
+      totalPortfolio: '$15,450.00',
+      portfolioYtd: 'Baseline 0.0%',
+      portfolioYtdIsPositive: null,
+      sealedPct: 71.2,
+      rawPct: 28.8,
+      sealedTotal: '$11,000.40',
+      sealedUnitsSkus: '28 units across 18 SKUs',
+      sealedCasesBoxes: '6 Cases • 10 Boxes',
+      sealedAvgCost: '$392.87',
+      sealedLeadSku: '151 Case Lead',
+      rawTotal: '$4,449.60',
+      rawCopiesEntries: '220 copies / 188 entries',
+      rawUniqueSets: '23 Unique Sets',
+      rawSirConc: '$2.6k (58%)',
+      rawRaritiesCount: '17 Rarities',
+      valRangeTitle: '$13.6k - $17.2k',
+      valRangeDelta: 'Δ $3,600',
+      valRangeLow: '$13,650',
+      valRangeHigh: '$17,250',
+      concentrationRangeBarWidth: '50%',
+      largestHoldingName: '151 Pokémon Center ETB sealed case',
+      largestHoldingVal: '$5,500',
+      largestHoldingBarWidth: '35.6%',
+      largestHoldingPctText: '35.6% of the full portfolio',
+      sealedReadoutRange: '$9,200 – $12,900',
+      sealedReadout151Share: '50.0%',
+      topSealedHoldings: [
+        { name: 'Scarlet & Violet 151 Center ETB sea...', bar: '79%', val: '$5,500', color: 'bg-amber-300' },
+        { name: 'Night UPC', bar: '14.0%', val: '$980', color: 'bg-blue-400' },
+        { name: 'Day UPC', bar: '12.5%', val: '$875', color: 'bg-blue-400' },
+        { name: 'Delta Reign Center ETB', bar: '8.3%', val: '$580', color: 'bg-blue-400' },
+        { name: '30th Center ETB', bar: '6.4%', val: '$450', color: 'bg-blue-400' },
+        { name: '30th Booster Bundle', bar: '6.2%', val: '$435', color: 'bg-blue-400' },
+        { name: '30th ETB', bar: '5.9%', val: '$415', color: 'bg-blue-400' },
+        { name: 'Prismatic Surprise Box + Booster Bu...', bar: '4.3%', val: '$300', color: 'bg-blue-400' },
+        { name: '30th Display Tin Case', bar: '3.6%', val: '$250', color: 'bg-blue-400' }
+      ],
+      collectionStructure: [
+        { name: '151 PC ETB case', val: '$5,500', pct: '50.0%', dotColor: 'bg-amber-400', txtColor: 'text-amber-400' },
+        { name: '30th Celebration', val: '$3,280', pct: '29.8%', dotColor: 'bg-blue-500', txtColor: 'text-blue-400' },
+        { name: 'Delta Reign', val: '$820', pct: '7.5%', dotColor: 'bg-purple-400', txtColor: 'text-purple-400' },
+        { name: 'Other sealed', val: '$1,400', pct: '12.7%', dotColor: 'bg-teal-400', txtColor: 'text-teal-400' }
+      ],
+      rawCardSets: [
+        { name: 'Ascended Heroes', bar: '80%', val: '$2.5k', isHighlight: true },
+        { name: 'ME: 30th Celebration Clas...', bar: '13%', val: '$195', isHighlight: false },
+        { name: 'Prismatic Evolutions', bar: '12%', val: '$180', isHighlight: false },
+        { name: 'ME: 30th Celebration', bar: '11%', val: '$170', isHighlight: false },
+        { name: 'SM Promos', bar: '8%', val: '$130', isHighlight: false }
+      ],
+      rawCardRarities: [
+        { name: 'Special Illustration Rare', bar: '82%', val: '$2.6k', isHighlight: true },
+        { name: 'Holo Rare', bar: '22%', val: '$480', isHighlight: false },
+        { name: 'Ultra Rare', bar: '10%', val: '$200', isHighlight: false },
+        { name: 'Classic Collection', bar: '9%', val: '$195', isHighlight: false },
+        { name: 'Promo', bar: '7%', val: '$128', isHighlight: false }
+      ],
+      topRawLeft: [
+        { num: '01', name: 'Mega Gengar ex', set: '• Ascended Heroes', val: '$680.00' },
+        { num: '02', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$620.00' },
+        { num: '03', name: 'Mega Dragonite ex', set: '• Ascended Heroes', val: '$390.00' },
+        { num: '04', name: 'Pikachu ex', set: '• Ascended Heroes', val: '$245.00' }
+      ],
+      topRawRight: [
+        { num: '05', name: 'Eevee ex', set: '• Prismatic Evolutions', val: '$135.00' },
+        { num: '06', name: 'Moltres & Zapdos & Articuno GX', set: '• SM P...', val: '$130.00' },
+        { num: '07', name: "N's Zoroark ex", set: '• Ascended Heroes', val: '$110.00' },
+        { num: '08', name: 'Charizard', set: '• ME: 30th Celebration Clas...', val: '$108.00' }
+      ],
+      scenarioStartingMidpoint: '$15,450.00',
+      outcomes: { cons: '$17,135', mod: '$29,340', high: '$59,780' }
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const snapshotSelector = document.getElementById('snapshotSelector');
+    const toast = document.getElementById('snapshotToast');
+    const toastSnapshotName = document.getElementById('toastSnapshotName');
+
+    function pulseElement(el) {
+      if (!el) return;
+      el.classList.remove('metric-updated');
+      void el.offsetWidth;
+      el.classList.add('metric-updated');
+    }
+
+    function showToast(name) {
+      toastSnapshotName.textContent = name;
+      toast.classList.remove('opacity-0', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-2');
+      }, 2000);
+    }
+
+    function renderSnapshotData(key) {
+      const data = snapshotDatabase[key] || snapshotDatabase['16-oct-2026'];
+
+      // Header & Status
+      document.getElementById('headerSummaryCounts').textContent = data.headerSubtitle;
+      document.getElementById('holoStatusText').textContent = `Verified Sync (${data.shortDate})`;
+      document.getElementById('footerSnapshotDate').textContent = data.shortDate;
+      document.getElementById('rawCardHeaderSubtitle').textContent = `HoloDex export: ${data.name.split(' (')[0]} • Ungraded / raw only • values shown in USD`;
+      document.getElementById('modalSyncTimestamp').textContent = data.syncDate;
+
+      // Card 1: Total Portfolio
+      const valTotalPortfolio = document.getElementById('valTotalPortfolio');
+      valTotalPortfolio.textContent = data.totalPortfolio;
+      pulseElement(valTotalPortfolio);
+
+      const valPortfolioYtdText = document.getElementById('valPortfolioYtdText');
+      valPortfolioYtdText.textContent = data.portfolioYtd;
+      const valPortfolioYtd = document.getElementById('valPortfolioYtd');
+      if (data.portfolioYtdIsPositive === true) {
+        valPortfolioYtd.className = 'text-emerald-400 font-semibold flex items-center gap-0.5';
+      } else if (data.portfolioYtdIsPositive === false) {
+        valPortfolioYtd.className = 'text-rose-400 font-semibold flex items-center gap-0.5';
+      } else {
+        valPortfolioYtd.className = 'text-slate-300 font-semibold flex items-center gap-0.5';
+      }
+
+      document.getElementById('kpiBarSealed').style.width = `${data.sealedPct}%`;
+      document.getElementById('kpiBarRaw').style.width = `${data.rawPct}%`;
+      document.getElementById('kpiSealedPctLabel').textContent = `${data.sealedPct}%`;
+      document.getElementById('kpiRawPctLabel').textContent = `${data.rawPct}%`;
+
+      // Card 2: Sealed Inventory
+      const valSealedTotal = document.getElementById('valSealedTotal');
+      valSealedTotal.textContent = data.sealedTotal;
+      pulseElement(valSealedTotal);
+      document.getElementById('sealedUnitsSkusLabel').textContent = data.sealedUnitsSkus;
+      document.getElementById('sealedCasesBoxesLabel').textContent = data.sealedCasesBoxes;
+      document.getElementById('valSealedAvgUnitCost').textContent = data.sealedAvgCost;
+      document.getElementById('valSealedLeadSku').textContent = data.sealedLeadSku;
+
+      // Card 3: Raw Cards
+      const valRawTotal = document.getElementById('valRawTotal');
+      valRawTotal.textContent = data.rawTotal;
+      pulseElement(valRawTotal);
+      document.getElementById('rawCopiesEntriesLabel').textContent = data.rawCopiesEntries;
+      document.getElementById('rawUniqueSetsLabel').textContent = data.rawUniqueSets;
+      document.getElementById('valRawSirConcentration').textContent = data.rawSirConc;
+      document.getElementById('valRawRarityCount').textContent = data.rawRaritiesCount;
+
+      // Card 4: Valuation Range
+      const valRangeTitle = document.getElementById('valRangeTitle');
+      valRangeTitle.textContent = data.valRangeTitle;
+      pulseElement(valRangeTitle);
+      document.getElementById('valRangeDelta').textContent = data.valRangeDelta;
+      document.getElementById('valRangeLow').textContent = data.valRangeLow;
+      document.getElementById('valRangeHigh').textContent = data.valRangeHigh;
+
+      // Card 5: Donut Mix
+      const circumference = 364.4;
+      const rawOffset = (data.rawPct / 100) * circumference;
+      const sealedLength = (data.sealedPct / 100) * circumference;
+      const donutRawSlice = document.getElementById('donutRawSlice');
+      const donutSealedSlice = document.getElementById('donutSealedSlice');
+      if (donutRawSlice && donutSealedSlice) {
+        donutRawSlice.setAttribute('stroke-dasharray', `${rawOffset.toFixed(1)} ${circumference}`);
+        donutSealedSlice.setAttribute('stroke-dasharray', `${sealedLength.toFixed(1)} ${circumference}`);
+        donutSealedSlice.setAttribute('stroke-dashoffset', `-${rawOffset.toFixed(1)}`);
+      }
+      document.getElementById('donutCenterPct').textContent = `${data.sealedPct}%`;
+      document.getElementById('mixSealedAmount').textContent = `$${Math.round(parseFloat(data.sealedTotal.replace(/[$,]/g, ''))).toLocaleString()}`;
+      document.getElementById('mixSealedPct').textContent = `${data.sealedPct}%`;
+      document.getElementById('mixRawAmount').textContent = `$${Math.round(parseFloat(data.rawTotal.replace(/[$,]/g, ''))).toLocaleString()}`;
+      document.getElementById('mixRawPct').textContent = `${data.rawPct}%`;
+      document.getElementById('mixRawBigPct').textContent = `${data.rawPct}%`;
+
+      // Card 6: Valuation & Concentration
+      document.getElementById('concentrationRangeSpan').textContent = `${data.valRangeLow} — ${data.valRangeHigh}`;
+      document.getElementById('concentrationLowLabel').textContent = `Low ${data.valRangeLow}`;
+      document.getElementById('concentrationHighLabel').textContent = `High ${data.valRangeHigh}`;
+      document.getElementById('concentrationRangeBar').style.width = data.concentrationRangeBarWidth;
+      document.getElementById('largestHoldingName').textContent = data.largestHoldingName;
+      const largestHoldingVal = document.getElementById('largestHoldingVal');
+      largestHoldingVal.textContent = data.largestHoldingVal;
+      pulseElement(largestHoldingVal);
+      document.getElementById('largestHoldingBar').style.width = data.largestHoldingBarWidth;
+      document.getElementById('largestHoldingPctLabel').textContent = data.largestHoldingPctText;
+
+      // Card 7: Top Sealed Holdings
+      const sealedHoldingsList = document.getElementById('sealedHoldingsList');
+      sealedHoldingsList.innerHTML = data.topSealedHoldings.map(item => `
+        <div class="grid grid-cols-12 items-center gap-3">
+          <span class="col-span-5 sm:col-span-4 text-slate-200 truncate font-medium">${item.name}</span>
+          <div class="col-span-5 sm:col-span-6 bg-[#16274e] h-2.5 rounded-full overflow-hidden">
+            <div class="h-full ${item.color} rounded-full bar-updated" style="width: ${item.bar}"></div>
+          </div>
+          <span class="col-span-2 text-right font-bold text-white font-mono">${item.val}</span>
+        </div>
+      `).join('');
+
+      // Card 8: Collection Structure
+      const structureList = document.getElementById('structureList');
+      structureList.innerHTML = data.collectionStructure.map(item => `
+        <div class="flex items-center justify-between">
+          <span class="flex items-center space-x-2 text-slate-300">
+            <span class="w-2.5 h-2.5 rounded-full ${item.dotColor}"></span>
+            <span>${item.name}</span>
+          </span>
+          <span class="font-mono text-slate-200"><strong>${item.val}</strong> <span class="${item.txtColor} ml-1">${item.pct}</span></span>
+        </div>
+      `).join('');
+      document.getElementById('sealedReadoutRange').textContent = data.sealedReadoutRange;
+      document.getElementById('sealedReadout151Share').textContent = data.sealedReadout151Share;
+
+      // Card 9: Raw Card Sets & Rarities
+      const rawCardSetsList = document.getElementById('rawCardSetsList');
+      rawCardSetsList.innerHTML = data.rawCardSets.map(set => `
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">${set.name}</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-teal-400 rounded-full bar-updated" style="width: ${set.bar}"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono ${set.isHighlight ? 'font-bold text-teal-300' : 'text-slate-200'}">${set.val}</span>
+        </div>
+      `).join('');
+
+      const rawCardRaritiesList = document.getElementById('rawCardRaritiesList');
+      rawCardRaritiesList.innerHTML = data.rawCardRarities.map(rar => `
+        <div class="grid grid-cols-12 items-center gap-2">
+          <span class="col-span-5 text-slate-300 truncate">${rar.name}</span>
+          <div class="col-span-5 bg-[#16274e] h-2 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-400 rounded-full bar-updated" style="width: ${rar.bar}"></div>
+          </div>
+          <span class="col-span-2 text-right font-mono ${rar.isHighlight ? 'font-bold text-purple-300' : 'text-slate-200'}">${rar.val}</span>
+        </div>
+      `).join('');
+
+      // Top 8 Raw Cards
+      const topRawColLeft = document.getElementById('topRawColLeft');
+      topRawColLeft.innerHTML = data.topRawLeft.map(c => `
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">${c.num}</span>
+            <span class="font-semibold text-white">${c.name}</span>
+            <span class="text-slate-400 text-[11px]">${c.set}</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">${c.val}</span>
+        </div>
+      `).join('');
+
+      const topRawColRight = document.getElementById('topRawColRight');
+      topRawColRight.innerHTML = data.topRawRight.map(c => `
+        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#0e1933] border border-[#192b52] hover:border-teal-500/40 transition-colors">
+          <div class="flex items-center space-x-3">
+            <span class="font-mono text-teal-400 font-bold">${c.num}</span>
+            <span class="font-semibold text-white">${c.name}</span>
+            <span class="text-slate-400 text-[11px]">${c.set}</span>
+          </div>
+          <span class="font-mono font-bold text-white text-sm">${c.val}</span>
+        </div>
+      `).join('');
+
+      // Scenarios & Outcomes
+      document.getElementById('scenarioChartSubtitle').textContent = `Illustrative, not a prediction • starting midpoint ${data.scenarioStartingMidpoint} • nominal values before transaction costs`;
+      const outcomeConsVal = document.getElementById('outcomeConsVal');
+      outcomeConsVal.textContent = data.outcomes.cons;
+      pulseElement(outcomeConsVal);
+
+      const outcomeModVal = document.getElementById('outcomeModVal');
+      outcomeModVal.textContent = data.outcomes.mod;
+      pulseElement(outcomeModVal);
+
+      const outcomeHighVal = document.getElementById('outcomeHighVal');
+      outcomeHighVal.textContent = data.outcomes.high;
+      pulseElement(outcomeHighVal);
+
+      showToast(data.name);
+    }
+
+    renderSnapshotData('16-oct-2026');
+
+    snapshotSelector.addEventListener('change', (e) => {
+      renderSnapshotData(e.target.value);
+    });
+
+    // View Navigation Filter Tabs
+    const filterTabs = document.querySelectorAll('#viewFilterBar .nav-tab');
+    const cards = document.querySelectorAll('.dash-card');
+    const footerActiveViewLabel = document.getElementById('footerActiveViewLabel');
+    const currentPillCategory = document.getElementById('currentPillCategory');
+    const mainDashboardTitle = document.getElementById('mainDashboardTitle');
+    const mainDashboardSubtitle = document.getElementById('mainDashboardSubtitle');
+
+    const viewMeta = {
+      all: { pill: 'EXECUTIVE DASHBOARD', title: 'Collection, at a glance', footer: 'OVERVIEW' },
+      sealed: { pill: 'SEGMENT ANALYTICS', title: 'Sealed inventory performance', footer: 'SEALED' },
+      raw: { pill: 'CARD-LEVEL ANALYTICS', title: 'Raw card portfolio intelligence', footer: 'RAW CARDS' },
+      scenarios: { pill: 'FORWARD OUTLOOK', title: 'Projected portfolio scenarios', footer: 'SCENARIOS' }
+    };
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => {
+          t.classList.remove('active', 'bg-teal-500', 'text-slate-950', 'shadow-sm');
+          t.classList.add('text-slate-300');
+        });
+        tab.classList.add('active', 'bg-teal-500', 'text-slate-950', 'shadow-sm');
+        tab.classList.remove('text-slate-300');
+
+        const filterValue = tab.getAttribute('data-filter');
+        const meta = viewMeta[filterValue] || viewMeta.all;
+
+        currentPillCategory.textContent = meta.pill;
+        mainDashboardTitle.textContent = meta.title;
+        footerActiveViewLabel.textContent = meta.footer;
+
+        cards.forEach(card => {
+          const categories = card.getAttribute('data-category').split(' ');
+          if (filterValue === 'all' || categories.includes(filterValue)) {
+            card.style.display = 'block';
+            setTimeout(() => { card.style.opacity = '1'; card.style.transform = 'scale(1)'; }, 10);
+          } else {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.96)';
+            setTimeout(() => { card.style.display = 'none'; }, 200);
+          }
+        });
+      });
+    });
+
+    // Reorder Mode Controls
+    let isReorderMode = false;
+    const toggleReorderBtn = document.getElementById('toggleReorderBtn');
+    const reorderBtnLabel = document.getElementById('reorderBtnLabel');
+    const reorderBanner = document.getElementById('reorderBanner');
+    const resetLayoutBtn = document.getElementById('resetLayoutBtn');
+    const dashboardGrid = document.getElementById('dashboardGrid');
+    const initialCardsOrder = Array.from(dashboardGrid.children);
+
+    toggleReorderBtn.addEventListener('click', () => {
+      isReorderMode = !isReorderMode;
+      if (isReorderMode) {
+        reorderBtnLabel.textContent = 'Save Layout';
+        toggleReorderBtn.classList.add('bg-teal-500/20', 'border-teal-400', 'text-teal-300');
+        reorderBanner.classList.remove('hidden');
+        enableReorderUI(true);
+      } else {
+        reorderBtnLabel.textContent = 'Reorder Layout';
+        toggleReorderBtn.classList.remove('bg-teal-500/20', 'border-teal-400', 'text-teal-300');
+        reorderBanner.classList.add('hidden');
+        enableReorderUI(false);
+      }
+    });
+
+    resetLayoutBtn.addEventListener('click', () => {
+      initialCardsOrder.forEach(c => dashboardGrid.appendChild(c));
+    });
+
+    function enableReorderUI(enabled) {
+      cards.forEach(card => {
+        card.setAttribute('draggable', enabled ? 'true' : 'false');
+        const handle = card.querySelector('.card-reorder-handle');
+        if (handle) handle.classList.toggle('hidden', !enabled);
+        if (enabled) {
+          card.classList.add('cursor-grab');
+        } else {
+          card.classList.remove('cursor-grab', 'card-ghost');
+        }
+      });
+    }
+
+    document.querySelectorAll('.shift-left').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentCard = btn.closest('.dash-card');
+        const prev = currentCard.previousElementSibling;
+        if (prev) dashboardGrid.insertBefore(currentCard, prev);
+      });
+    });
+
+    document.querySelectorAll('.shift-right').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentCard = btn.closest('.dash-card');
+        const next = currentCard.nextElementSibling;
+        if (next) dashboardGrid.insertBefore(next, currentCard);
+      });
+    });
+
+    // Native Drag and Drop
+    let draggedElement = null;
+    cards.forEach(card => {
+      card.addEventListener('dragstart', (e) => {
+        if (!isReorderMode) return;
+        draggedElement = card;
+        card.classList.add('card-ghost');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('card-ghost');
+        cards.forEach(c => c.classList.remove('drag-over'));
+        draggedElement = null;
+      });
+      card.addEventListener('dragover', (e) => {
+        if (!isReorderMode) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+      });
+      card.addEventListener('drop', (e) => {
+        if (!isReorderMode || !draggedElement || draggedElement === card) return;
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        const allCards = Array.from(dashboardGrid.children);
+        const droppedIndex = allCards.indexOf(card);
+        const draggedIndex = allCards.indexOf(draggedElement);
+        if (draggedIndex < droppedIndex) {
+          dashboardGrid.insertBefore(draggedElement, card.nextSibling);
+        } else {
+          dashboardGrid.insertBefore(draggedElement, card);
+        }
+      });
+    });
+
+    // Deep Inspection Modal
+    const inspectModal = document.getElementById('inspectModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalDoneBtn = document.getElementById('modalDoneBtn');
+    const modalCardTitle = document.getElementById('modalCardTitle');
+    const modalDynamicBody = document.getElementById('modalDynamicBody');
+
+    function openModalForCard(card) {
+      const cardTitleEl = card.querySelector('h2, .uppercase.text-slate-400');
+      const title = cardTitleEl ? cardTitleEl.textContent.trim() : 'Analytics Module';
+      modalCardTitle.textContent = title;
+      modalDynamicBody.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-[#0b1328] p-4 rounded-xl border border-[#1d2d53]">
+            <div class="text-xs text-slate-400 font-medium">30-Day Trajectory</div>
+            <div class="text-xl font-bold text-teal-300 mt-1">+4.8%</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Outperforming market average</div>
+          </div>
+          <div class="bg-[#0b1328] p-4 rounded-xl border border-[#1d2d53]">
+            <div class="text-xs text-slate-400 font-medium">Liquidity Score</div>
+            <div class="text-xl font-bold text-sky-300 mt-1">High (8.6/10)</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Est. 14 days to liquidate 80%</div>
+          </div>
+          <div class="bg-[#0b1328] p-4 rounded-xl border border-[#1d2d53]">
+            <div class="text-xs text-slate-400 font-medium">Confidence Interval</div>
+            <div class="text-xl font-bold text-amber-300 mt-1">94.2% Verified</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Based on HoloDex certified sales</div>
+          </div>
+        </div>
+        <div class="bg-[#0b1429] p-4 rounded-xl border border-[#1c2e56] space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-300">Historical Sales Depth</div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Data aggregated across eBay authenticated sales, TCGPlayer verified marketplace, and verified direct trades. Values reflect true transaction costs adjusted for grade population and condition standard.
+          </p>
+        </div>
+      `;
+      inspectModal.classList.remove('hidden');
+    }
+
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (isReorderMode || e.target.closest('.card-reorder-handle') || e.target.closest('select')) return;
+        openModalForCard(card);
+      });
+      const inspectBtn = card.querySelector('.inspect-btn');
+      if (inspectBtn) {
+        inspectBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openModalForCard(card);
+        });
+      }
+    });
+
+    function closeModal() { inspectModal.classList.add('hidden'); }
+    closeModalBtn.addEventListener('click', closeModal);
+    modalDoneBtn.addEventListener('click', closeModal);
+    inspectModal.addEventListener('click', (e) => { if (e.target === inspectModal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !inspectModal.classList.contains('hidden')) closeModal(); });
+  });
+</script>
+
+</body></html>
