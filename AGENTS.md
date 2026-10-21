@@ -18,7 +18,8 @@ Next.js dashboard for tracking a Pokémon card collection and its value. Read `R
 2. **One branch per issue or epic.** Create a new branch before starting, named `<type>/<ticket-id>-<description>`, where `<ticket-id>` is the GitHub issue number. See `.agents/skills/start-issue/SKILL.md`.
 3. **Use Conventional Commits 1.0.0** for commit messages and **Conventional Branches** for branch names. See `.agents/skills/commit/SKILL.md`.
 4. Do not commit directly to `main` or `dev`. Open a pull request into `dev`.
-5. Do not push, create issues, or open pull requests unless asked.
+5. Before starting any issue, claim it (check it is not already In Progress, then set it In Progress on the project board) so only one agent works on it. See `start-issue`.
+6. Do not push, create issues, or open pull requests unless asked.
 
 ## Conventions
 
@@ -30,6 +31,6 @@ Next.js dashboard for tracking a Pokémon card collection and its value. Read `R
 
 Task playbooks live in `.agents/skills/<name>/SKILL.md`:
 
-- `start-issue` – begin work on an issue or epic
+- `start-issue` – claim an issue (lock it via board status), then begin work on it
 - `commit` – write a conventional commit
 - `changelog` – record a change in `CHANGELOG.md`
