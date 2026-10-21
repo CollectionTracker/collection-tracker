@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { costBasisOf, getSealed } from "./sealed-stats";
 
 type EntryRow = {
   id: number;
@@ -123,7 +124,15 @@ export async function getDashboard() {
 
   const movers = holdings.filter((h) => h.change !== 0).sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
 
+  const sealed = await getSealed();
+  const combined = {
+    value: totalValue + sealed.value,
+    ...costBasisOf([...holdings, ...sealed.holdings]),
+  };
+
   return {
+    sealed,
+    combined,
     holdings,
     history,
     totalValue,

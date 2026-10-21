@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `sealed_products` and `sealed_price_snapshots` tables (name, product type, set/series group, SKU, quantity, per-unit purchase price, notes; daily market/low/mid/high prices) with a Drizzle migration; existing card tables are untouched.
 - Sealed product CSV import (`POST /api/import/sealed`, `docs/sealed-sample.csv`): maps name, type, set, SKU, quantity and purchase price, merges duplicate rows, adds quantity to existing products, and reports invalid rows by row number.
 - Manual sealed price entry: `setSealedPrice` and a `setSealedPriceAction` server action record a current value with optional low/high per product and day (re-entering a day edits it), validated so low ≤ value ≤ high. Snapshots gain a `price_source` column (`manual`) so an API source can be added later without another migration.
+- Cost basis for sealed products: `getSealed` computes per-unit cost, total cost, gain/loss, average unit cost and cost basis, and `getDashboard` now returns `sealed` and a `combined` (raw + sealed) value, cost basis and gain/loss. Holdings without a purchase price are left out of cost basis and gain, as for raw cards.
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
 - Project README with a preview of the target design, and this changelog.
 
