@@ -72,3 +72,49 @@ export const priceSnapshots = pgTable(
   },
   (t) => [primaryKey({ columns: [t.cardId, t.variant, t.day] })],
 );
+
+export const SEALED_PRODUCT_TYPES = [
+  "etb",
+  "case",
+  "booster_box",
+  "upc",
+  "bundle",
+  "tin",
+  "other",
+] as const;
+export type SealedProductType = (typeof SEALED_PRODUCT_TYPES)[number];
+
+export const sealedProducts = pgTable(
+  "sealed_products",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    productType: text("product_type", { enum: SEALED_PRODUCT_TYPES }).notNull(),
+    // Set or series the product belongs to; free text, sealed products rarely map 1:1 to a set.
+    setGroup: text("set_group"),
+    sku: text("sku"),
+    quantity: integer("quantity").notNull().default(1),
+    purchasePrice: doublePrecision("purchase_price"), // per unit
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => [
+    index("sealed_products_type_idx").on(t.productType),
+    index("sealed_products_set_idx").on(t.setGroup),
+  ],
+);
+
+export const sealedPriceSnapshots = pgTable(
+  "sealed_price_snapshots",
+  {
+    sealedProductId: integer("sealed_product_id")
+      .notNull()
+      .references(() => sealedProducts.id, { onDelete: "cascade" }),
+    day: date("day", { mode: "string" }).notNull(),
+    market: doublePrecision("market"),
+    low: doublePrecision("low"),
+    mid: doublePrecision("mid"),
+    high: doublePrecision("high"),
+  },
+  (t) => [primaryKey({ columns: [t.sealedProductId, t.day] })],
+);
