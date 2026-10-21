@@ -8,6 +8,13 @@
       "when": 1792598501666,
       "tag": "0000_busy_saracen",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792611648834,
+      "tag": "0001_sealed_products",
+      "breakpoints": true
     }
   ]
 }
