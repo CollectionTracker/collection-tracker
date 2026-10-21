@@ -1,0 +1,1 @@
+ALTER TABLE "sealed_price_snapshots" ADD COLUMN "price_source" text DEFAULT 'manual' NOT NULL;
