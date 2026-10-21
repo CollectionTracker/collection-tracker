@@ -18,7 +18,7 @@ Constants: repo `JakeDeFord/collection-tracker`, project `3` (owner `JakeDeFord`
    gh project item-list 3 --owner JakeDeFord --limit 200 --format json \
      | jq '.items[] | select(.content.number == <n>) | {id, status}'
    ```
-3. The issue is **free** only if all hold: it is open, its board Status is `Todo` (or unset), and it has no unreleased claim comment (a `🤖 claimed by …` comment with no later `🤖 released by …`). Otherwise it is **taken**: do not touch it, tell the user who holds it, and pick a different free issue or stop. Never override someone else's claim; if it looks stale, ask the user.
+3. The issue is **free** only if all hold: it is open, its board Status is `Todo` (or unset), it has no open blocker that has no branch yet (see "Blocked issues" below), and it has no unreleased claim comment (a `🤖 claimed by …` comment with no later `🤖 released by …`). Otherwise it is **taken**: do not touch it, tell the user who holds it, and pick a different free issue or stop. Never override someone else's claim; if it looks stale, ask the user.
 4. For an epic, also check its sub-issues and claim only the sub-issue you will work on (check that one the same way). Do not claim a parent epic just to work on one child.
 5. Claim it, in this order:
    ```bash
@@ -29,6 +29,25 @@ Constants: repo `JakeDeFord/collection-tracker`, project `3` (owner `JakeDeFord`
    ```
    If the issue is not on the board yet, add it first with `gh project item-add 3 --owner JakeDeFord --url <issue-url>` and use the returned item id.
 6. Verify you won any race: re-read the issue comments. If another `claimed by` comment (different agent id) with no release exists **earlier** than yours, you lost: post `🤖 released by <agent-id>`, leave the Status as it is, and stop or pick another issue. Otherwise you hold the claim.
+
+## Blocked issues
+
+Dependencies between issues are recorded with GitHub's "blocked by" relationship. Check it before claiming:
+
+```bash
+gh api repos/JakeDeFord/collection-tracker/issues/<n>/dependencies/blocked_by \
+  --jq '.[] | {number, state, title}'
+```
+
+For each blocker:
+- **Closed / its PR merged into `dev`:** ignore it and branch from `dev`.
+- **Open, with a branch or open PR:** branch from the blocker's branch (chain) and open the PR against that branch; retarget it to `dev` once the blocker merges. Rebase after the blocker changes.
+- **Open, with no branch yet:** the issue is not free. Work on the blocker first or pick another issue.
+- Several blockers: only chain when they are all on one branch line, otherwise wait for them to merge.
+- No blockers: always branch from `dev`.
+
+When you find a dependency that is not recorded, add the link rather than relying on memory:
+`gh api -X POST repos/JakeDeFord/collection-tracker/issues/<n>/dependencies/blocked_by -F issue_id=<blocker database id>` (database id from `gh api repos/JakeDeFord/collection-tracker/issues/<blocker> --jq .id`). Migration files are the usual conflict point, so chain rather than parallelise issues that both add migrations.
 
 ## 2. Set up the work
 
@@ -43,7 +62,7 @@ Constants: repo `JakeDeFord/collection-tracker`, project `3` (owner `JakeDeFord`
 4. Build the name `<type>/<ticket-id>-<description>`:
    - description is 2–5 lowercase words, hyphen-separated, no punctuation
    - example: `feature/2-sealed-product-schema`
-5. Create it from `dev`:
+5. Create it from `dev`, or from the blocker's branch when chaining (see "Blocked issues"):
    ```bash
    git switch dev
    git switch -c feature/2-sealed-product-schema
