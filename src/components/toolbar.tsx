@@ -34,10 +34,10 @@ export function Toolbar() {
     });
 
   const btn =
-    "rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium hover:bg-white/10 disabled:opacity-50";
+    "rounded-md border border-sky/60 px-3 py-1.5 font-label text-[13px] font-semibold tracking-wide text-sky hover:bg-sky/10 disabled:opacity-50";
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {msg && <span className="text-sm text-zinc-400">{msg}</span>}
+      {msg && <span className="text-sm text-slate-2">{msg}</span>}
       <input
         ref={fileRef}
         type="file"
@@ -48,7 +48,11 @@ export function Toolbar() {
       <button className={btn} disabled={pending} onClick={() => fileRef.current?.click()}>
         Import CSV
       </button>
-      <button className={btn} disabled={pending} onClick={sync}>
+      <button
+        className="rounded-md bg-mint px-3 py-1.5 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110 disabled:opacity-50"
+        disabled={pending}
+        onClick={sync}
+      >
         Sync prices
       </button>
     </div>
