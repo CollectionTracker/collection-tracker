@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- GitHub pull request template and issue forms (bug report, feature request, task) in `.github/`.
 - Stitch design exports in `.renders/` as the reference for the dashboard redesign.
 - Rarity value-mix donut chart on the dashboard.
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
