@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project README with a preview of the target design, and this changelog.
 
 ### Changed
+- `start-issue` skill now claims an issue first (checks board status and claim comments, sets it In Progress, releases it when done or abandoned) so only one agent works on an issue at a time.
 - Restyled the dashboard to the "Executive Collectible Intelligence" design system: midnight/mint theme, Plus Jakarta Sans and Space Grotesk fonts, accent-bar summary cards and thicker progress bars.
 
 ## [0.1.0] - Initial release
