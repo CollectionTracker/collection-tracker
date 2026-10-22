@@ -127,3 +127,14 @@ export const snapshotLabels = pgTable("snapshot_labels", {
   label: text("label").notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// One row per price sync (manual button or daily cron), so the header can show the last sync and whether it failed.
+export const syncRuns = pgTable("sync_runs", {
+  id: serial("id").primaryKey(),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  finishedAt: timestamp("finished_at"),
+  status: text("status", { enum: ["running", "success", "failed"] }).notNull().default("running"),
+  cards: integer("cards"),
+  prices: integer("prices"),
+  error: text("error"),
+});

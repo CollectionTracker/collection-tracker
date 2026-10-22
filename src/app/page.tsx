@@ -7,8 +7,9 @@ import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { type Bucket, type Holding, getDashboard } from "@/lib/stats";
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
+import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
-import { pct, signed, tone, usd } from "@/lib/format";
+import { ago, pct, signed, tone, usd } from "@/lib/format";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -23,6 +24,9 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
           </h1>
           <Suspense fallback={null}>
             <SnapshotBar searchParams={searchParams} />
+          </Suspense>
+          <Suspense fallback={null}>
+            <SyncChip />
           </Suspense>
         </div>
         <Toolbar />
@@ -45,6 +49,35 @@ async function SnapshotBar({ searchParams }: { searchParams: SearchParams }) {
         {current ? `As of snapshot ${snapshotName(current)}` : snapshots[0] ? `Current prices as of ${snapshots[0].day}` : "No snapshots yet"}
       </p>
       {snapshots.length > 0 && <SnapshotPicker snapshots={snapshots} selected={selected} />}
+    </div>
+  );
+}
+
+const chipStyles = {
+  verified: ["bg-mint/10 text-mint", "bg-mint"],
+  running: ["bg-sky/10 text-sky", "bg-sky animate-pulse"],
+  stale: ["bg-amber/10 text-amber", "bg-amber"],
+  failed: ["bg-rose-400/10 text-rose-400", "bg-rose-400"],
+  never: ["bg-white/5 text-slate-2", "bg-slate-2"],
+};
+const chipLabels = { verified: "Synced", running: "Syncing", stale: "Stale", failed: "Sync failed", never: "Never synced" };
+
+async function SyncChip() {
+  await connection();
+  const st = await getSyncStatus();
+  const [tint, dot] = chipStyles[st.state];
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-2">
+      <span
+        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-label text-[11px] font-bold uppercase tracking-wider ${tint}`}
+      >
+        <span className={`size-1.5 rounded-full ${dot}`} />
+        {chipLabels[st.state]}
+      </span>
+      <span>
+        {st.lastSuccess ? `Last verified sync ${st.lastSuccess.toISOString().slice(0, 16).replace("T", " ")} UTC · updated ${ago(st.lastSuccess)}` : "No verified sync yet"}
+      </span>
+      {st.lastError && <span className="text-rose-400">Latest attempt failed: {st.lastError}</span>}
     </div>
   );
 }
