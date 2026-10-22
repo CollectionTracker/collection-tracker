@@ -15,7 +15,7 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-6 md:px-8">
+    <main className="mx-auto w-full max-w-7xl space-y-3 py-6 page-x md:space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
         <div>
           <Eyebrow>Executive dashboard</Eyebrow>
@@ -234,7 +234,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-3">
         <Stat accent="mint" label="Total value" value={usd(d.totalValue)} sub={d.lastUpdated ? `as of ${d.lastUpdated}` : undefined} />
         <Stat accent="sky" label="Since last update" value={signed(d.dayChange)} sub={pct(d.dayChangePct)} subTone={tone(d.dayChange)} />
         <Stat
@@ -252,7 +252,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         />
       </section>
 
-      <section className="grid gap-5 sm:grid-cols-2">
+      <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-6">
         <ComparisonCard
           title="Year to date"
           c={cmp.ytd}
@@ -270,16 +270,16 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         <ValueChart data={d.history} />
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-12">
-        <div className={card + " lg:col-span-5"}>
+      <section className="page-grid">
+        <div className={card + " col-span-full lg:col-span-5"}>
           <h2 className={`${heading} mb-4`}>Value mix by rarity</h2>
           <Donut items={d.byRarity} total={d.totalValue} />
         </div>
-        <div className={card + " lg:col-span-7"}>
+        <div className={card + " col-span-full lg:col-span-7"}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
           <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} />)}</ul>
         </div>
-        <div className="space-y-5 lg:col-span-12">
+        <div className="col-span-full space-y-5">
           <div className={card}>
             <h2 className={`${heading} mb-4`}>Top movers</h2>
             {d.gainers.length + d.losers.length === 0 ? (
@@ -293,7 +293,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </div>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-3">
+      <section className="page-grid [&>*]:col-span-full md:[&>*]:col-span-4 lg:[&>*]:col-span-4 [&>*:last-child]:md:col-span-8 [&>*:last-child]:lg:col-span-4">
         <div className={card}>
           <h2 className={`${heading} mb-4`}>Value by set</h2>
           <ul className="space-y-3">

@@ -28,7 +28,7 @@ export function HeaderDrawer() {
       {open && (
         <div
           id="header-drawer"
-          className="absolute inset-x-0 top-full z-40 space-y-5 border-t border-white/5 bg-inset px-4 py-5 shadow-2xl md:px-8"
+          className="absolute inset-x-0 top-full z-40 space-y-5 border-t border-white/5 bg-inset page-x py-5 shadow-2xl"
         >
           <section className="space-y-2">
             <div className="flex items-center justify-between">
