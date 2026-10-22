@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { cards, collectionEntries, priceSnapshots, sets } from "@/db/schema";
+import { cards, collectionEntries, priceSnapshots, sets, syncRuns } from "@/db/schema";
 import { type ApiCard, fetchCardsByIds } from "./pokemontcg";
 
 export const today = () => new Date().toISOString().slice(0, 10);
@@ -88,12 +88,25 @@ export async function snapshotPrices(apiCards: ApiCard[]) {
   return rows.length;
 }
 
-/** Daily job: refresh prices for every card currently in the collection. */
+/** Daily job: refresh prices for every card currently in the collection, recording the outcome in sync_runs. */
 export async function syncCollectionPrices() {
   const db = await getDb();
-  const owned = await db.selectDistinct({ id: collectionEntries.cardId }).from(collectionEntries);
-  const fetched = await fetchCardsByIds(owned.map((o) => o.id));
-  await upsertCards(fetched);
-  const snapshots = await snapshotPrices(fetched);
-  return { cards: fetched.length, snapshots };
+  const [run] = await db.insert(syncRuns).values({ status: "running" }).returning();
+  try {
+    const owned = await db.selectDistinct({ id: collectionEntries.cardId }).from(collectionEntries);
+    const fetched = await fetchCardsByIds(owned.map((o) => o.id));
+    await upsertCards(fetched);
+    const snapshots = await snapshotPrices(fetched);
+    await db
+      .update(syncRuns)
+      .set({ status: "success", finishedAt: new Date(), cards: fetched.length, prices: snapshots })
+      .where(sql`${syncRuns.id} = ${run.id}`);
+    return { cards: fetched.length, snapshots };
+  } catch (e) {
+    await db
+      .update(syncRuns)
+      .set({ status: "failed", finishedAt: new Date(), error: e instanceof Error ? e.message : String(e) })
+      .where(sql`${syncRuns.id} = ${run.id}`);
+    throw e;
+  }
 }
