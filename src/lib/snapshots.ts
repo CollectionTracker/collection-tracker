@@ -53,3 +53,9 @@ export async function listSnapshots(): Promise<SnapshotSummary[]> {
   `);
   return res.rows;
 }
+
+/** The snapshot day asked for, or null (current) when it is absent or not a stored snapshot. */
+export function pickSnapshot(requested: string | string[] | undefined, snapshots: SnapshotSummary[]) {
+  const day = Array.isArray(requested) ? requested[0] : requested;
+  return snapshots.find((s) => s.day === day)?.day ?? null;
+}

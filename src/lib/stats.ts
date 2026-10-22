@@ -43,7 +43,8 @@ export type Holding = {
 export type Bucket = { label: string; value: number; count: number };
 export type SetProgress = { id: string; name: string; owned: number; total: number; value: number };
 
-export async function getDashboard() {
+/** Dashboard figures as of `asOf` (a snapshot day); defaults to the latest stored prices. */
+export async function getDashboard(asOf: string | null = null) {
   const db = await getDb();
   const { rows } = await db.execute<EntryRow>(sql`
     select e.id, e.card_id, e.variant, e.condition, e.quantity, e.purchase_price,
@@ -56,10 +57,12 @@ export async function getDashboard() {
     left join lateral (
       select market from price_snapshots p
       where p.card_id = e.card_id and p.variant = e.variant and p.market is not null
+        and (${asOf}::date is null or p.day <= ${asOf}::date)
       order by day desc limit 1) cur on true
     left join lateral (
       select market from price_snapshots p
       where p.card_id = e.card_id and p.variant = e.variant and p.market is not null
+        and (${asOf}::date is null or p.day <= ${asOf}::date)
       order by day desc limit 1 offset 1) prev on true`);
 
   const holdings: Holding[] = rows.map((r) => {
@@ -90,7 +93,7 @@ export async function getDashboard() {
     select p.day::text as day, sum(e.quantity * p.market)::float8 as value
     from collection_entries e
     join price_snapshots p on p.card_id = e.card_id and p.variant = e.variant
-    where p.market is not null
+    where p.market is not null and (${asOf}::date is null or p.day <= ${asOf}::date)
     group by p.day order by p.day`);
 
   const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
@@ -125,7 +128,7 @@ export async function getDashboard() {
 
   const movers = holdings.filter((h) => h.change !== 0).sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
 
-  const sealed = await getSealed();
+  const sealed = await getSealed(asOf);
   const rawValuation = rangeOf(totalValue, DEFAULT_SPREAD.raw);
   const combined = {
     value: totalValue + sealed.value,
