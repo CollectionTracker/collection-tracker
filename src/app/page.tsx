@@ -6,6 +6,7 @@ import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { type Bucket, type Holding, getDashboard } from "@/lib/stats";
+import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { pct, signed, tone, usd } from "@/lib/format";
 
@@ -77,6 +78,26 @@ function Stat({
       <div className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2">{label}</div>
       <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{value}</div>
       {sub && <div className={`mt-1 text-xs tabular-nums ${subTone ?? "text-slate-2"}`}>{sub}</div>}
+    </div>
+  );
+}
+
+function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
+  return (
+    <div className={card}>
+      <h2 className={`${heading} mb-3`}>{title}</h2>
+      {c ? (
+        <>
+          <div className={`text-[28px] font-bold leading-[34px] tabular-nums ${tone(c.change)}`}>
+            {c.changePct == null ? signed(c.change) : pct(c.changePct)}
+          </div>
+          <div className="mt-1 text-xs tabular-nums text-slate-2">
+            {signed(c.change)} since {c.baselineDay} ({usd(c.baselineValue)}), raw and sealed combined
+          </div>
+        </>
+      ) : (
+        <p className="text-sm text-slate-2">{empty}</p>
+      )}
     </div>
   );
 }
@@ -167,7 +188,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   await connection(); // always render per request, never at build time
   const snapshots = await listSnapshots();
   const asOf = pickSnapshot((await searchParams).snapshot, snapshots);
-  const d = await getDashboard(asOf);
+  const [d, cmp] = await Promise.all([getDashboard(asOf), getComparisons(asOf)]);
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>
@@ -193,6 +214,19 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           label="Cards"
           value={d.totalCopies.toLocaleString()}
           sub={`${d.uniqueCards} unique · ${d.setCount} sets`}
+        />
+      </section>
+
+      <section className="grid gap-5 sm:grid-cols-2">
+        <ComparisonCard
+          title="Year to date"
+          c={cmp.ytd}
+          empty="Needs at least two snapshots this year, or one from last year."
+        />
+        <ComparisonCard
+          title={`${COMPARISON_DAYS}-day comparison`}
+          c={cmp.thirtyDay}
+          empty={`Needs a snapshot at least ${COMPARISON_DAYS} days older than the latest one.`}
         />
       </section>
 
