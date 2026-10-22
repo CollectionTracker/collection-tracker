@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { VIEWS } from "@/lib/views";
+import { VIEWS, isActive } from "@/lib/views";
 
 export function ViewTabs() {
   const pathname = usePathname();
   return (
     <nav
       aria-label="Views"
-      className="flex max-w-full gap-1 overflow-x-auto rounded-full border border-white/5 bg-canvas p-1 font-label text-xs font-bold uppercase tracking-wider"
+      className="hidden max-w-full gap-1 overflow-x-auto rounded-full border border-white/5 bg-canvas p-1 md:flex font-label text-xs font-bold uppercase tracking-wider"
     >
       {VIEWS.map((v) => {
-        const active = v.href === "/" ? pathname === "/" : pathname.startsWith(v.href);
+        const active = isActive(v.href, pathname);
         return (
           <Link
             key={v.href}

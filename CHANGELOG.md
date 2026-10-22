@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sync status: a `sync_runs` table (with migration) records every price sync (manual button and `/api/cron/sync`) with its result, card and price counts and any error. The dashboard header shows a status chip (synced, syncing, stale after 36 hours, sync failed, never synced), the last verified sync time, "updated N mins ago", and the error when the latest attempt failed.
 - Four view routes (`/`, `/sealed`, `/raw`, `/scenarios`) sharing a root-layout header (PokeVault Analytics brand and links) and footer; the sealed, raw and scenarios routes are placeholders until their epics land.
 - Top app bar view tabs: the header shows the PokeVault Analytics brand and a segmented pill control (Overview, Sealed Inventory, Raw Cards, Scenarios & Growth) that routes between the four views and highlights the current one.
+- Mobile bottom tab bar: under 768px the header tabs are replaced by a fixed bottom bar (Overview, Sealed, Raw Cards, Scenarios) that highlights the current view; page content gets bottom padding so the bar never covers it.
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
 - Project README with a preview of the target design, and this changelog.
 
