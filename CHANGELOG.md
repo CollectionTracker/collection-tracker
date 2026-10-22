@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mobile bottom tab bar: under 768px the header tabs are replaced by a fixed bottom bar (Overview, Sealed, Raw Cards, Scenarios) that highlights the current view; page content gets bottom padding so the bar never covers it.
 - Responsive header drawer: below 1024px the header tabs and the dashboard toolbar collapse into a hamburger drawer with a "Views & Categories" section (the four views) and a "Portfolio Controls & Tools" section (currency pill, Import CSV, Sync prices).
 - Footer status bar: brand and data source (Pokémon TCG API for cards, manual prices for sealed), the selected snapshot date (or the latest price date), the current view and a page indicator (e.g. 02 / 04).
+- Responsive grid per the design system: shared `page-grid` (4 columns below 768px, 8 from 768px, 12 from 1024px; gutter 0.75rem on mobile, 1.25rem above) and `page-x` (page margins 1rem / 1.5rem / 2rem) utilities, applied to the header, footer, placeholder views and the dashboard sections (KPI cards `col-span-3`, rarity mix 5 and most valuable 7 columns on desktop).
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
 - Project README with a preview of the target design, and this changelog.
 

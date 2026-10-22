@@ -26,3 +26,27 @@ body {
   color: #f8fafc;
   font-family: var(--font-jakarta), system-ui, sans-serif;
 }
+
+/* Responsive grid per the design system: 4 / 8 / 12 columns below 768px, 768-1024px, above 1024px. */
+@utility page-x {
+  padding-inline: 1rem;
+  @variant md {
+    padding-inline: 1.5rem;
+  }
+  @variant lg {
+    padding-inline: 2rem;
+  }
+}
+
+@utility page-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  @variant md {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  @variant lg {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
