@@ -120,3 +120,10 @@ export const sealedPriceSnapshots = pgTable(
   },
   (t) => [primaryKey({ columns: [t.sealedProductId, t.day] })],
 );
+
+// A daily snapshot is the set of prices stored for a day; this table holds the optional label for that day.
+export const snapshotLabels = pgTable("snapshot_labels", {
+  day: date("day", { mode: "string" }).primaryKey(),
+  label: text("label").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
