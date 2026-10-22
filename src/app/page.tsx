@@ -2,8 +2,10 @@ import { Suspense } from "react";
 import Image from "next/image";
 import { connection } from "next/server";
 import { Toolbar } from "@/components/toolbar";
+import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { type Bucket, type Holding, getDashboard } from "@/lib/stats";
+import { listSnapshots } from "@/lib/snapshots";
 import { pct, signed, tone, usd } from "@/lib/format";
 
 export default function Home() {
@@ -142,7 +144,7 @@ function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
 
 async function Dashboard() {
   await connection(); // always render per request, never at build time
-  const d = await getDashboard();
+  const [d, snapshots] = await Promise.all([getDashboard(), listSnapshots()]);
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>
@@ -230,6 +232,11 @@ async function Dashboard() {
           <h2 className={`${heading} mb-4`}>By condition</h2>
           <Bars items={d.byCondition} total={d.totalValue} />
         </div>
+      </section>
+
+      <section className={card}>
+        <h2 className={`${heading} mb-4`}>Snapshots</h2>
+        <SnapshotList snapshots={snapshots} />
       </section>
     </>
   );

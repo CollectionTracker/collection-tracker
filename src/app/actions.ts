@@ -1,6 +1,7 @@
 "use server";
 
 import { type SealedPriceInput, setSealedPrice } from "@/lib/sealed-prices";
+import { type SnapshotLabelInput, setSnapshotLabel } from "@/lib/snapshots";
 import { syncCollectionPrices } from "@/lib/sync";
 
 export async function syncNow() {
@@ -14,6 +15,14 @@ export async function syncNow() {
 export async function setSealedPriceAction(input: SealedPriceInput) {
   try {
     return { ok: true as const, price: await setSealedPrice(input) };
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+export async function setSnapshotLabelAction(input: SnapshotLabelInput) {
+  try {
+    return { ok: true as const, snapshot: await setSnapshotLabel(input) };
   } catch (e) {
     return { ok: false as const, error: e instanceof Error ? e.message : String(e) };
   }
