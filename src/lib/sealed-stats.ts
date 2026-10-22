@@ -53,7 +53,7 @@ export function costBasisOf(items: { quantity: number; value: number; cost: numb
   };
 }
 
-export async function getSealed() {
+export async function getSealed(asOf: string | null = null) {
   const db = await getDb();
   const { rows } = await db.execute<SealedRow>(sql`
     select p.id, p.name, p.product_type, p.set_group, p.sku, p.quantity, p.purchase_price,
@@ -62,6 +62,7 @@ export async function getSealed() {
     left join lateral (
       select market, low, high from sealed_price_snapshots s
       where s.sealed_product_id = p.id and s.market is not null
+        and (${asOf}::date is null or s.day <= ${asOf}::date)
       order by day desc limit 1) cur on true`);
 
   const holdings: SealedHolding[] = rows.map((r) => {

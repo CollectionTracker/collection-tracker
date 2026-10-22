@@ -2,13 +2,16 @@ import { Suspense } from "react";
 import Image from "next/image";
 import { connection } from "next/server";
 import { Toolbar } from "@/components/toolbar";
+import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { type Bucket, type Holding, getDashboard } from "@/lib/stats";
-import { listSnapshots } from "@/lib/snapshots";
+import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { pct, signed, tone, usd } from "@/lib/format";
 
-export default function Home() {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
     <main className="mx-auto max-w-7xl space-y-5 px-4 py-6 md:px-8">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
@@ -17,13 +20,31 @@ export default function Home() {
           <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">
             Collection, at a glance
           </h1>
+          <Suspense fallback={null}>
+            <SnapshotBar searchParams={searchParams} />
+          </Suspense>
         </div>
         <Toolbar />
       </header>
       <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
-        <Dashboard />
+        <Dashboard searchParams={searchParams} />
       </Suspense>
     </main>
+  );
+}
+
+async function SnapshotBar({ searchParams }: { searchParams: SearchParams }) {
+  await connection();
+  const snapshots = await listSnapshots();
+  const selected = pickSnapshot((await searchParams).snapshot, snapshots);
+  const current = snapshots.find((s) => s.day === selected) ?? null;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-3">
+      <p className="text-sm text-slate-2">
+        {current ? `As of snapshot ${snapshotName(current)}` : snapshots[0] ? `Current prices as of ${snapshots[0].day}` : "No snapshots yet"}
+      </p>
+      {snapshots.length > 0 && <SnapshotPicker snapshots={snapshots} selected={selected} />}
+    </div>
   );
 }
 
@@ -142,9 +163,11 @@ function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
   );
 }
 
-async function Dashboard() {
+async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   await connection(); // always render per request, never at build time
-  const [d, snapshots] = await Promise.all([getDashboard(), listSnapshots()]);
+  const snapshots = await listSnapshots();
+  const asOf = pickSnapshot((await searchParams).snapshot, snapshots);
+  const d = await getDashboard(asOf);
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>
