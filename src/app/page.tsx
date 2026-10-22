@@ -29,7 +29,9 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
             <SyncChip />
           </Suspense>
         </div>
-        <Toolbar />
+        <div className="hidden lg:block">
+          <Toolbar />
+        </div>
       </header>
       <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
         <Dashboard searchParams={searchParams} />

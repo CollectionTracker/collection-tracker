@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Four view routes (`/`, `/sealed`, `/raw`, `/scenarios`) sharing a root-layout header (PokeVault Analytics brand and links) and footer; the sealed, raw and scenarios routes are placeholders until their epics land.
 - Top app bar view tabs: the header shows the PokeVault Analytics brand and a segmented pill control (Overview, Sealed Inventory, Raw Cards, Scenarios & Growth) that routes between the four views and highlights the current one.
 - Mobile bottom tab bar: under 768px the header tabs are replaced by a fixed bottom bar (Overview, Sealed, Raw Cards, Scenarios) that highlights the current view; page content gets bottom padding so the bar never covers it.
+- Responsive header drawer: below 1024px the header tabs and the dashboard toolbar collapse into a hamburger drawer with a "Views & Categories" section (the four views) and a "Portfolio Controls & Tools" section (currency pill, Import CSV, Sync prices).
 - Agent guide in `AGENTS.md` and skills in `.agents/skills/` (`start-issue`, `commit`, `changelog`) defining the changelog, branch-naming and conventional-commit rules.
 - Project README with a preview of the target design, and this changelog.
 
