@@ -15,7 +15,7 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="mx-auto max-w-7xl space-y-5 px-4 py-6 md:px-8">
+    <main className="mx-auto w-full max-w-7xl space-y-5 px-4 py-6 md:px-8">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
         <div>
           <Eyebrow>Executive dashboard</Eyebrow>
