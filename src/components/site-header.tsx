@@ -1,15 +1,17 @@
 import Link from "next/link";
+import { HeaderDrawer } from "@/components/header-drawer";
 import { ViewTabs } from "@/components/view-tabs";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-white/5 bg-inset">
+    <header className="relative border-b border-white/5 bg-inset">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-4 py-3 md:px-8">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="text-lg font-extrabold tracking-[-0.03em]">PokeVault</span>
           <span className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-mint">Analytics</span>
         </Link>
         <ViewTabs />
+        <HeaderDrawer />
       </div>
     </header>
   );

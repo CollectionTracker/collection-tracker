@@ -9,7 +9,7 @@ export function ViewTabs() {
   return (
     <nav
       aria-label="Views"
-      className="hidden max-w-full gap-1 overflow-x-auto rounded-full border border-white/5 bg-canvas p-1 md:flex font-label text-xs font-bold uppercase tracking-wider"
+      className="hidden max-w-full gap-1 overflow-x-auto rounded-full border border-white/5 bg-canvas p-1 lg:flex font-label text-xs font-bold uppercase tracking-wider"
     >
       {VIEWS.map((v) => {
         const active = isActive(v.href, pathname);
