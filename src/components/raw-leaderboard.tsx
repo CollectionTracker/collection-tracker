@@ -33,13 +33,13 @@ export function RawLeaderboard({ d }: { d: Dashboard }) {
       {top.length === 0 ? (
         <p className="text-sm text-slate-2">No priced raw cards yet.</p>
       ) : (
-        <div className="grid gap-x-8 gap-y-2.5 md:grid-cols-2">
-          <ol className="space-y-2.5">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-2.5 md:grid-cols-2">
+          <ol className="min-w-0 space-y-2.5">
             {top.slice(0, half).map((h, i) => (
               <Row key={h.id} h={h} rank={i + 1} />
             ))}
           </ol>
-          <ol className="space-y-2.5">
+          <ol className="min-w-0 space-y-2.5">
             {top.slice(half).map((h, i) => (
               <Row key={h.id} h={h} rank={half + i + 1} />
             ))}
