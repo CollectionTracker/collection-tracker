@@ -25,8 +25,8 @@ export function ScenarioChart({ scenarios }: { scenarios: Scenario[] }) {
           </li>
         ))}
       </ul>
-      <div role="img" aria-label={`10-year projection, illustrative. ${summary}`}>
-        <ResponsiveContainer width="100%" height={256}>
+      <div role="img" aria-label={`10-year projection, illustrative. ${summary}`} className="h-48 md:h-64">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ left: 0, right: 12, top: 8 }}>
             <CartesianGrid stroke="#ffffff0d" strokeDasharray="2 3" vertical={false} />
             <XAxis
