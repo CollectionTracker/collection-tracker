@@ -17,13 +17,20 @@ async function init() {
     await migratePg(db, { migrationsFolder });
     return db;
   }
-  const dir = path.join(process.cwd(), ".data/pglite");
+  // `npm run dev` gets a separate, pre-filled demo database so real data in .data/pglite is never mixed
+  // with it. Set SEED_DEV_DATA=0 to use the real one; delete .data/pglite-demo to regenerate the demo.
+  const demo = process.env.NODE_ENV === "development" && process.env.SEED_DEV_DATA !== "0";
+  const dir = path.join(process.cwd(), demo ? ".data/pglite-demo" : ".data/pglite");
   mkdirSync(dir, { recursive: true });
   const db = drizzleLite({
     client: new PGlite(dir),
     schema,
   });
   await migrateLite(db, { migrationsFolder });
+  if (demo && !(await db.select().from(schema.sets).limit(1)).length) {
+    const { seedDevData } = await import("./seed-dev");
+    await seedDevData(db);
+  }
   return db;
 }
 

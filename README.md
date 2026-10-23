@@ -19,6 +19,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 With no configuration the app uses an embedded Postgres (PGlite) stored in `.data/`, so it runs with zero setup.
 
+`npm run dev` starts with a pre-filled demo collection (cards, sealed products and price history) in `.data/pglite-demo`, separate from your real data. Delete that folder to regenerate it, or set `SEED_DEV_DATA=0` to use your real database in dev.
+
 ### Environment variables
 
 | Variable | Purpose |
@@ -26,6 +28,7 @@ With no configuration the app uses an embedded Postgres (PGlite) stored in `.dat
 | `DATABASE_URL` | Use a real Postgres server instead of the embedded one. |
 | `POKEMONTCG_API_KEY` | Optional API key for higher Pokémon TCG API rate limits. |
 | `CRON_SECRET` | Secret that protects the `/api/cron/sync` endpoint. |
+| `SEED_DEV_DATA` | Set to `0` to skip the demo data in `npm run dev`. |
 
 ## Scripts
 
