@@ -1,11 +1,8 @@
-import { connection } from "next/server";
-import { getDashboard } from "@/lib/stats";
+import type { Dashboard } from "@/lib/stats";
 
 const chip = "rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs text-slate-2 tabular-nums";
 
-export async function RawIntelHeader() {
-  await connection();
-  const d = await getDashboard();
+export function RawIntelHeader({ d }: { d: Dashboard }) {
   return (
     <section className="flex flex-col justify-between gap-3 rounded-2xl border border-white/5 bg-surface p-5 sm:flex-row sm:items-center">
       <div>
