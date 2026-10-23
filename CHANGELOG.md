@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project README with a preview of the target design, and this changelog.
 
 ### Changed
+- Portfolio value mix donut replaces the interim rarity donut: it splits combined value into Sealed and Raw cards, shows each share and amount in the legend, and highlights the matching slice (and the centre readout) when you hover a slice or legend row. The by-rarity bars below are unchanged.
 - Overview summary cards: the four stat cards are now Total Portfolio (combined raw + sealed midpoint, YTD change and a sealed/raw split bar), Sealed Inventory, Raw Cards and Valuation Range (combined low – high with the midpoint). The old Total / Since last update / Gain-loss / Cards stats are folded in: total value is Total Portfolio, gain/loss and card counts move to the Sealed and Raw cards, and the day-over-day change is dropped in favour of YTD and the 30-day card.
 - `start-issue` skill and `AGENTS.md` now define when to chain a branch off a blocking issue's branch and when to branch from `dev`, using GitHub "blocked by" links, which are now set on the sub-issues of every epic.
 - `start-issue` skill now claims an issue first (checks board status and claim comments, sets it In Progress, releases it when done or abandoned) so only one agent works on an issue at a time.
