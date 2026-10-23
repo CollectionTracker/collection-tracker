@@ -1,17 +1,18 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { compactUsd, wholeUsd as dollars } from "@/lib/format";
+import { compactMoney, converted, type Money, wholeMoney } from "@/lib/format";
 import { MILESTONE_YEARS, PROJECTION_YEARS, type Scenario, scenarioColor as colorOf } from "@/lib/scenarios";
 
-
 /** Three-line projection over the milestone years; straight segments between milestones, as in the design. */
-export function ScenarioChart({ scenarios }: { scenarios: Scenario[] }) {
+/** Values are converted into the display currency before plotting, so axis ticks are round in that currency. */
+export function ScenarioChart({ scenarios, m }: { scenarios: Scenario[]; m: Money }) {
+  const unit = converted(m);
   const data = MILESTONE_YEARS.map((year) =>
-    Object.fromEntries([["year", year], ...scenarios.map((s) => [s.id, s.values[year]])]),
+    Object.fromEntries([["year", year], ...scenarios.map((s) => [s.id, s.values[year] * m.rate])]),
   );
   const summary = scenarios
-    .map((s) => `${s.label}: ${s.milestones.map((m) => `Y${m.year} ${dollars(m.value)}`).join(", ")}`)
+    .map((s) => `${s.label}: ${s.milestones.map((ms) => `Y${ms.year} ${wholeMoney(ms.value, m)}`).join(", ")}`)
     .join("; ");
   // Draw the steepest line last so it sits on top, like the render.
   const ordered = [...scenarios].sort((a, b) => a.values[PROJECTION_YEARS] - b.values[PROJECTION_YEARS]);
@@ -37,11 +38,11 @@ export function ScenarioChart({ scenarios }: { scenarios: Scenario[] }) {
               tick={{ fill: "#94a3b8", fontSize: 12 }}
               tickFormatter={(y: number) => `${y}Y`}
             />
-            <YAxis width={52} tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => compactUsd(v).replace(".0", "")} domain={[0, "auto"]} />
+            <YAxis width={52} tick={{ fill: "#94a3b8", fontSize: 12 }} tickFormatter={(v: number) => compactMoney(v, unit).replace(".0", "")} domain={[0, "auto"]} />
             <Tooltip
               contentStyle={{ background: "#0d1733", border: "1px solid #ffffff20", borderRadius: 8 }}
               labelFormatter={(y) => (Number(y) === 0 ? "Start" : `Year ${y}`)}
-              formatter={(v, id) => [dollars(Number(v)), scenarios.find((s) => s.id === id)?.label ?? id]}
+              formatter={(v, id) => [wholeMoney(Number(v), unit), scenarios.find((s) => s.id === id)?.label ?? id]}
               itemSorter={(item) => -Number(item.value)}
             />
             {ordered.map((s) => (

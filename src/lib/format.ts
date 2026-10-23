@@ -4,6 +4,8 @@ import { CURRENCY_INFO, type Currency, type FxRates } from "./currencies";
 export type Money = { currency: Currency; rate: number };
 export const USD: Money = { currency: "USD", rate: 1 };
 export const moneyFor = (currency: Currency, fx: Pick<FxRates, "rates">): Money => ({ currency, rate: fx.rates[currency] });
+/** For values already converted (e.g. chart data): same currency, rate 1. */
+export const converted = (m: Money): Money => ({ currency: m.currency, rate: 1 });
 
 /** Symbol, sign and digits; never "-$0.00" for an amount that rounds to zero. */
 function fmt(usdAmount: number, m: Money, digits: number) {
@@ -30,10 +32,6 @@ export function compactMoney(n: number, m: Money = USD) {
 /** Change with an explicit sign: +$12.00, −€3.40. */
 export const signedMoney = (n: number, m: Money = USD) => `${n >= 0 ? "+" : "−"}${money(Math.abs(n), m)}`;
 
-// USD-only names kept until every view takes the selected currency (#42).
-export const usd = (n: number) => money(n);
-export const wholeUsd = (n: number) => wholeMoney(n);
-export const signed = (n: number) => signedMoney(n);
 export const pct = (n: number) => `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(1)}%`;
 export const tone = (n: number) => (n > 0 ? "text-mint" : n < 0 ? "text-rose-400" : "text-slate-2");
 export function ago(then: Date, now = new Date()) {
@@ -44,4 +42,3 @@ export function ago(then: Date, now = new Date()) {
   if (hours < 48) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
   return `${Math.floor(hours / 24)} days ago`;
 }
-export const compactUsd = (n: number) => compactMoney(n);

@@ -1,11 +1,11 @@
-import { usd } from "@/lib/format";
+import { type Money, money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
 const SETS = 8;
 
-export function RawStructure({ d }: { d: Dashboard }) {
+export function RawStructure({ d, m }: { d: Dashboard; m: Money }) {
   const sets = d.setProgress.slice(0, SETS);
   return (
     <section className="grid gap-3 md:grid-cols-2 md:gap-5">
@@ -21,7 +21,7 @@ export function RawStructure({ d }: { d: Dashboard }) {
                 <li key={s.id}>
                   <div className="flex justify-between gap-2 text-sm">
                     <span className="truncate text-slate-2">{s.name}</span>
-                    <span className="font-bold tabular-nums">{usd(s.value)}</span>
+                    <span className="font-bold tabular-nums">{money(s.value, m)}</span>
                   </div>
                   <div className="mt-1.5 h-2 rounded-full bg-track">
                     <div className="h-full rounded-full bg-sky" style={{ width: `${done}%` }} />
@@ -48,7 +48,7 @@ export function RawStructure({ d }: { d: Dashboard }) {
                     {b.label} <span className="text-xs">×{b.count}</span>
                   </span>
                   <span className="font-bold tabular-nums">
-                    {((b.value / d.totalValue) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {usd(b.value)}</span>
+                    {((b.value / d.totalValue) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {money(b.value, m)}</span>
                   </span>
                 </div>
                 <div className="mt-1.5 h-2 rounded-full bg-track">

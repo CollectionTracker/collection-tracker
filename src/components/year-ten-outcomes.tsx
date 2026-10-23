@@ -1,11 +1,11 @@
-import { wholeUsd } from "@/lib/format";
+import { type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, assumptionText, multiplierText, scenarioColor } from "@/lib/scenarios";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
 
 /** One card per scenario: its year-10 value, the assumptions behind it and a "× start" multiplier badge. */
-export function YearTenOutcomes({ scenarios }: { scenarios: Scenario[] }) {
+export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Money }) {
   return (
     <section className={panel}>
       <h2 className={`${heading} mb-4`}>Year {PROJECTION_YEARS} outcomes</h2>
@@ -30,7 +30,7 @@ export function YearTenOutcomes({ scenarios }: { scenarios: Scenario[] }) {
                   </span>
                 )}
               </div>
-              <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeUsd(s.values[PROJECTION_YEARS])}</div>
+              <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeMoney(s.values[PROJECTION_YEARS], m)}</div>
               <div className="mt-0.5 text-[11px] text-slate-2">{assumptionText(s)}</div>
             </li>
           );

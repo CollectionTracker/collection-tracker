@@ -1,4 +1,4 @@
-import { compactUsd, usd, wholeUsd } from "@/lib/format";
+import { compactMoney, money, type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, multiplierText } from "@/lib/scenarios";
 import type { Range } from "@/lib/valuation";
 
@@ -7,7 +7,7 @@ const labelStyle = "font-label text-[11px] font-bold uppercase tracking-[0.12em]
 const value = "mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums";
 
 /** Header strip for the Scenarios view: where projections start, today's range, and the year-10 spread. */
-export function ScenarioSummary({ valuation, scenarios }: { valuation: Range; scenarios: Scenario[] }) {
+export function ScenarioSummary({ valuation, scenarios, m }: { valuation: Range; scenarios: Scenario[]; m: Money }) {
   const finals = scenarios.map((s) => s.values[PROJECTION_YEARS]);
   const multipliers = scenarios.map((s) => s.multiplier).filter((m) => m !== null);
   return (
@@ -15,25 +15,25 @@ export function ScenarioSummary({ valuation, scenarios }: { valuation: Range; sc
       <div className={card}>
         <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
         <div className={labelStyle}>Starting midpoint</div>
-        <div className={value}>{usd(valuation.mid)}</div>
+        <div className={value}>{money(valuation.mid, m)}</div>
         <div className="mt-1 text-xs text-slate-2">Raw cards and sealed combined; every scenario starts here</div>
       </div>
       <div className={card}>
         <div className="mb-3 h-1 w-8 rounded-full bg-amber" />
         <div className={labelStyle}>Valuation range</div>
         <div className={value}>
-          {compactUsd(valuation.low)} – {compactUsd(valuation.high)}
+          {compactMoney(valuation.low, m)} – {compactMoney(valuation.high, m)}
         </div>
         <div className="mt-1 flex justify-between gap-2 text-xs text-slate-2">
           <span>Low to high estimate today</span>
-          <span className="font-label text-amber tabular-nums">Δ {wholeUsd(valuation.high - valuation.low)}</span>
+          <span className="font-label text-amber tabular-nums">Δ {wholeMoney(valuation.high - valuation.low, m)}</span>
         </div>
         <div className="mt-3 flex justify-between border-t border-white/5 pt-3 text-[11px] text-slate-2 tabular-nums">
           <span>
-            Low <strong className="text-ink">{wholeUsd(valuation.low)}</strong>
+            Low <strong className="text-ink">{wholeMoney(valuation.low, m)}</strong>
           </span>
           <span>
-            High <strong className="text-ink">{wholeUsd(valuation.high)}</strong>
+            High <strong className="text-ink">{wholeMoney(valuation.high, m)}</strong>
           </span>
         </div>
       </div>
@@ -42,7 +42,7 @@ export function ScenarioSummary({ valuation, scenarios }: { valuation: Range; sc
         <div className="mb-3 h-1 w-8 rounded-full bg-violet" />
         <div className={labelStyle}>Year {PROJECTION_YEARS} range</div>
         <div className={value}>
-          {compactUsd(Math.min(...finals))} – {compactUsd(Math.max(...finals))}
+          {compactMoney(Math.min(...finals), m)} – {compactMoney(Math.max(...finals), m)}
         </div>
         <div className="mt-1 text-xs text-slate-2 tabular-nums">
           {multiplierText(Math.min(...multipliers))} to {multiplierText(Math.max(...multipliers))} the midpoint across{" "}

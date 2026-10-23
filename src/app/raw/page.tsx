@@ -7,6 +7,7 @@ import { RawLeaderboard } from "@/components/raw-leaderboard";
 import { RawIntelHeader } from "@/components/raw-intel-header";
 import { RawHistory, RawMovers } from "@/components/raw-movers";
 import { RawStructure } from "@/components/raw-structure";
+import { getDisplayMoney } from "@/lib/currency-pref";
 import { getDashboard } from "@/lib/stats";
 
 export const metadata: Metadata = { title: "Raw Cards · Collection Tracker" };
@@ -27,16 +28,16 @@ export default function Page() {
 
 async function RawCards() {
   await connection();
-  const d = await getDashboard();
+  const [d, m] = await Promise.all([getDashboard(), getDisplayMoney()]);
   return (
     <>
-      <RawIntelHeader d={d} />
-      <RawBreakdown d={d} />
-      <RawLeaderboard d={d} />
-      <RawStructure d={d} />
-      <RawHistory d={d} />
-      <RawMovers d={d} />
-      <RawAllCards holdings={d.holdings} sets={d.setProgress} />
+      <RawIntelHeader d={d} m={m} />
+      <RawBreakdown d={d} m={m} />
+      <RawLeaderboard d={d} m={m} />
+      <RawStructure d={d} m={m} />
+      <RawHistory d={d} m={m} />
+      <RawMovers d={d} m={m} />
+      <RawAllCards holdings={d.holdings} sets={d.setProgress} m={m} />
     </>
   );
 }
