@@ -36,6 +36,13 @@
       "when": 1792701249948,
       "tag": "0004_sync_runs",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792780340582,
+      "tag": "0005_fx_rates",
+      "breakpoints": true
     }
   ]
 }

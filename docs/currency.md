@@ -1,0 +1,25 @@
+# Currency
+
+All prices are stored in USD (the Pokémon TCG API and manual sealed prices are USD). Other currencies are a display conversion: `amount × rate`, where the rate is units of that currency per 1 USD.
+
+## Supported currencies
+
+USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, HKD, NZD (`CURRENCIES` in `src/lib/currencies.ts`).
+
+## Rate source
+
+[Frankfurter](https://frankfurter.dev), which serves the European Central Bank reference rates. It is free, needs no API key and covers every supported currency. The ECB publishes once per working day (around 16:00 CET), with no rates at weekends or on TARGET holidays.
+
+## Storage and caching
+
+- Rates are stored in the `fx_rates` table, one row per rate day and currency, under the ECB publication date (not the fetch date).
+- They are refreshed by the daily price sync (`/api/cron/sync` and the Sync prices button) and, if that has not run, lazily on the first page load of the day. They are fetched at most once per day.
+- A failed fetch never fails the price sync or a page load. Page loads wait an hour before retrying.
+
+## Fallbacks
+
+`getFxRates(asOf?)` in `src/lib/forex.ts` picks one rate per currency:
+
+1. The latest stored rate on or before the day (today, or the selected snapshot day).
+2. For a day before rates were first stored, the earliest stored rate.
+3. If a currency has never been stored (e.g. first run offline), the built-in `FALLBACK_RATES`. The result lists these currencies in `fallback`.

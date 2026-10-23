@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { cards, collectionEntries, priceSnapshots, sets, syncRuns } from "@/db/schema";
+import { refreshFxRates } from "./forex";
 import { type ApiCard, fetchCardsByIds } from "./pokemontcg";
 
 export const today = () => new Date().toISOString().slice(0, 10);
@@ -88,8 +89,12 @@ export async function snapshotPrices(apiCards: ApiCard[]) {
   return rows.length;
 }
 
-/** Daily job: refresh prices for every card currently in the collection, recording the outcome in sync_runs. */
+/**
+ * Daily job: refresh prices for every card currently in the collection, recording the outcome in sync_runs.
+ * Exchange rates are refreshed too; a rate failure is logged and never fails the price sync.
+ */
 export async function syncCollectionPrices() {
+  await refreshFxRates().catch((e) => console.warn("Exchange rate refresh failed:", e));
   const db = await getDb();
   const [run] = await db.insert(syncRuns).values({ status: "running" }).returning();
   try {
