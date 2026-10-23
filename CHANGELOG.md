@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- All raw cards panel on the Raw Cards view lists every imported card, not just the top 8 and movers. It opens as a table you can sort by any column, with cost, gain, day change, filtered totals and 25 rows per page. Search and set, rarity and condition filters apply to every view. Icon buttons with hover hints switch to a card-art grid or to cards grouped by set (expandable, in card-number order, with completion). The chosen view is kept in the URL (`?view=grid`, `?view=sets`) (#89).
 - Raw Cards view now shows Raw card value over time and Top movers, so the card-level history and price changes live with the other raw analytics (#32).
 - Raw Cards view now also shows Set completion (owned/total cards and value per set) and Value by condition (share of raw value), completing the page alongside the header, set/rarity panels and top 8 leaderboard (#31).
 - Top 8 raw card holdings leaderboard on the Raw Cards view: two numbered columns ranked by stack value, each row with thumbnail, set, rarity, variant, quantity and value (#30).
