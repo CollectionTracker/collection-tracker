@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { usd } from "@/lib/format";
+import { type Money, money } from "@/lib/format";
 
 export type MixSlice = { label: string; value: number; color: string };
 
 const R = 60;
 const C = 2 * Math.PI * R;
 
-export function ValueMixDonut({ slices }: { slices: MixSlice[] }) {
+export function ValueMixDonut({ slices, m }: { slices: MixSlice[]; m: Money }) {
   const [active, setActive] = useState<string | null>(null);
   const total = slices.reduce((a, s) => a + s.value, 0);
   const share = (v: number) => (total ? (v / total) * 100 : 0);
@@ -88,7 +88,7 @@ export function ValueMixDonut({ slices }: { slices: MixSlice[] }) {
             <span className="text-xs tabular-nums text-slate-2">
               {share(s.value).toFixed(1)}%
             </span>
-            <span className="font-bold tabular-nums">{usd(s.value)}</span>
+            <span className="font-bold tabular-nums">{money(s.value, m)}</span>
           </li>
         ))}
       </ul>

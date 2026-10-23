@@ -1,23 +1,23 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { FALLBACK_RATES } from "./currencies";
-import { compactMoney, compactUsd, money, moneyFor, signed, signedMoney, usd, wholeMoney, wholeUsd } from "./format";
+import { compactMoney, money, moneyFor, signedMoney, wholeMoney } from "./format";
 
 const fx = { rates: FALLBACK_RATES };
 const JPY = moneyFor("JPY", fx); // 154.5 per USD
 const EUR = moneyFor("EUR", fx); // 0.92
 const CHF = moneyFor("CHF", fx); // 0.88
 
-test("USD helpers keep their existing output", () => {
-  assert.equal(usd(1234.5), "$1,234.50");
-  assert.equal(usd(-1234.5), "-$1,234.50");
-  assert.equal(usd(0), "$0.00");
-  assert.equal(wholeUsd(36_233.6), "$36,234");
-  assert.equal(signed(12), "+$12.00");
-  assert.equal(signed(-3.4), "−$3.40");
-  assert.equal(compactUsd(229.4), "$229");
-  assert.equal(compactUsd(3100), "$3.1k");
-  assert.equal(compactUsd(1_200_000), "$1.2M");
+test("USD by default", () => {
+  assert.equal(money(1234.5), "$1,234.50");
+  assert.equal(money(-1234.5), "-$1,234.50");
+  assert.equal(money(0), "$0.00");
+  assert.equal(wholeMoney(36_233.6), "$36,234");
+  assert.equal(signedMoney(12), "+$12.00");
+  assert.equal(signedMoney(-3.4), "−$3.40");
+  assert.equal(compactMoney(229.4), "$229");
+  assert.equal(compactMoney(3100), "$3.1k");
+  assert.equal(compactMoney(1_200_000), "$1.2M");
 });
 
 test("converts and uses the currency's symbol and decimals", () => {

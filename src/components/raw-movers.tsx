@@ -1,22 +1,22 @@
 import Image from "next/image";
 import { cardPreview } from "@/lib/card-preview";
-import { pct, signed, tone, usd } from "@/lib/format";
+import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 import { ValueChart } from "./value-chart";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
 
-export function RawHistory({ d }: { d: Dashboard }) {
+export function RawHistory({ d, m }: { d: Dashboard; m: Money }) {
   return (
     <section className={panel}>
       <h3 className={`${heading} mb-4`}>Raw card value over time</h3>
-      <ValueChart data={d.history} />
+      <ValueChart data={d.history} m={m} />
     </section>
   );
 }
 
-export function RawMovers({ d }: { d: Dashboard }) {
+export function RawMovers({ d, m }: { d: Dashboard; m: Money }) {
   const movers = [...d.gainers, ...d.losers];
   return (
     <section className={panel}>
@@ -36,9 +36,9 @@ export function RawMovers({ d }: { d: Dashboard }) {
                 </div>
               </div>
               <div className="text-right text-sm tabular-nums">
-                <div>{usd(h.value)}</div>
+                <div>{money(h.value, m)}</div>
                 <div className={`text-xs ${tone(h.change)}`}>
-                  {signed(h.change)} ({pct(h.changePct)})
+                  {signedMoney(h.change, m)} ({pct(h.changePct)})
                 </div>
               </div>
             </li>

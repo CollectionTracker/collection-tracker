@@ -5,6 +5,7 @@ import { ScenarioAssumptions } from "@/components/scenario-assumptions";
 import { ScenarioProjection } from "@/components/scenario-projection";
 import { ScenarioSummary } from "@/components/scenario-summary";
 import { YearTenOutcomes } from "@/components/year-ten-outcomes";
+import { getDisplayMoney } from "@/lib/currency-pref";
 import { projectScenarios } from "@/lib/scenarios";
 import { getDashboard } from "@/lib/stats";
 
@@ -26,19 +27,19 @@ export default function Page() {
 
 async function Scenarios() {
   await connection();
-  const d = await getDashboard();
+  const [d, m] = await Promise.all([getDashboard(), getDisplayMoney()]);
   const start = d.combined.valuation.mid;
   const scenarios = projectScenarios(start);
-  if (start <= 0) return <ScenarioProjection start={start} scenarios={scenarios} />;
+  if (start <= 0) return <ScenarioProjection start={start} scenarios={scenarios} m={m} />;
   return (
     <>
-      <ScenarioSummary valuation={d.combined.valuation} scenarios={scenarios} />
+      <ScenarioSummary valuation={d.combined.valuation} scenarios={scenarios} m={m} />
       <section className="page-grid">
         <div className="col-span-full lg:col-span-9">
-          <ScenarioProjection start={start} scenarios={scenarios} />
+          <ScenarioProjection start={start} scenarios={scenarios} m={m} />
         </div>
         <div className="col-span-full lg:col-span-3">
-          <YearTenOutcomes scenarios={scenarios} />
+          <YearTenOutcomes scenarios={scenarios} m={m} />
         </div>
       </section>
       <ScenarioAssumptions />

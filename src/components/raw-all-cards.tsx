@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { cardPreview } from "@/lib/card-preview";
-import { signed, tone, usd } from "@/lib/format";
+import { type Money, money, signedMoney, tone } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
@@ -28,8 +28,8 @@ function CondChip({ c }: { c: string }) {
   );
 }
 
-function Delta({ n }: { n: number | null }) {
-  return <span className={n == null || n === 0 ? "text-muted" : tone(n)}>{n == null || n === 0 ? "—" : signed(n)}</span>;
+function Delta({ n, m }: { n: number | null; m: Money }) {
+  return <span className={n == null || n === 0 ? "text-muted" : tone(n)}>{n == null || n === 0 ? "—" : signedMoney(n, m)}</span>;
 }
 
 const ICONS: Record<View, ReactNode> = {
@@ -105,7 +105,7 @@ const COLUMNS: { key: SortKey; label: string; right?: boolean }[] = [
   { key: "gain", label: "Gain", right: true },
 ];
 
-function TableView({ rows, sort, onSort }: { rows: Holding[]; sort: Sort; onSort: (k: SortKey) => void }) {
+function TableView({ rows, sort, onSort, m }: { rows: Holding[]; sort: Sort; onSort: (k: SortKey) => void; m: Money }) {
   const [page, setPage] = useState(0);
   const pages = Math.max(1, Math.ceil(rows.length / PAGE));
   const current = Math.min(page, pages - 1);
@@ -150,13 +150,13 @@ function TableView({ rows, sort, onSort }: { rows: Holding[]; sort: Sort; onSort
                   <CondChip c={h.condition} />
                 </td>
                 <td className={`${td} text-right`}>{h.quantity}</td>
-                <td className={`${td} text-right`}>{usd(h.unit)}</td>
-                <td className={`${td} text-right font-bold`}>{usd(h.value)}</td>
+                <td className={`${td} text-right`}>{money(h.unit, m)}</td>
+                <td className={`${td} text-right font-bold`}>{money(h.value, m)}</td>
                 <td className={`${td} text-right`}>
-                  <Delta n={h.change} />
+                  <Delta n={h.change} m={m} />
                 </td>
                 <td className={`${td} text-right`}>
-                  <Delta n={gain(h)} />
+                  <Delta n={gain(h)} m={m} />
                 </td>
               </tr>
             ))}
@@ -168,12 +168,12 @@ function TableView({ rows, sort, onSort }: { rows: Holding[]; sort: Sort; onSort
               </td>
               <td className="px-2.5 pt-3 text-right">{sum((h) => h.quantity)}</td>
               <td />
-              <td className="px-2.5 pt-3 text-right">{usd(sum((h) => h.value))}</td>
+              <td className="px-2.5 pt-3 text-right">{money(sum((h) => h.value), m)}</td>
               <td className="px-2.5 pt-3 text-right">
-                <Delta n={sum((h) => h.change)} />
+                <Delta n={sum((h) => h.change)} m={m} />
               </td>
               <td className="px-2.5 pt-3 text-right">
-                <Delta n={costed.length ? costed.reduce((a, h) => a + gain(h)!, 0) : null} />
+                <Delta n={costed.length ? costed.reduce((a, h) => a + gain(h)!, 0) : null} m={m} />
               </td>
             </tr>
           </tfoot>
@@ -201,7 +201,7 @@ function TableView({ rows, sort, onSort }: { rows: Holding[]; sort: Sort; onSort
   );
 }
 
-function GridView({ rows }: { rows: Holding[] }) {
+function GridView({ rows, m }: { rows: Holding[]; m: Money }) {
   const [limit, setLimit] = useState(GRID_PAGE);
   return (
     <>
@@ -224,9 +224,9 @@ function GridView({ rows }: { rows: Holding[] }) {
               </div>
             </div>
             <div className="flex items-baseline justify-between gap-1 tabular-nums">
-              <span className="text-sm font-bold">{usd(h.value)}</span>
+              <span className="text-sm font-bold">{money(h.value, m)}</span>
               <span className="text-[11px]">
-                <Delta n={h.change} />
+                <Delta n={h.change} m={m} />
               </span>
             </div>
           </li>
@@ -246,7 +246,7 @@ function GridView({ rows }: { rows: Holding[] }) {
   );
 }
 
-function SetsView({ rows, sets, filtered }: { rows: Holding[]; sets: SetProgress[]; filtered: boolean }) {
+function SetsView({ rows, sets, filtered, m }: { rows: Holding[]; sets: SetProgress[]; filtered: boolean; m: Money }) {
   const [open, setOpen] = useState<Set<string>>(() => new Set(sets.slice(0, 1).map((s) => s.id)));
   const groups = sets
     .map((s) => ({ ...s, cards: rows.filter((h) => h.setId === s.id).sort((a, b) => numberKey(a.number) - numberKey(b.number)) }))
@@ -297,7 +297,7 @@ function SetsView({ rows, sets, filtered }: { rows: Holding[]; sets: SetProgress
                     {g.owned}/{g.total} cards ({done.toFixed(0)}%)
                   </span>
                 </span>
-                <span className="font-bold tabular-nums">{usd(g.value)}</span>
+                <span className="font-bold tabular-nums">{money(g.value, m)}</span>
               </button>
               {isOpen && (
                 <ul className="border-t border-white/5">
@@ -320,9 +320,9 @@ function SetsView({ rows, sets, filtered }: { rows: Holding[]; sets: SetProgress
                       </span>
                       <span className="hidden text-xs text-slate-2 md:block">×{h.quantity}</span>
                       <span className="hidden text-right text-xs md:block">
-                        <Delta n={h.change} />
+                        <Delta n={h.change} m={m} />
                       </span>
-                      <span className="text-right font-bold">{usd(h.value)}</span>
+                      <span className="text-right font-bold">{money(h.value, m)}</span>
                     </li>
                   ))}
                 </ul>
@@ -344,7 +344,7 @@ const SORTS: { key: SortKey; label: string }[] = [
 ];
 const TEXT_KEYS: SortKey[] = ["name", "setName", "rarity", "condition"];
 
-export function RawAllCards({ holdings, sets }: { holdings: Holding[]; sets: SetProgress[] }) {
+export function RawAllCards({ holdings, sets, m }: { holdings: Holding[]; sets: SetProgress[]; m: Money }) {
   const params = useSearchParams();
   const [view, setView] = useState<View>(() => {
     const requested = params.get("view");
@@ -448,11 +448,11 @@ export function RawAllCards({ holdings, sets }: { holdings: Holding[]; sets: Set
           {rows.length === 0 ? (
             <p className="py-6 text-center text-sm text-slate-2">No cards match these filters.</p>
           ) : view === "grid" ? (
-            <GridView key={rows.length} rows={rows} />
+            <GridView key={rows.length} rows={rows} m={m} />
           ) : view === "sets" ? (
-            <SetsView rows={rows} sets={sets} filtered={filtered} />
+            <SetsView rows={rows} sets={sets} filtered={filtered} m={m} />
           ) : (
-            <TableView key={`${rows.length}-${sort.key}-${sort.dir}`} rows={rows} sort={sort} onSort={changeSort} />
+            <TableView key={`${rows.length}-${sort.key}-${sort.dir}`} rows={rows} sort={sort} onSort={changeSort} m={m} />
           )}
         </>
       )}

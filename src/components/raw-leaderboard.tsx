@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { cardPreview } from "@/lib/card-preview";
-import { usd } from "@/lib/format";
+import { type Money, money } from "@/lib/format";
 import type { Dashboard, Holding } from "@/lib/stats";
 
 const TOP = 8;
 
-function Row({ h, rank }: { h: Holding; rank: number }) {
+function Row({ h, rank, m }: { h: Holding; rank: number; m: Money }) {
   return (
     <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-colors hover:border-mint/40" {...cardPreview(h)}>
       <span className="w-6 shrink-0 font-bold tabular-nums text-mint">{String(rank).padStart(2, "0")}</span>
@@ -17,12 +17,12 @@ function Row({ h, rank }: { h: Holding; rank: number }) {
           {h.quantity > 1 && ` · ×${h.quantity}`}
         </div>
       </div>
-      <span className="text-sm font-bold tabular-nums">{usd(h.value)}</span>
+      <span className="text-sm font-bold tabular-nums">{money(h.value, m)}</span>
     </li>
   );
 }
 
-export function RawLeaderboard({ d }: { d: Dashboard }) {
+export function RawLeaderboard({ d, m }: { d: Dashboard; m: Money }) {
   const top = d.holdings
     .filter((h) => h.value > 0)
     .sort((a, b) => b.value - a.value)
@@ -37,12 +37,12 @@ export function RawLeaderboard({ d }: { d: Dashboard }) {
         <div className="grid grid-cols-1 gap-x-8 gap-y-2.5 md:grid-cols-2">
           <ol className="min-w-0 space-y-2.5">
             {top.slice(0, half).map((h, i) => (
-              <Row key={h.id} h={h} rank={i + 1} />
+              <Row key={h.id} h={h} rank={i + 1} m={m} />
             ))}
           </ol>
           <ol className="min-w-0 space-y-2.5">
             {top.slice(half).map((h, i) => (
-              <Row key={h.id} h={h} rank={half + i + 1} />
+              <Row key={h.id} h={h} rank={half + i + 1} m={m} />
             ))}
           </ol>
         </div>

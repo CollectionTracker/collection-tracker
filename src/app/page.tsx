@@ -11,8 +11,9 @@ import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparis
 import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
-import { ago, pct, signed, tone, usd } from "@/lib/format";
+import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
+import { getDisplayMoney } from "@/lib/currency-pref";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -121,7 +122,7 @@ function Stat({
   );
 }
 
-function SummaryCards({ d, ytd }: { d: Dashboard; ytd: Comparison | null }) {
+function SummaryCards({ d, ytd, m }: { d: Dashboard; ytd: Comparison | null; m: Money }) {
   const total = d.combined.value;
   const rawShare = total ? (d.totalValue / total) * 100 : 0;
   const { low, high } = d.combined.valuation;
@@ -130,9 +131,9 @@ function SummaryCards({ d, ytd }: { d: Dashboard; ytd: Comparison | null }) {
       <div className={card}>
         <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
         <div className={labelStyle}>Total portfolio</div>
-        <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{usd(total)}</div>
+        <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{money(total, m)}</div>
         <div className={`mt-1 text-xs tabular-nums ${ytd ? tone(ytd.change) : "text-slate-2"}`}>
-          {ytd ? `${ytd.changePct == null ? signed(ytd.change) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
+          {ytd ? `${ytd.changePct == null ? signedMoney(ytd.change, m) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
         </div>
         <div
           className="mt-3 flex h-2 overflow-hidden rounded-full bg-track"
@@ -150,28 +151,28 @@ function SummaryCards({ d, ytd }: { d: Dashboard; ytd: Comparison | null }) {
       <Stat
         accent="sky"
         label="Sealed inventory"
-        value={usd(d.sealed.value)}
-        sub={`${d.sealed.units.toLocaleString()} units${d.sealed.gain == null ? "" : ` · ${signed(d.sealed.gain)} gain / loss`}`}
+        value={money(d.sealed.value, m)}
+        sub={`${d.sealed.units.toLocaleString()} units${d.sealed.gain == null ? "" : ` · ${signedMoney(d.sealed.gain, m)} gain / loss`}`}
         subTone={d.sealed.gain == null ? undefined : tone(d.sealed.gain)}
       />
       <Stat
         accent="violet"
         label="Raw cards"
-        value={usd(d.totalValue)}
-        sub={`${d.totalCopies.toLocaleString()} cards · ${d.uniqueCards} unique · ${d.setCount} sets${d.gain == null ? "" : ` · ${signed(d.gain)} gain / loss`}`}
+        value={money(d.totalValue, m)}
+        sub={`${d.totalCopies.toLocaleString()} cards · ${d.uniqueCards} unique · ${d.setCount} sets${d.gain == null ? "" : ` · ${signedMoney(d.gain, m)} gain / loss`}`}
         subTone={d.gain == null ? undefined : tone(d.gain)}
       />
       <Stat
         accent="amber"
         label="Valuation range"
-        value={`${usd(low)} – ${usd(high)}`}
-        sub={`Midpoint ${usd(d.combined.valuation.mid)}`}
+        value={`${money(low, m)} – ${money(high, m)}`}
+        sub={`Midpoint ${money(d.combined.valuation.mid, m)}`}
       />
     </section>
   );
 }
 
-function ValuationPanel({ d }: { d: Dashboard }) {
+function ValuationPanel({ d, m }: { d: Dashboard; m: Money }) {
   const { low, mid, high } = d.combined.valuation;
   const largest = largestHolding(d.holdings, d.sealed.holdings, d.combined.value);
   const midPos = high > low ? ((mid - low) / (high - low)) * 100 : 50;
@@ -182,14 +183,14 @@ function ValuationPanel({ d }: { d: Dashboard }) {
       <div className="grid gap-6 md:grid-cols-2">
         <div>
           <div className={labelStyle}>Estimated range</div>
-          <div className="relative mt-4 h-2 rounded-full bg-track" role="img" aria-label={`Low ${usd(low)}, midpoint ${usd(mid)}, high ${usd(high)}`}>
+          <div className="relative mt-4 h-2 rounded-full bg-track" role="img" aria-label={`Low ${money(low, m)}, midpoint ${money(mid, m)}, high ${money(high, m)}`}>
             <div className="absolute inset-y-0 left-0 right-0 rounded-full bg-sky/40" />
             <div className="absolute -top-1 h-4 w-1 -translate-x-1/2 rounded-full bg-mint" style={{ left: `${midPos}%` }} />
           </div>
           <div className="mt-2 flex justify-between text-sm tabular-nums">
-            <span className="text-slate-2">Low {usd(low)}</span>
-            <span className="font-bold">Mid {usd(mid)}</span>
-            <span className="text-slate-2">High {usd(high)}</span>
+            <span className="text-slate-2">Low {money(low, m)}</span>
+            <span className="font-bold">Mid {money(mid, m)}</span>
+            <span className="text-slate-2">High {money(high, m)}</span>
           </div>
         </div>
         <div>
@@ -198,7 +199,7 @@ function ValuationPanel({ d }: { d: Dashboard }) {
             <>
               <div className="mt-1 truncate text-sm font-medium">{largest.name}</div>
               <div className="text-xs text-slate-2">
-                {largest.kind} · {usd(largest.value)} · <span className="font-bold text-ink">{largest.pct.toFixed(1)}%</span> of portfolio
+                {largest.kind} · {money(largest.value, m)} · <span className="font-bold text-ink">{largest.pct.toFixed(1)}%</span> of portfolio
               </div>
               {risky && (
                 <p className="mt-2 rounded-lg bg-amber/10 px-3 py-2 text-xs text-amber">
@@ -216,7 +217,7 @@ function ValuationPanel({ d }: { d: Dashboard }) {
   );
 }
 
-function TopSealedPanel({ d }: { d: Dashboard }) {
+function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
   const ranked = d.sealed.holdings.filter((h) => h.value > 0).sort((a, b) => b.value - a.value);
   const top = ranked.slice(0, 5);
   const max = top[0]?.value ?? 0;
@@ -237,7 +238,7 @@ function TopSealedPanel({ d }: { d: Dashboard }) {
                   {i + 1}. {h.name}
                   {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
                 </span>
-                <span className="font-bold tabular-nums">{usd(h.value)}</span>
+                <span className="font-bold tabular-nums">{money(h.value, m)}</span>
               </div>
               <div className="mt-1.5 h-2 rounded-full bg-track">
                 <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
@@ -250,7 +251,7 @@ function TopSealedPanel({ d }: { d: Dashboard }) {
   );
 }
 
-function StructurePanel({ d }: { d: Dashboard }) {
+function StructurePanel({ d, m }: { d: Dashboard; m: Money }) {
   const { holdings, value, valuation } = d.sealed;
   const groups = new Map<string, number>();
   for (const h of holdings) groups.set(h.productType, (groups.get(h.productType) ?? 0) + h.value);
@@ -269,7 +270,7 @@ function StructurePanel({ d }: { d: Dashboard }) {
                 <div className="flex justify-between text-sm">
                   <span className="truncate text-slate-2">{type}</span>
                   <span className="font-bold tabular-nums">
-                    {((v / value) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {usd(v)}</span>
+                    {((v / value) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {money(v, m)}</span>
                   </span>
                 </div>
                 <div className="mt-1.5 h-2 rounded-full bg-track">
@@ -282,7 +283,7 @@ function StructurePanel({ d }: { d: Dashboard }) {
             <div>
               <dt className={labelStyle}>Sealed market range</dt>
               <dd className="mt-1 tabular-nums">
-                {usd(valuation.low)} – {usd(valuation.high)}
+                {money(valuation.low, m)} – {money(valuation.high, m)}
               </dd>
             </div>
             <div>
@@ -314,17 +315,17 @@ function AssumptionsCard() {
   );
 }
 
-function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
+function ComparisonCard({ title, c, empty, m }: { title: string; c: Comparison | null; empty: string; m: Money }) {
   return (
     <div className={card}>
       <h2 className={`${heading} mb-3`}>{title}</h2>
       {c ? (
         <>
           <div className={`text-[28px] font-bold leading-[34px] tabular-nums ${tone(c.change)}`}>
-            {c.changePct == null ? signed(c.change) : pct(c.changePct)}
+            {c.changePct == null ? signedMoney(c.change, m) : pct(c.changePct)}
           </div>
           <div className="mt-1 text-xs tabular-nums text-slate-2">
-            {signed(c.change)} since {c.baselineDay} ({usd(c.baselineValue)}), raw and sealed combined
+            {signedMoney(c.change, m)} since {c.baselineDay} ({money(c.baselineValue, m)}), raw and sealed combined
           </div>
         </>
       ) : (
@@ -334,7 +335,7 @@ function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | nu
   );
 }
 
-function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
+function CardRow({ h, m, showChange }: { h: Holding; m: Money; showChange?: boolean }) {
   return (
     <li className="flex items-center gap-3" {...cardPreview(h)}>
       {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
@@ -346,10 +347,10 @@ function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
         </div>
       </div>
       <div className="text-right text-sm tabular-nums">
-        <div>{usd(h.value)}</div>
+        <div>{money(h.value, m)}</div>
         {showChange && (
           <div className={`text-xs ${tone(h.change)}`}>
-            {signed(h.change)} ({pct(h.changePct)})
+            {signedMoney(h.change, m)} ({pct(h.changePct)})
           </div>
         )}
       </div>
@@ -361,7 +362,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   await connection(); // always render per request, never at build time
   const snapshots = await listSnapshots();
   const asOf = pickSnapshot((await searchParams).snapshot, snapshots);
-  const [d, cmp] = await Promise.all([getDashboard(asOf), getComparisons(asOf)]);
+  const [d, cmp, m] = await Promise.all([getDashboard(asOf), getComparisons(asOf), getDisplayMoney(asOf ?? undefined)]);
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>
@@ -372,24 +373,26 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <SummaryCards d={d} ytd={cmp.ytd} />
+      <SummaryCards d={d} ytd={cmp.ytd} m={m} />
 
       <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-6">
         <ComparisonCard
           title="Year to date"
           c={cmp.ytd}
+          m={m}
           empty="Needs at least two snapshots this year, or one from last year."
         />
         <ComparisonCard
           title={`${COMPARISON_DAYS}-day comparison`}
           c={cmp.thirtyDay}
+          m={m}
           empty={`Needs a snapshot at least ${COMPARISON_DAYS} days older than the latest one.`}
         />
       </section>
 
       <section className={card}>
         <h2 className={`${heading} mb-4`}>Value over time</h2>
-        <ValueChart data={d.history} />
+        <ValueChart data={d.history} m={m} />
       </section>
 
       <section className="page-grid">
@@ -401,6 +404,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
                 { label: "Sealed", value: d.sealed.value, color: "#38bdf8" },
                 { label: "Raw cards", value: d.totalValue, color: "#a855f7" },
               ]}
+              m={m}
             />
           ) : (
             <p className="text-sm text-slate-2">No priced holdings yet.</p>
@@ -408,11 +412,11 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </div>
         <div className={card + " col-span-full lg:col-span-7"}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
-          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} />)}</ul>
+          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} />)}</ul>
         </div>
-        <ValuationPanel d={d} />
-        <TopSealedPanel d={d} />
-        <StructurePanel d={d} />
+        <ValuationPanel d={d} m={m} />
+        <TopSealedPanel d={d} m={m} />
+        <StructurePanel d={d} m={m} />
         <AssumptionsCard />
       </section>
 

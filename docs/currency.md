@@ -40,3 +40,10 @@ Symbols and decimals come from `CURRENCY_INFO` in `src/lib/currencies.ts` and fo
 ## Selected currency
 
 The header has a currency selector (in the menu drawer below 1024px). The choice is stored in the `currency` cookie (one year, `SameSite=Lax`) by the `setCurrencyAction` server action. Server components read it with `getCurrency()` from `src/lib/currency-pref.ts`, which falls back to USD for a missing or unknown value. It reads a cookie, so call it inside a `<Suspense>` boundary.
+
+## Applying the currency
+
+Server pages call `getDisplayMoney(asOf?)` (in `src/lib/currency-pref.ts`) once and pass the `Money` it returns down as an `m` prop. It is plain data, so client components get it too. Every amount goes through `money`, `wholeMoney`, `compactMoney` or `signedMoney` with that `m`.
+
+- **One rate per page:** the selected currency's rate for the day being shown. That is today, or the snapshot day on the Overview. History, comparisons and projections all use that one rate, so they show changes in the portfolio, not in exchange rates. Percentages are unaffected.
+- **Charts** convert their data (`value * m.rate`) before plotting and format with `converted(m)` (rate 1). Axis ticks are then round numbers in the display currency, not converted round dollars.

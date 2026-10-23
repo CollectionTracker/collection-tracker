@@ -1,4 +1,4 @@
-import { compactUsd } from "@/lib/format";
+import { compactMoney, type Money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
@@ -7,7 +7,9 @@ const TOP = 5;
 
 type Row = { label: string; value: number };
 
-function BarPanel({ title, rows, bar, text, empty }: { title: string; rows: Row[]; bar: string; text: string; empty: string }) {
+type BarPanelProps = { title: string; rows: Row[]; bar: string; text: string; empty: string; m: Money };
+
+function BarPanel({ title, rows, bar, text, empty, m }: BarPanelProps) {
   const top = rows.slice(0, TOP);
   const max = top[0]?.value ?? 0;
   return (
@@ -25,7 +27,7 @@ function BarPanel({ title, rows, bar, text, empty }: { title: string; rows: Row[
               <div className="col-span-5 h-2 overflow-hidden rounded-full bg-track">
                 <div className={`h-full rounded-full ${bar}`} style={{ width: `${(r.value / max) * 100}%` }} />
               </div>
-              <span className={`col-span-2 text-right tabular-nums ${i === 0 ? `font-bold ${text}` : ""}`}>{compactUsd(r.value)}</span>
+              <span className={`col-span-2 text-right tabular-nums ${i === 0 ? `font-bold ${text}` : ""}`}>{compactMoney(r.value, m)}</span>
             </li>
           ))}
         </ul>
@@ -34,13 +36,13 @@ function BarPanel({ title, rows, bar, text, empty }: { title: string; rows: Row[
   );
 }
 
-export function RawBreakdown({ d }: { d: Dashboard }) {
+export function RawBreakdown({ d, m }: { d: Dashboard; m: Money }) {
   const sets = d.setProgress.map((s) => ({ label: s.name, value: s.value }));
   const empty = "No priced raw cards yet.";
   return (
     <section className="grid gap-3 md:grid-cols-2 md:gap-5">
-      <BarPanel title="Value by card set" rows={sets} bar="bg-mint" text="text-mint" empty={empty} />
-      <BarPanel title="Value by rarity" rows={d.byRarity} bar="bg-violet" text="text-violet" empty={empty} />
+      <BarPanel title="Value by card set" rows={sets} bar="bg-mint" text="text-mint" empty={empty} m={m} />
+      <BarPanel title="Value by rarity" rows={d.byRarity} bar="bg-violet" text="text-violet" empty={empty} m={m} />
     </section>
   );
 }
