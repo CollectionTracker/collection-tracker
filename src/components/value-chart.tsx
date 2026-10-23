@@ -9,6 +9,9 @@ export function ValueChart({ data }: { data: { day: string; value: number }[] })
         History builds up as daily price snapshots are collected.
       </div>
     );
+  // Pad the range so a flat history still gets distinct ticks (equal min and max repeat a tick).
+  const values = data.map((p) => p.value);
+  const domain = [Math.floor(Math.min(...values) * 0.98), Math.ceil(Math.max(...values) * 1.02)];
   return (
     <ResponsiveContainer width="100%" height={256}>
       <AreaChart data={data} margin={{ left: 0, right: 8, top: 8 }}>
@@ -24,7 +27,7 @@ export function ValueChart({ data }: { data: { day: string; value: number }[] })
           width={56}
           tick={{ fill: "#94a3b8", fontSize: 12 }}
           tickFormatter={(v: number) => `$${v.toLocaleString()}`}
-          domain={[(min: number) => Math.floor(min * 0.98), (max: number) => Math.ceil(max * 1.02)]}
+          domain={domain}
         />
         <Tooltip
           contentStyle={{ background: "#0d1733", border: "1px solid #ffffff20", borderRadius: 8 }}
