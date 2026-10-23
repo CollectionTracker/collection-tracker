@@ -10,6 +10,7 @@ import { type Bucket, type Dashboard, type Holding, getDashboard } from "@/lib/s
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
+import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, pct, signed, tone, usd } from "@/lib/format";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
@@ -169,6 +170,51 @@ function SummaryCards({ d, ytd }: { d: Dashboard; ytd: Comparison | null }) {
   );
 }
 
+function ValuationPanel({ d }: { d: Dashboard }) {
+  const { low, mid, high } = d.combined.valuation;
+  const largest = largestHolding(d.holdings, d.sealed.holdings, d.combined.value);
+  const midPos = high > low ? ((mid - low) / (high - low)) * 100 : 50;
+  const risky = largest != null && largest.pct >= CONCENTRATION_WARNING_PCT;
+  return (
+    <div className={card + " col-span-full"}>
+      <h2 className={`${heading} mb-4`}>Valuation &amp; concentration</h2>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div>
+          <div className={labelStyle}>Estimated range</div>
+          <div className="relative mt-4 h-2 rounded-full bg-track" role="img" aria-label={`Low ${usd(low)}, midpoint ${usd(mid)}, high ${usd(high)}`}>
+            <div className="absolute inset-y-0 left-0 right-0 rounded-full bg-sky/40" />
+            <div className="absolute -top-1 h-4 w-1 -translate-x-1/2 rounded-full bg-mint" style={{ left: `${midPos}%` }} />
+          </div>
+          <div className="mt-2 flex justify-between text-sm tabular-nums">
+            <span className="text-slate-2">Low {usd(low)}</span>
+            <span className="font-bold">Mid {usd(mid)}</span>
+            <span className="text-slate-2">High {usd(high)}</span>
+          </div>
+        </div>
+        <div>
+          <div className={labelStyle}>Largest single holding</div>
+          {largest ? (
+            <>
+              <div className="mt-1 truncate text-sm font-medium">{largest.name}</div>
+              <div className="text-xs text-slate-2">
+                {largest.kind} · {usd(largest.value)} · <span className="font-bold text-ink">{largest.pct.toFixed(1)}%</span> of portfolio
+              </div>
+              {risky && (
+                <p className="mt-2 rounded-lg bg-amber/10 px-3 py-2 text-xs text-amber">
+                  Concentration warning: one holding is {largest.pct.toFixed(0)}% of the portfolio (threshold {CONCENTRATION_WARNING_PCT}%).
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-slate-2">No priced holdings yet.</p>
+          )}
+        </div>
+      </div>
+      <p className="mt-4 text-xs text-slate-2">The range is an estimate, not guaranteed realized sale proceeds.</p>
+    </div>
+  );
+}
+
 function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
   return (
     <div className={card}>
@@ -285,6 +331,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
           <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} />)}</ul>
         </div>
+        <ValuationPanel d={d} />
         <div className="col-span-full space-y-5">
           <div className={card}>
             <h2 className={`${heading} mb-4`}>Top movers</h2>
