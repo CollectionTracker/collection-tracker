@@ -249,6 +249,54 @@ function TopSealedPanel({ d }: { d: Dashboard }) {
   );
 }
 
+function StructurePanel({ d }: { d: Dashboard }) {
+  const { holdings, value, valuation } = d.sealed;
+  const groups = new Map<string, number>();
+  for (const h of holdings) groups.set(h.productType, (groups.get(h.productType) ?? 0) + h.value);
+  const weights = [...groups].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  const largest = holdings.reduce<(typeof holdings)[number] | null>((a, h) => (!a || h.value > a.value ? h : a), null);
+  return (
+    <div className={card + " col-span-full lg:col-span-6"}>
+      <h2 className={`${heading} mb-4`}>Collection structure</h2>
+      {weights.length === 0 ? (
+        <p className="text-sm text-slate-2">No priced sealed products yet. Enter a price on the Sealed Inventory view.</p>
+      ) : (
+        <>
+          <ul className="space-y-3">
+            {weights.map(([type, v]) => (
+              <li key={type}>
+                <div className="flex justify-between text-sm">
+                  <span className="truncate text-slate-2">{type}</span>
+                  <span className="font-bold tabular-nums">
+                    {((v / value) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {usd(v)}</span>
+                  </span>
+                </div>
+                <div className="mt-1.5 h-2 rounded-full bg-track">
+                  <div className="h-full rounded-full bg-violet" style={{ width: `${(v / value) * 100}%` }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <dl className="mt-5 grid gap-3 border-t border-white/5 pt-4 text-sm sm:grid-cols-2">
+            <div>
+              <dt className={labelStyle}>Sealed market range</dt>
+              <dd className="mt-1 tabular-nums">
+                {usd(valuation.low)} – {usd(valuation.high)}
+              </dd>
+            </div>
+            <div>
+              <dt className={labelStyle}>Largest holding</dt>
+              <dd className="mt-1 truncate tabular-nums">
+                {largest && value > 0 ? `${((largest.value / value) * 100).toFixed(1)}% of sealed · ${largest.name}` : "—"}
+              </dd>
+            </div>
+          </dl>
+        </>
+      )}
+    </div>
+  );
+}
+
 function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
   return (
     <div className={card}>
@@ -367,6 +415,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </div>
         <ValuationPanel d={d} />
         <TopSealedPanel d={d} />
+        <StructurePanel d={d} />
         <div className="col-span-full space-y-5">
           <div className={card}>
             <h2 className={`${heading} mb-4`}>Top movers</h2>

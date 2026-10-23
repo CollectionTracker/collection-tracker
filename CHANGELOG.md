@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Value-over-time chart logged duplicate React key errors when every snapshot had the same total (flat history gave repeated Y-axis ticks); the axis range is now computed from the data and padded by 2 % so ticks stay distinct.
 
 ### Changed
+- Collection structure panel on the Overview: sealed value split by product type (booster box, ETB, …) with percentage weights and amounts, the sealed low–high market range, and the share of sealed value held in the single largest holding; empty state until a sealed price is entered.
 - Top sealed holdings panel on the Overview: the five most valuable sealed SKUs ranked as bars (top item highlighted, quantity shown) with the total SKU count, and an empty state until a sealed price is entered.
 - Valuation & Concentration panel on the Overview: a low–mid–high range bar for the combined portfolio, the largest single holding (raw card or sealed stack) with its share of the portfolio, an amber concentration warning when it reaches 25 % (`CONCENTRATION_WARNING_PCT`), and a note that the range is not guaranteed realized sale proceeds.
 - Portfolio value mix donut replaces the interim rarity donut: it splits combined value into Sealed and Raw cards, shows each share and amount in the legend, and highlights the matching slice (and the centre readout) when you hover a slice or legend row. The by-rarity bars below are unchanged.
