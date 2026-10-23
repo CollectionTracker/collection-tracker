@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
+import { RawAllCards } from "@/components/raw-all-cards";
 import { RawBreakdown } from "@/components/raw-breakdown";
 import { RawLeaderboard } from "@/components/raw-leaderboard";
 import { RawIntelHeader } from "@/components/raw-intel-header";
@@ -35,6 +36,7 @@ async function RawCards() {
       <RawStructure d={d} />
       <RawHistory d={d} />
       <RawMovers d={d} />
+      <RawAllCards holdings={d.holdings} sets={d.setProgress} />
     </>
   );
 }
