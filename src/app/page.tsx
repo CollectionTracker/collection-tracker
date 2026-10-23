@@ -215,6 +215,40 @@ function ValuationPanel({ d }: { d: Dashboard }) {
   );
 }
 
+function TopSealedPanel({ d }: { d: Dashboard }) {
+  const ranked = d.sealed.holdings.filter((h) => h.value > 0).sort((a, b) => b.value - a.value);
+  const top = ranked.slice(0, 5);
+  const max = top[0]?.value ?? 0;
+  return (
+    <div className={card + " col-span-full lg:col-span-6"}>
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 className={heading}>Top sealed holdings</h2>
+        <span className="text-xs text-slate-2">{d.sealed.holdings.length} SKUs</span>
+      </div>
+      {top.length === 0 ? (
+        <p className="text-sm text-slate-2">No priced sealed products yet. Enter a price on the Sealed Inventory view.</p>
+      ) : (
+        <ol className="space-y-3">
+          {top.map((h, i) => (
+            <li key={h.id}>
+              <div className="flex justify-between gap-3 text-sm">
+                <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
+                  {i + 1}. {h.name}
+                  {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
+                </span>
+                <span className="font-bold tabular-nums">{usd(h.value)}</span>
+              </div>
+              <div className="mt-1.5 h-2 rounded-full bg-track">
+                <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
   return (
     <div className={card}>
@@ -332,6 +366,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
           <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} />)}</ul>
         </div>
         <ValuationPanel d={d} />
+        <TopSealedPanel d={d} />
         <div className="col-span-full space-y-5">
           <div className={card}>
             <h2 className={`${heading} mb-4`}>Top movers</h2>
