@@ -1,14 +1,9 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { compactUsd } from "@/lib/format";
-import { MILESTONE_YEARS, PROJECTION_YEARS, type Scenario } from "@/lib/scenarios";
+import { compactUsd, wholeUsd as dollars } from "@/lib/format";
+import { MILESTONE_YEARS, PROJECTION_YEARS, type Scenario, scenarioColor as colorOf } from "@/lib/scenarios";
 
-/** Line colour per scenario id; matches the render (amber conservative, mint moderate, violet high). */
-export const SCENARIO_COLORS: Record<string, string> = { conservative: "#f59e0b", moderate: "#2dd4bf", high: "#a855f7" };
-const colorOf = (id: string) => SCENARIO_COLORS[id] ?? "#94a3b8";
-/** Projections are rough, so whole dollars only. */
-const dollars = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 /** Three-line projection over the milestone years; straight segments between milestones, as in the design. */
 export function ScenarioChart({ scenarios }: { scenarios: Scenario[] }) {

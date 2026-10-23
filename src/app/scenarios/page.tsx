@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { ScenarioProjection } from "@/components/scenario-projection";
+import { YearTenOutcomes } from "@/components/year-ten-outcomes";
 import { projectScenarios } from "@/lib/scenarios";
 import { getDashboard } from "@/lib/stats";
 
@@ -25,5 +26,17 @@ async function Scenarios() {
   await connection();
   const d = await getDashboard();
   const start = d.combined.valuation.mid;
-  return <ScenarioProjection start={start} scenarios={projectScenarios(start)} />;
+  const scenarios = projectScenarios(start);
+  return (
+    <section className="page-grid">
+      <div className="col-span-full lg:col-span-9">
+        <ScenarioProjection start={start} scenarios={scenarios} />
+      </div>
+      {start > 0 && (
+        <div className="col-span-full lg:col-span-3">
+          <YearTenOutcomes scenarios={scenarios} />
+        </div>
+      )}
+    </section>
+  );
 }
