@@ -297,6 +297,22 @@ function StructurePanel({ d }: { d: Dashboard }) {
   );
 }
 
+function AssumptionsCard() {
+  return (
+    <div className={card + " col-span-full"}>
+      <h2 className={`${heading} mb-3`}>Valuation context &amp; assumptions</h2>
+      <ul className="list-disc space-y-1.5 pl-5 text-xs text-slate-2">
+        <li>Values are estimates based on market prices and are not guaranteed realized sale proceeds.</li>
+        <li>Selling fees, taxes and shipping are not deducted.</li>
+        <li>Raw card prices assume the recorded condition; actual grading or condition can move the price.</li>
+        <li>Thin markets and low liquidity mean a large holding may sell below the listed price, or slowly.</li>
+        <li>Preorder and recently released sealed products carry extra price uncertainty.</li>
+        <li>Low and high are an illustrative spread around the midpoint, not a forecast (see docs/valuation.md).</li>
+      </ul>
+    </div>
+  );
+}
+
 function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | null; empty: string }) {
   return (
     <div className={card}>
@@ -416,6 +432,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         <ValuationPanel d={d} />
         <TopSealedPanel d={d} />
         <StructurePanel d={d} />
+        <AssumptionsCard />
         <div className="col-span-full space-y-5">
           <div className={card}>
             <h2 className={`${heading} mb-4`}>Top movers</h2>
