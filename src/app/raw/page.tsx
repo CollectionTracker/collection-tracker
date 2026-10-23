@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { connection } from "next/server";
+import { RawBreakdown } from "@/components/raw-breakdown";
 import { RawIntelHeader } from "@/components/raw-intel-header";
+import { getDashboard } from "@/lib/stats";
 
 export const metadata: Metadata = { title: "Raw Cards · Collection Tracker" };
 
@@ -12,8 +15,19 @@ export default function Page() {
         <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">Raw Cards</h1>
       </header>
       <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
-        <RawIntelHeader />
+        <RawCards />
       </Suspense>
     </main>
+  );
+}
+
+async function RawCards() {
+  await connection();
+  const d = await getDashboard();
+  return (
+    <>
+      <RawIntelHeader d={d} />
+      <RawBreakdown d={d} />
+    </>
   );
 }

@@ -10,3 +10,6 @@ export function ago(then: Date, now = new Date()) {
   if (hours < 48) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
   return `${Math.floor(hours / 24)} days ago`;
 }
+/** Short dollar amount for tight spaces: $229, $3.1k, $1.2M. */
+export const compactUsd = (n: number) =>
+  n >= 1_000_000 ? `$${(n / 1_000_000).toFixed(1)}M` : n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`;
