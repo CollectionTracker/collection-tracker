@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { RawBreakdown } from "@/components/raw-breakdown";
+import { RawLeaderboard } from "@/components/raw-leaderboard";
 import { RawIntelHeader } from "@/components/raw-intel-header";
 import { getDashboard } from "@/lib/stats";
 
@@ -28,6 +29,7 @@ async function RawCards() {
     <>
       <RawIntelHeader d={d} />
       <RawBreakdown d={d} />
+      <RawLeaderboard d={d} />
     </>
   );
 }
