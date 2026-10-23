@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { asc, desc, gt, lte, max, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { fxRates } from "@/db/schema";
@@ -45,8 +46,9 @@ async function refreshIfStale() {
 /**
  * Rates (units per 1 USD) for display. Current rates are refreshed daily; with `asOf` (a snapshot day) the rates
  * stored on or before that day are used. Missing currencies fall back to the last known, then built-in, rate.
+ * Cached per request, so several components can ask for the rates with one query.
  */
-export async function getFxRates(asOf?: string): Promise<FxRates> {
+export const getFxRates = cache(async (asOf?: string): Promise<FxRates> => {
   if (!asOf) await refreshIfStale();
   const db = await getDb();
   const latest = await db
@@ -63,4 +65,4 @@ export async function getFxRates(asOf?: string): Promise<FxRates> {
           .orderBy(fxRates.currency, asc(fxRates.day))
       : [];
   return resolveRates(latest, earliest);
-}
+});
