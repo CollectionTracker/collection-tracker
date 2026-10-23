@@ -1,11 +1,23 @@
-import { z } from "zod";
-
 /** Display currencies, in selector order. Every price is stored in USD and converted for display. */
 export const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "HKD", "NZD"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const BASE_CURRENCY = "USD" satisfies Currency;
 
-export const isCurrency = (code: string): code is Currency => (CURRENCIES as readonly string[]).includes(code);
+/** Display details from the design render. Several currencies share "$" or "¥"; the selector shows the code beside it. */
+export const CURRENCY_INFO: Record<Currency, { symbol: string; name: string; flag: string; decimals: number }> = {
+  USD: { symbol: "$", name: "US Dollar", flag: "🇺🇸", decimals: 2 },
+  EUR: { symbol: "€", name: "Euro", flag: "🇪🇺", decimals: 2 },
+  GBP: { symbol: "£", name: "British Pound", flag: "🇬🇧", decimals: 2 },
+  JPY: { symbol: "¥", name: "Japanese Yen", flag: "🇯🇵", decimals: 0 },
+  CAD: { symbol: "$", name: "Canadian Dollar", flag: "🇨🇦", decimals: 2 },
+  AUD: { symbol: "$", name: "Australian Dollar", flag: "🇦🇺", decimals: 2 },
+  CHF: { symbol: "Fr", name: "Swiss Franc", flag: "🇨🇭", decimals: 2 },
+  CNY: { symbol: "¥", name: "Chinese Yuan", flag: "🇨🇳", decimals: 2 },
+  HKD: { symbol: "$", name: "Hong Kong Dollar", flag: "🇭🇰", decimals: 2 },
+  NZD: { symbol: "$", name: "New Zealand Dollar", flag: "🇳🇿", decimals: 2 },
+};
+
+export const isCurrency =(code: string): code is Currency => (CURRENCIES as readonly string[]).includes(code);
 
 /** Rates from the design render, used for a currency only when no rate has ever been stored for it (e.g. offline first run). */
 export const FALLBACK_RATES: Record<Currency, number> = {
@@ -33,18 +45,22 @@ export type FxRates = {
   fallback: Currency[];
 };
 
-// Frankfurter (ECB reference rates): { amount: 1, base: "USD", date: "2026-10-23", rates: { EUR: 0.89, ... } }
-const frankfurterResponse = z.object({
-  base: z.literal(BASE_CURRENCY),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  rates: z.record(z.string(), z.number().positive()),
-});
-
-/** Validate a Frankfurter response and keep only supported currencies. Throws on a malformed response. */
+/**
+ * Validate a Frankfurter (ECB reference rates) response, `{ amount: 1, base: "USD", date: "2026-10-23", rates: { EUR: 0.89 } }`,
+ * and keep only supported currencies. Throws on a malformed response. Checked by hand rather than with zod because
+ * this module ships to the browser with the formatters.
+ */
 export function parseRates(json: unknown): { day: string; rates: Partial<Record<Currency, number>> } {
-  const { date, rates } = frankfurterResponse.parse(json);
+  const { base, date, rates } = (json ?? {}) as { base?: unknown; date?: unknown; rates?: unknown };
+  if (base !== BASE_CURRENCY) throw new Error(`Expected ${BASE_CURRENCY} rates, got base ${String(base)}`);
+  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Rate response has no valid date");
+  if (typeof rates !== "object" || rates === null) throw new Error("Rate response has no rates");
   const out: Partial<Record<Currency, number>> = {};
-  for (const [code, rate] of Object.entries(rates)) if (isCurrency(code) && code !== BASE_CURRENCY) out[code] = rate;
+  for (const [code, rate] of Object.entries(rates)) {
+    if (!isCurrency(code) || code === BASE_CURRENCY) continue;
+    if (typeof rate !== "number" || !(rate > 0) || !Number.isFinite(rate)) throw new Error(`Invalid ${code} rate`);
+    out[code] = rate;
+  }
   if (!Object.keys(out).length) throw new Error("No supported currencies in rate response");
   return { day: date, rates: out };
 }
