@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cardPreview } from "@/lib/card-preview";
 import { pct, signed, tone, usd } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 import { ValueChart } from "./value-chart";
@@ -25,7 +26,7 @@ export function RawMovers({ d }: { d: Dashboard }) {
       ) : (
         <ul className="space-y-3">
           {movers.map((h) => (
-            <li key={h.id} className="flex items-center gap-3">
+            <li key={h.id} className="flex items-center gap-3" {...cardPreview(h)}>
               {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium">{h.name}</div>

@@ -14,6 +14,7 @@ type EntryRow = {
   number: string;
   rarity: string | null;
   image_small: string | null;
+  image_large: string | null;
   set_id: string;
   set_name: string;
   printed_total: number;
@@ -28,6 +29,7 @@ export type Holding = {
   number: string;
   rarity: string;
   image: string | null;
+  imageLarge: string | null; // hi-res art for the hover preview
   setId: string;
   setName: string;
   variant: string;
@@ -48,7 +50,7 @@ export async function getDashboard(asOf: string | null = null) {
   const db = await getDb();
   const { rows } = await db.execute<EntryRow>(sql`
     select e.id, e.card_id, e.variant, e.condition, e.quantity, e.purchase_price,
-           c.name, c.number, c.rarity, c.image_small,
+           c.name, c.number, c.rarity, c.image_small, c.image_large,
            s.id as set_id, s.name as set_name, s.printed_total,
            cur.market as cur, prev.market as prev
     from collection_entries e
@@ -76,6 +78,7 @@ export async function getDashboard(asOf: string | null = null) {
       number: r.number,
       rarity: r.rarity ?? "Unknown",
       image: r.image_small,
+      imageLarge: r.image_large,
       setId: r.set_id,
       setName: r.set_name,
       variant: r.variant,

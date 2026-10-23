@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { BottomTabBar } from "@/components/bottom-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
+import { CardPreviewLayer } from "@/components/card-preview-layer";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <SiteFooter />
         <BottomTabBar />
+        <CardPreviewLayer />
       </body>
     </html>
   );
