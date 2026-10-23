@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { RawBreakdown } from "@/components/raw-breakdown";
 import { RawLeaderboard } from "@/components/raw-leaderboard";
 import { RawIntelHeader } from "@/components/raw-intel-header";
+import { RawHistory, RawMovers } from "@/components/raw-movers";
 import { RawStructure } from "@/components/raw-structure";
 import { getDashboard } from "@/lib/stats";
 
@@ -32,6 +33,8 @@ async function RawCards() {
       <RawBreakdown d={d} />
       <RawLeaderboard d={d} />
       <RawStructure d={d} />
+      <RawHistory d={d} />
+      <RawMovers d={d} />
     </>
   );
 }

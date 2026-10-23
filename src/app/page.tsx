@@ -6,7 +6,7 @@ import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { ValueMixDonut } from "@/components/value-mix-donut";
-import { type Bucket, type Dashboard, type Holding, getDashboard } from "@/lib/stats";
+import { type Dashboard, type Holding, getDashboard } from "@/lib/stats";
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
@@ -333,26 +333,6 @@ function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | nu
   );
 }
 
-function Bars({ items, total }: { items: Bucket[]; total: number }) {
-  return (
-    <ul className="space-y-3">
-      {items.slice(0, 8).map((b) => (
-        <li key={b.label}>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-2">
-              {b.label} <span className="text-slate-2">×{b.count}</span>
-            </span>
-            <span className="font-bold tabular-nums">{usd(b.value)}</span>
-          </div>
-          <div className="mt-1.5 h-2 rounded-full bg-track">
-            <div className="h-full rounded-full bg-mint" style={{ width: `${total ? (b.value / total) * 100 : 0}%` }} />
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
   return (
     <li className="flex items-center gap-3">
@@ -433,51 +413,6 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         <TopSealedPanel d={d} />
         <StructurePanel d={d} />
         <AssumptionsCard />
-        <div className="col-span-full space-y-5">
-          <div className={card}>
-            <h2 className={`${heading} mb-4`}>Top movers</h2>
-            {d.gainers.length + d.losers.length === 0 ? (
-              <p className="text-sm text-slate-2">Needs at least two daily snapshots.</p>
-            ) : (
-              <ul className="space-y-3">
-                {[...d.gainers, ...d.losers].map((h) => <CardRow key={h.id} h={h} showChange />)}
-              </ul>
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="page-grid [&>*]:col-span-full md:[&>*]:col-span-4 lg:[&>*]:col-span-4 [&>*:last-child]:md:col-span-8 [&>*:last-child]:lg:col-span-4">
-        <div className={card}>
-          <h2 className={`${heading} mb-4`}>Value by set</h2>
-          <ul className="space-y-3">
-            {d.setProgress.slice(0, 8).map((s) => (
-              <li key={s.id}>
-                <div className="flex justify-between text-sm">
-                  <span className="truncate pr-2 text-slate-2">{s.name}</span>
-                  <span className="font-bold tabular-nums">{usd(s.value)}</span>
-                </div>
-                <div className="mt-1.5 h-2 rounded-full bg-track">
-                  <div
-                    className="h-full rounded-full bg-sky"
-                    style={{ width: `${s.total ? Math.min(100, (s.owned / s.total) * 100) : 0}%` }}
-                  />
-                </div>
-                <div className="mt-0.5 text-xs text-slate-2">
-                  {s.owned}/{s.total} cards ({s.total ? ((s.owned / s.total) * 100).toFixed(0) : 0}%)
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className={card}>
-          <h2 className={`${heading} mb-4`}>By rarity</h2>
-          <Bars items={d.byRarity} total={d.totalValue} />
-        </div>
-        <div className={card}>
-          <h2 className={`${heading} mb-4`}>By condition</h2>
-          <Bars items={d.byCondition} total={d.totalValue} />
-        </div>
       </section>
 
       <section className={card}>
