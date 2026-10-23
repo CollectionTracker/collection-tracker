@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Raw Cards view now shows Raw card value over time and Top movers, so the card-level history and price changes live with the other raw analytics (#32).
 - Raw Cards view now also shows Set completion (owned/total cards and value per set) and Value by condition (share of raw value), completing the page alongside the header, set/rarity panels and top 8 leaderboard (#31).
 - Top 8 raw card holdings leaderboard on the Raw Cards view: two numbered columns ranked by stack value, each row with thumbnail, set, rarity, variant, quantity and value (#30).
 - Value by card set and Value by rarity panels on the Raw Cards view: top 5 each as horizontal bars scaled to the largest, the top item highlighted, values in compact form (e.g. $3.1k) (#29).
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Value-over-time chart logged duplicate React key errors when every snapshot had the same total (flat history gave repeated Y-axis ticks); the axis range is now computed from the data and padded by 2 % so ticks stay distinct.
 
 ### Changed
+- Overview no longer repeats the raw-card-only Top movers, Value by set, By rarity and By condition widgets; they moved to the Raw Cards view (Top movers, Set completion, Value by card set / rarity / condition). Value over time stays on the Overview (#32).
 - Valuation context and assumptions card on the Overview: states that values are estimates, not realized proceeds, and that fees, taxes, shipping, condition, liquidity and preorder uncertainty are not accounted for.
 - Collection structure panel on the Overview: sealed value split by product type (booster box, ETB, …) with percentage weights and amounts, the sealed low–high market range, and the share of sealed value held in the single largest holding; empty state until a sealed price is entered.
 - Top sealed holdings panel on the Overview: the five most valuable sealed SKUs ranked as bars (top item highlighted, quantity shown) with the total SKU count, and an empty state until a sealed price is entered.
