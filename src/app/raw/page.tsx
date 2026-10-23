@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { RawBreakdown } from "@/components/raw-breakdown";
 import { RawLeaderboard } from "@/components/raw-leaderboard";
 import { RawIntelHeader } from "@/components/raw-intel-header";
+import { RawStructure } from "@/components/raw-structure";
 import { getDashboard } from "@/lib/stats";
 
 export const metadata: Metadata = { title: "Raw Cards · Collection Tracker" };
@@ -30,6 +31,7 @@ async function RawCards() {
       <RawIntelHeader d={d} />
       <RawBreakdown d={d} />
       <RawLeaderboard d={d} />
+      <RawStructure d={d} />
     </>
   );
 }

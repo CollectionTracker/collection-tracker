@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Raw Cards view now also shows Set completion (owned/total cards and value per set) and Value by condition (share of raw value), completing the page alongside the header, set/rarity panels and top 8 leaderboard (#31).
 - Top 8 raw card holdings leaderboard on the Raw Cards view: two numbered columns ranked by stack value, each row with thumbnail, set, rarity, variant, quantity and value (#30).
 - Value by card set and Value by rarity panels on the Raw Cards view: top 5 each as horizontal bars scaled to the largest, the top item highlighted, values in compact form (e.g. $3.1k) (#29).
 - Raw card intelligence header on the Raw Cards view: eyebrow, title, a line with the latest price date (ungraded only, USD) and chips for the number of sets and rarity categories in the collection (#28).
