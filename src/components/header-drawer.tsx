@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Toolbar } from "@/components/toolbar";
@@ -8,7 +8,8 @@ import { VIEWS, isActive } from "@/lib/views";
 
 const label = "px-1 font-label text-[10px] font-bold uppercase tracking-widest";
 
-export function HeaderDrawer() {
+/** `currency` is the server-rendered currency selector, shown in the controls section. */
+export function HeaderDrawer({ currency }: { currency: ReactNode }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return (
@@ -56,11 +57,7 @@ export function HeaderDrawer() {
           </section>
           <section className="space-y-3 border-t border-white/5 pt-3">
             <span className={`${label} text-slate-2`}>Portfolio Controls &amp; Tools</span>
-            <div className="flex items-center gap-2">
-              <span className="rounded-md border border-white/5 bg-surface px-2 py-1 font-label text-[11px] text-slate-2">
-                <b className="mr-1 text-mint">USD</b>$
-              </span>
-            </div>
+            <div className="flex items-center gap-2">{currency}</div>
             <Toolbar />
           </section>
         </div>

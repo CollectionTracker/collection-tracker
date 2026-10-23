@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { CURRENCIES, FALLBACK_RATES, convert, isCurrency, parseRates, resolveRates } from "./currencies";
+import {
+  CURRENCIES,
+  FALLBACK_RATES,
+  convert,
+  isCurrency,
+  parseRates,
+  rateText,
+  resolveRates,
+  searchCurrencies,
+} from "./currencies";
 
 test("ten display currencies with USD as base", () => {
   assert.equal(CURRENCIES.length, 10);
@@ -49,4 +58,21 @@ test("nothing stored gives the built-in rates", () => {
   assert.equal(fx.day, null);
   assert.equal(fx.fallback.length, 9);
   assert.equal(convert(100, "JPY", fx), 15_450);
+});
+
+test("search matches code, name, country and symbol", () => {
+  assert.deepEqual(searchCurrencies(""), [...CURRENCIES]);
+  assert.deepEqual(searchCurrencies("  jpy "), ["JPY"]);
+  assert.deepEqual(searchCurrencies("japan"), ["JPY"]);
+  assert.deepEqual(searchCurrencies("swiss"), ["CHF"]);
+  assert.deepEqual(searchCurrencies("united"), ["USD", "GBP"]);
+  assert.deepEqual(searchCurrencies("¥"), ["JPY", "CNY"]);
+  assert.deepEqual(searchCurrencies("dollar"), ["USD", "CAD", "AUD", "HKD", "NZD"]);
+  assert.deepEqual(searchCurrencies("zzz"), []);
+});
+
+test("rate text as in the render", () => {
+  assert.equal(rateText("USD", 1), "1.000");
+  assert.equal(rateText("JPY", 156.8), "156.8");
+  assert.equal(rateText("EUR", 0.89342), "0.89");
 });

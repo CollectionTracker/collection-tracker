@@ -36,3 +36,7 @@ The helpers in `src/lib/format.ts` take a USD amount and a display context, `Mon
 | `signedMoney` | changes | +$12.00 | +¥1,854 |
 
 Symbols and decimals come from `CURRENCY_INFO` in `src/lib/currencies.ts` and follow the design render: CAD, AUD, HKD and NZD show `$`, CNY shows `¥` and CHF shows `Fr`, so the currency code appears in the selector. JPY has no decimals. An amount that rounds to zero never shows a minus sign.
+
+## Selected currency
+
+The header has a currency selector (in the menu drawer below 1024px). The choice is stored in the `currency` cookie (one year, `SameSite=Lax`) by the `setCurrencyAction` server action. Server components read it with `getCurrency()` from `src/lib/currency-pref.ts`, which falls back to USD for a missing or unknown value. It reads a cookie, so call it inside a `<Suspense>` boundary.

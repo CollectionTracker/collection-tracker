@@ -4,20 +4,37 @@ export type Currency = (typeof CURRENCIES)[number];
 export const BASE_CURRENCY = "USD" satisfies Currency;
 
 /** Display details from the design render. Several currencies share "$" or "¥"; the selector shows the code beside it. */
-export const CURRENCY_INFO: Record<Currency, { symbol: string; name: string; flag: string; decimals: number }> = {
-  USD: { symbol: "$", name: "US Dollar", flag: "🇺🇸", decimals: 2 },
-  EUR: { symbol: "€", name: "Euro", flag: "🇪🇺", decimals: 2 },
-  GBP: { symbol: "£", name: "British Pound", flag: "🇬🇧", decimals: 2 },
-  JPY: { symbol: "¥", name: "Japanese Yen", flag: "🇯🇵", decimals: 0 },
-  CAD: { symbol: "$", name: "Canadian Dollar", flag: "🇨🇦", decimals: 2 },
-  AUD: { symbol: "$", name: "Australian Dollar", flag: "🇦🇺", decimals: 2 },
-  CHF: { symbol: "Fr", name: "Swiss Franc", flag: "🇨🇭", decimals: 2 },
-  CNY: { symbol: "¥", name: "Chinese Yuan", flag: "🇨🇳", decimals: 2 },
-  HKD: { symbol: "$", name: "Hong Kong Dollar", flag: "🇭🇰", decimals: 2 },
-  NZD: { symbol: "$", name: "New Zealand Dollar", flag: "🇳🇿", decimals: 2 },
+export const CURRENCY_INFO: Record<
+  Currency,
+  { symbol: string; name: string; country: string; flag: string; decimals: number }
+> = {
+  USD: { symbol: "$", name: "US Dollar", country: "United States", flag: "🇺🇸", decimals: 2 },
+  EUR: { symbol: "€", name: "Euro", country: "Eurozone", flag: "🇪🇺", decimals: 2 },
+  GBP: { symbol: "£", name: "British Pound", country: "United Kingdom", flag: "🇬🇧", decimals: 2 },
+  JPY: { symbol: "¥", name: "Japanese Yen", country: "Japan", flag: "🇯🇵", decimals: 0 },
+  CAD: { symbol: "$", name: "Canadian Dollar", country: "Canada", flag: "🇨🇦", decimals: 2 },
+  AUD: { symbol: "$", name: "Australian Dollar", country: "Australia", flag: "🇦🇺", decimals: 2 },
+  CHF: { symbol: "Fr", name: "Swiss Franc", country: "Switzerland", flag: "🇨🇭", decimals: 2 },
+  CNY: { symbol: "¥", name: "Chinese Yuan", country: "China", flag: "🇨🇳", decimals: 2 },
+  HKD: { symbol: "$", name: "Hong Kong Dollar", country: "Hong Kong", flag: "🇭🇰", decimals: 2 },
+  NZD: { symbol: "$", name: "New Zealand Dollar", country: "New Zealand", flag: "🇳🇿", decimals: 2 },
 };
 
-export const isCurrency =(code: string): code is Currency => (CURRENCIES as readonly string[]).includes(code);
+export const isCurrency = (code: string): code is Currency => (CURRENCIES as readonly string[]).includes(code);
+
+/** Currencies whose code, name, country or symbol contains the query (case-insensitive), in selector order. */
+export function searchCurrencies(query: string): Currency[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [...CURRENCIES];
+  return CURRENCIES.filter((code) => {
+    const { name, country, symbol } = CURRENCY_INFO[code];
+    return [code, name, country, symbol].some((s) => s.toLowerCase().includes(q));
+  });
+}
+
+/** Rate per 1 USD as the selector shows it: 1.000 for USD, one decimal for JPY, two otherwise. */
+export const rateText = (code: Currency, rate: number) =>
+  code === BASE_CURRENCY ? "1.000" : rate.toFixed(CURRENCY_INFO[code].decimals === 0 ? 1 : 2);
 
 /** Rates from the design render, used for a currency only when no rate has ever been stored for it (e.g. offline first run). */
 export const FALLBACK_RATES: Record<Currency, number> = {

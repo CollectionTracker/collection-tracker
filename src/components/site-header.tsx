@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CurrencyMenu } from "@/components/currency-menu";
 import { HeaderDrawer } from "@/components/header-drawer";
 import { ViewTabs } from "@/components/view-tabs";
 
@@ -11,7 +12,10 @@ export function SiteHeader() {
           <span className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-mint">Analytics</span>
         </Link>
         <ViewTabs />
-        <HeaderDrawer />
+        <div className="hidden lg:block">
+          <CurrencyMenu />
+        </div>
+        <HeaderDrawer currency={<CurrencyMenu align="left" />} />
       </div>
     </header>
   );
