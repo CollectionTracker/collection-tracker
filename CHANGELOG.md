@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project README with a preview of the target design, and this changelog.
 
 ### Changed
+- Overview summary cards: the four stat cards are now Total Portfolio (combined raw + sealed midpoint, YTD change and a sealed/raw split bar), Sealed Inventory, Raw Cards and Valuation Range (combined low – high with the midpoint). The old Total / Since last update / Gain-loss / Cards stats are folded in: total value is Total Portfolio, gain/loss and card counts move to the Sealed and Raw cards, and the day-over-day change is dropped in favour of YTD and the 30-day card.
 - `start-issue` skill and `AGENTS.md` now define when to chain a branch off a blocking issue's branch and when to branch from `dev`, using GitHub "blocked by" links, which are now set on the sub-issues of every epic.
 - `start-issue` skill now claims an issue first (checks board status and claim comments, sets it In Progress, releases it when done or abandoned) so only one agent works on an issue at a time.
 - Restyled the dashboard to the "Executive Collectible Intelligence" design system: midnight/mint theme, Plus Jakarta Sans and Space Grotesk fonts, accent-bar summary cards and thicker progress bars.

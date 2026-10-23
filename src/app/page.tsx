@@ -5,7 +5,7 @@ import { Toolbar } from "@/components/toolbar";
 import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
-import { type Bucket, type Holding, getDashboard } from "@/lib/stats";
+import { type Bucket, type Dashboard, type Holding, getDashboard } from "@/lib/stats";
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
@@ -86,6 +86,7 @@ async function SyncChip() {
 
 const card =
   "rounded-2xl border border-white/5 bg-surface p-5 transition-shadow hover:shadow-[0_8px_24px_-4px_rgba(45,212,191,0.08),0_2px_6px_rgba(0,0,0,0.4)]";
+const labelStyle = "font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2";
 const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -110,10 +111,60 @@ function Stat({
   return (
     <div className={card}>
       <div className={`mb-3 h-1 w-8 rounded-full ${accents[accent]}`} />
-      <div className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2">{label}</div>
+      <div className={labelStyle}>{label}</div>
       <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{value}</div>
       {sub && <div className={`mt-1 text-xs tabular-nums ${subTone ?? "text-slate-2"}`}>{sub}</div>}
     </div>
+  );
+}
+
+function SummaryCards({ d, ytd }: { d: Dashboard; ytd: Comparison | null }) {
+  const total = d.combined.value;
+  const rawShare = total ? (d.totalValue / total) * 100 : 0;
+  const { low, high } = d.combined.valuation;
+  return (
+    <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-3">
+      <div className={card}>
+        <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
+        <div className={labelStyle}>Total portfolio</div>
+        <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{usd(total)}</div>
+        <div className={`mt-1 text-xs tabular-nums ${ytd ? tone(ytd.change) : "text-slate-2"}`}>
+          {ytd ? `${ytd.changePct == null ? signed(ytd.change) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
+        </div>
+        <div
+          className="mt-3 flex h-2 overflow-hidden rounded-full bg-track"
+          role="img"
+          aria-label={`${(100 - rawShare).toFixed(0)}% sealed, ${rawShare.toFixed(0)}% raw`}
+        >
+          <div className="bg-sky" style={{ width: `${total ? 100 - rawShare : 0}%` }} />
+          <div className="bg-violet" style={{ width: `${rawShare}%` }} />
+        </div>
+        <div className="mt-1 flex justify-between text-xs text-slate-2">
+          <span>Sealed {total ? (100 - rawShare).toFixed(0) : 0}%</span>
+          <span>Raw {rawShare.toFixed(0)}%</span>
+        </div>
+      </div>
+      <Stat
+        accent="sky"
+        label="Sealed inventory"
+        value={usd(d.sealed.value)}
+        sub={`${d.sealed.units.toLocaleString()} units${d.sealed.gain == null ? "" : ` · ${signed(d.sealed.gain)} gain / loss`}`}
+        subTone={d.sealed.gain == null ? undefined : tone(d.sealed.gain)}
+      />
+      <Stat
+        accent="violet"
+        label="Raw cards"
+        value={usd(d.totalValue)}
+        sub={`${d.totalCopies.toLocaleString()} cards · ${d.uniqueCards} unique · ${d.setCount} sets${d.gain == null ? "" : ` · ${signed(d.gain)} gain / loss`}`}
+        subTone={d.gain == null ? undefined : tone(d.gain)}
+      />
+      <Stat
+        accent="amber"
+        label="Valuation range"
+        value={`${usd(low)} – ${usd(high)}`}
+        sub={`Midpoint ${usd(d.combined.valuation.mid)}`}
+      />
+    </section>
   );
 }
 
@@ -234,23 +285,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <>
-      <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-3">
-        <Stat accent="mint" label="Total value" value={usd(d.totalValue)} sub={d.lastUpdated ? `as of ${d.lastUpdated}` : undefined} />
-        <Stat accent="sky" label="Since last update" value={signed(d.dayChange)} sub={pct(d.dayChangePct)} subTone={tone(d.dayChange)} />
-        <Stat
-          accent="amber"
-          label="Gain / loss"
-          value={d.gain == null ? "—" : signed(d.gain)}
-          sub={d.gainPct == null ? "add purchase prices" : `${pct(d.gainPct)} on ${usd(d.costBasis!)} paid`}
-          subTone={d.gain == null ? undefined : tone(d.gain)}
-        />
-        <Stat
-          accent="violet"
-          label="Cards"
-          value={d.totalCopies.toLocaleString()}
-          sub={`${d.uniqueCards} unique · ${d.setCount} sets`}
-        />
-      </section>
+      <SummaryCards d={d} ytd={cmp.ytd} />
 
       <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-6">
         <ComparisonCard
