@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Raw card intelligence header on the Raw Cards view: eyebrow, title, a line with the latest price date (ungraded only, USD) and chips for the number of sets and rarity categories in the collection (#28).
 - Demo data for `npm run dev`: a separate embedded database (`.data/pglite-demo`) is filled on first start with 42 cards across 11 sets, 13 sealed products, about 14 months of price history, snapshot labels and sync runs, so every view shows how it looks when full. Real data in `.data/pglite` is never touched; set `SEED_DEV_DATA=0` to use it instead, or delete `.data/pglite-demo` to regenerate the demo. Production builds and `DATABASE_URL` are unaffected.
 - GitHub pull request template and issue forms (bug report, feature request, task) in `.github/`.
 - Stitch design exports in `.renders/` as the reference for the dashboard redesign.
