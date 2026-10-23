@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Project README with a preview of the target design, and this changelog.
 
 ### Fixed
+- Top 8 raw card holdings leaderboard no longer makes the Raw Cards page scroll sideways on phones: below the two-column breakpoint the list now has an explicit single column, so long set · rarity · variant lines truncate instead of widening the page (#90).
 - Value-over-time chart logged duplicate React key errors when every snapshot had the same total (flat history gave repeated Y-axis ticks); the axis range is now computed from the data and padded by 2 % so ticks stay distinct.
 
 ### Changed
