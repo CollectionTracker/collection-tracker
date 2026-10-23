@@ -128,6 +128,20 @@ export const snapshotLabels = pgTable("snapshot_labels", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Exchange rates as units of `currency` per 1 USD (all prices are stored in USD), one row per rate day and currency.
+// `day` is the publication date of the rates (ECB skips weekends), `fetched_at` when we last stored them.
+export const fxRates = pgTable(
+  "fx_rates",
+  {
+    day: date("day", { mode: "string" }).notNull(),
+    currency: text("currency").notNull(),
+    rate: doublePrecision("rate").notNull(),
+    source: text("source").notNull(),
+    fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.currency] })],
+);
+
 // One row per price sync (manual button or daily cron), so the header can show the last sync and whether it failed.
 export const syncRuns = pgTable("sync_runs", {
   id: serial("id").primaryKey(),
