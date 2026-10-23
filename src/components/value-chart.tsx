@@ -24,7 +24,7 @@ export function ValueChart({ data }: { data: { day: string; value: number }[] })
           width={56}
           tick={{ fill: "#94a3b8", fontSize: 12 }}
           tickFormatter={(v: number) => `$${v.toLocaleString()}`}
-          domain={["auto", "auto"]}
+          domain={[(min: number) => Math.floor(min * 0.98), (max: number) => Math.ceil(max * 1.02)]}
         />
         <Tooltip
           contentStyle={{ background: "#0d1733", border: "1px solid #ffffff20", borderRadius: 8 }}
