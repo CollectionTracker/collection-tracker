@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Top 8 raw card holdings leaderboard on the Raw Cards view: two numbered columns ranked by stack value, each row with thumbnail, set, rarity, variant, quantity and value (#30).
 - Value by card set and Value by rarity panels on the Raw Cards view: top 5 each as horizontal bars scaled to the largest, the top item highlighted, values in compact form (e.g. $3.1k) (#29).
 - Raw card intelligence header on the Raw Cards view: eyebrow, title, a line with the latest price date (ungraded only, USD) and chips for the number of sets and rarity categories in the collection (#28).
 - Demo data for `npm run dev`: a separate embedded database (`.data/pglite-demo`) is filled on first start with 42 cards across 11 sets, 13 sealed products, about 14 months of price history, snapshot labels and sync runs, so every view shows how it looks when full. Real data in `.data/pglite` is never touched; set `SEED_DEV_DATA=0` to use it instead, or delete `.data/pglite-demo` to regenerate the demo. Production builds and `DATABASE_URL` are unaffected.
