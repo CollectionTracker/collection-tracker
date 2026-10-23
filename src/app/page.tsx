@@ -12,6 +12,7 @@ import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, pct, signed, tone, usd } from "@/lib/format";
+import { cardPreview } from "@/lib/card-preview";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -335,7 +336,7 @@ function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | nu
 
 function CardRow({ h, showChange }: { h: Holding; showChange?: boolean }) {
   return (
-    <li className="flex items-center gap-3">
+    <li className="flex items-center gap-3" {...cardPreview(h)}>
       {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{h.name}</div>

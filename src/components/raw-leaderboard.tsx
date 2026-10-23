@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cardPreview } from "@/lib/card-preview";
 import { usd } from "@/lib/format";
 import type { Dashboard, Holding } from "@/lib/stats";
 
@@ -6,7 +7,7 @@ const TOP = 8;
 
 function Row({ h, rank }: { h: Holding; rank: number }) {
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-colors hover:border-mint/40">
+    <li className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-colors hover:border-mint/40" {...cardPreview(h)}>
       <span className="w-6 shrink-0 font-bold tabular-nums text-mint">{String(rank).padStart(2, "0")}</span>
       {h.image && <Image src={h.image} alt="" width={36} height={50} className="shrink-0 rounded-md" />}
       <div className="min-w-0 flex-1">

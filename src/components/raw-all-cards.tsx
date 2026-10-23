@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { cardPreview } from "@/lib/card-preview";
 import { signed, tone, usd } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
 
@@ -131,7 +132,7 @@ function TableView({ rows, sort, onSort }: { rows: Holding[]; sort: Sort; onSort
           </thead>
           <tbody className="tabular-nums">
             {shown.map((h) => (
-              <tr key={h.id} className="hover:bg-white/[0.02]">
+              <tr key={h.id} className="hover:bg-white/[0.02]" {...cardPreview(h)}>
                 <td className={td}>
                   <div className="flex items-center gap-2.5">
                     {h.image ? <Image src={h.image} alt="" width={28} height={39} className="shrink-0 rounded" /> : <span className="h-[39px] w-7 shrink-0 rounded bg-surface-2" />}
@@ -206,7 +207,7 @@ function GridView({ rows }: { rows: Holding[] }) {
     <>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {rows.slice(0, limit).map((h) => (
-          <li key={h.id} className="grid gap-2 rounded-xl border border-white/5 bg-inset p-2 transition-colors hover:border-mint/40">
+          <li key={h.id} className="grid gap-2 rounded-xl border border-white/5 bg-inset p-2 transition-colors hover:border-mint/40" {...cardPreview(h)}>
             <div className="relative aspect-[63/88] overflow-hidden rounded-md bg-surface-2">
               {h.image && <Image src={h.image} alt={h.name} fill sizes="(min-width: 1024px) 180px, 45vw" className="object-cover" />}
               <span className="absolute left-1.5 top-1.5">
@@ -304,6 +305,7 @@ function SetsView({ rows, sets, filtered }: { rows: Holding[]; sets: SetProgress
                     <li
                       key={h.id}
                       className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-center gap-3 border-b border-white/5 px-3.5 py-2 text-sm tabular-nums last:border-0 md:grid-cols-[52px_28px_minmax(0,1fr)_44px_40px_90px_90px]"
+                      {...cardPreview(h)}
                     >
                       <span className="hidden font-label text-xs font-semibold text-slate-2 md:block">#{h.number}</span>
                       {h.image ? <Image src={h.image} alt="" width={28} height={39} className="rounded" /> : <span className="h-[39px] w-7 rounded bg-surface-2" />}
