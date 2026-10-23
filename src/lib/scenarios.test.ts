@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DEFAULT_SCENARIOS, projectScenario, projectScenarios, valueAtYear } from "./scenarios";
+import {
+  DEFAULT_SCENARIOS,
+  assumptionText,
+  multiplierText,
+  projectScenario,
+  projectScenarios,
+  valueAtYear,
+} from "./scenarios";
 
 // Starting midpoint and milestone values from the Stitch render (.renders/pokevault_portfolio_marketing_intelligence_dashboard),
 // which shows whole dollars rounded inconsistently (High Y5 is $1.57 low), so values are compared to within $2.
@@ -49,4 +56,16 @@ test("zero start gives zero values and no multiplier", () => {
   const [s] = projectScenarios(0);
   assert.ok(s.values.every((v) => v === 0));
   assert.equal(s.multiplier, null);
+});
+
+test("assumption and multiplier text", () => {
+  assert.deepEqual(DEFAULT_SCENARIOS.map(assumptionText), [
+    "Y1 −15%, then 3% annually",
+    "Y1 −5%, then 8% annually",
+    "Y1 +10%, then 15% annually",
+  ]);
+  assert.equal(assumptionText({ year1Shift: 0, annualRate: 0.025 }), "Y1 0%, then 2.5% annually");
+  assert.equal(assumptionText({ year1Shift: 0.07, annualRate: -0.02 }), "Y1 +7%, then −2% annually");
+  assert.equal(multiplierText(3.8698), "3.87×");
+  assert.equal(multiplierText(null), null);
 });

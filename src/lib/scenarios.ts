@@ -27,6 +27,10 @@ export const DEFAULT_SCENARIOS: readonly ScenarioInput[] = [
   { id: "high", label: "High", year1Shift: 0.1, annualRate: 0.15 },
 ];
 
+/** Colour per scenario id; matches the render (amber conservative, mint moderate, violet high). */
+export const SCENARIO_COLORS: Record<string, string> = { conservative: "#f59e0b", moderate: "#2dd4bf", high: "#a855f7" };
+export const scenarioColor = (id: string) => SCENARIO_COLORS[id] ?? "#94a3b8";
+
 /** Value after `year` years from `start`: year 0 is the start, year 1 applies the shift, later years compound. */
 export function valueAtYear(start: number, { year1Shift, annualRate }: Pick<ScenarioInput, "year1Shift" | "annualRate">, year: number) {
   if (year <= 0) return start;
@@ -47,3 +51,14 @@ export function projectScenario(start: number, input: ScenarioInput, horizon = P
 export function projectScenarios(start: number, inputs: readonly ScenarioInput[] = DEFAULT_SCENARIOS, horizon = PROJECTION_YEARS) {
   return inputs.map((input) => projectScenario(start, input, horizon));
 }
+
+const pctText = (n: number, signed: boolean) =>
+  `${signed ? (n > 0 ? "+" : n < 0 ? "−" : "") : n < 0 ? "−" : ""}${Number((Math.abs(n) * 100).toFixed(1))}%`;
+
+/** Plain-language assumptions, e.g. "Y1 −15%, then 3% annually". */
+export function assumptionText({ year1Shift, annualRate }: Pick<ScenarioInput, "year1Shift" | "annualRate">) {
+  return `Y1 ${pctText(year1Shift, true)}, then ${pctText(annualRate, false)} annually`;
+}
+
+/** Multiplier badge text, e.g. "3.87×"; null when there is no multiplier. */
+export const multiplierText = (m: number | null) => (m === null ? null : `${m.toFixed(2)}×`);
