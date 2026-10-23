@@ -23,3 +23,16 @@ USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, HKD, NZD (`CURRENCIES` in `src/lib/curre
 1. The latest stored rate on or before the day (today, or the selected snapshot day).
 2. For a day before rates were first stored, the earliest stored rate.
 3. If a currency has never been stored (e.g. first run offline), the built-in `FALLBACK_RATES`. The result lists these currencies in `fallback`.
+
+## Formatting
+
+The helpers in `src/lib/format.ts` take a USD amount and a display context, `Money = { currency, rate }` (build it with `moneyFor(currency, fx)`; it defaults to USD):
+
+| Helper | Use | USD | JPY |
+|---|---|---|---|
+| `money` | full amounts, with the currency's decimals | $1,234.50 | ¥190,740 |
+| `wholeMoney` | rough figures such as projections | $36,234 | ¥5,598,153 |
+| `compactMoney` | tight spaces and chart axes | $16.8k | ¥2.6M |
+| `signedMoney` | changes | +$12.00 | +¥1,854 |
+
+Symbols and decimals come from `CURRENCY_INFO` in `src/lib/currencies.ts` and follow the design render: CAD, AUD, HKD and NZD show `$`, CNY shows `¥` and CHF shows `Fr`, so the currency code appears in the selector. JPY has no decimals. An amount that rounds to zero never shows a minus sign.
