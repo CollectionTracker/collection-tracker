@@ -5,6 +5,7 @@ import { Toolbar } from "@/components/toolbar";
 import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
+import { ValueMixDonut } from "@/components/value-mix-donut";
 import { type Bucket, type Dashboard, type Holding, getDashboard } from "@/lib/stats";
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { getSyncStatus } from "@/lib/sync-status";
@@ -188,45 +189,6 @@ function ComparisonCard({ title, c, empty }: { title: string; c: Comparison | nu
   );
 }
 
-const donutColors = ["#2dd4bf", "#38bdf8", "#a855f7", "#f59e0b", "#475569"];
-
-function Donut({ items, total }: { items: Bucket[]; total: number }) {
-  const top = items.slice(0, 4);
-  const rest = total - top.reduce((a, b) => a + b.value, 0);
-  const slices = [...top.map((b) => ({ label: b.label, value: b.value })), ...(rest > 0.005 ? [{ label: "Other", value: rest }] : [])];
-  let acc = 0;
-  const stops = slices.map((s, i) => {
-    const from = total ? (acc / total) * 100 : 0;
-    acc += s.value;
-    return `${donutColors[i]} ${from}% ${total ? (acc / total) * 100 : 0}%`;
-  });
-  const lead = slices[0];
-  return (
-    <div className="flex flex-wrap items-center gap-6">
-      <div
-        className="grid size-40 shrink-0 place-items-center rounded-full"
-        style={{ background: `conic-gradient(${stops.join(", ")})` }}
-      >
-        <div className="grid size-28 place-items-center rounded-full border border-white/5 bg-inset text-center">
-          <div>
-            <div className="text-xl font-bold tracking-[-0.015em]">{total ? ((lead.value / total) * 100).toFixed(1) : 0}%</div>
-            <div className="max-w-20 truncate font-label text-[10px] uppercase tracking-wider text-slate-2">{lead.label}</div>
-          </div>
-        </div>
-      </div>
-      <ul className="min-w-48 flex-1 space-y-2">
-        {slices.map((s, i) => (
-          <li key={s.label} className="flex items-center gap-3 rounded-lg border border-white/5 bg-inset px-3 py-2 text-sm">
-            <span className="size-2.5 shrink-0 rounded-full" style={{ background: donutColors[i] }} />
-            <span className="flex-1 truncate text-slate-2">{s.label}</span>
-            <span className="font-bold tabular-nums">{usd(s.value)}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function Bars({ items, total }: { items: Bucket[]; total: number }) {
   return (
     <ul className="space-y-3">
@@ -307,8 +269,17 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
 
       <section className="page-grid">
         <div className={card + " col-span-full lg:col-span-5"}>
-          <h2 className={`${heading} mb-4`}>Value mix by rarity</h2>
-          <Donut items={d.byRarity} total={d.totalValue} />
+          <h2 className={`${heading} mb-4`}>Portfolio value mix</h2>
+          {d.combined.value > 0 ? (
+            <ValueMixDonut
+              slices={[
+                { label: "Sealed", value: d.sealed.value, color: "#38bdf8" },
+                { label: "Raw cards", value: d.totalValue, color: "#a855f7" },
+              ]}
+            />
+          ) : (
+            <p className="text-sm text-slate-2">No priced holdings yet.</p>
+          )}
         </div>
         <div className={card + " col-span-full lg:col-span-7"}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
