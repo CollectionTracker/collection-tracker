@@ -60,6 +60,11 @@ test("sealed asset keeps its entered range and skips missing details", () => {
     gain: 200,
     gainPct: 100,
     valuation: { low: 350, mid: 400, high: 500 },
+    change: null,
+    changePct: null,
+    priceDay: "2026-10-26",
+    priceSource: "manual",
+    linked: false,
   };
   const a = sealedAsset(h, 1000);
   assert.equal(a.kind, "Sealed");

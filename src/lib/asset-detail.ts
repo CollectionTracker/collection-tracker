@@ -1,4 +1,5 @@
 import { exportHref } from "./export";
+import { sealedTypeLabel } from "./sealed-breakdown";
 import type { SealedHolding } from "./sealed-stats";
 import type { Holding } from "./stats";
 import { DEFAULT_SPREAD, type Range, rangeOf } from "./valuation";
@@ -19,7 +20,7 @@ export type AssetDetail = {
   cost: number | null;
   gain: number | null;
   gainPct: number | null;
-  /** Change since the previous snapshot; null when there is no price history for it (sealed). */
+  /** Change since the previous price; null when there is no earlier price. */
   change: number | null;
   changePct: number | null;
   /** Share of the whole portfolio's value, null when the portfolio has no value. */
@@ -56,7 +57,7 @@ export function sealedAsset(h: SealedHolding, portfolioValue: number, asOf: stri
   return {
     kind: "Sealed",
     name: h.name,
-    meta: [h.productType, h.setGroup, h.sku && `SKU ${h.sku}`].filter((x): x is string => !!x),
+    meta: [sealedTypeLabel(h.productType), h.setGroup, h.sku && `SKU ${h.sku}`].filter((x): x is string => !!x),
     image: null,
     quantity: h.quantity,
     unit: h.unit,
@@ -64,8 +65,8 @@ export function sealedAsset(h: SealedHolding, portfolioValue: number, asOf: stri
     cost: h.cost,
     gain: h.gain,
     gainPct: h.gainPct,
-    change: null,
-    changePct: null,
+    change: h.change,
+    changePct: h.changePct,
     sharePct: share(h.value, portfolioValue),
     exportHref: exportHref({ sealed: h.id }, asOf),
   };
