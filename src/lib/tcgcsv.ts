@@ -1,7 +1,9 @@
 // TCGCSV (tcgcsv.com) mirrors TCGplayer's catalog and prices once a day (around 20:00 UTC), no key needed.
 // Pokémon is category 3; a "group" is a set, its products are cards and sealed products, prices join on productId.
 // Usage rules: server-side only, a descriptive User-Agent, a pause between requests, well under 10k requests a day.
-const BASE = "https://tcgcsv.com/tcgplayer/3";
+// In the browser, requests go through this app's server (src/app/api/tcgcsv), which adds the User-Agent.
+const IN_BROWSER = typeof window !== "undefined";
+const BASE = IN_BROWSER ? "/api/tcgcsv" : "https://tcgcsv.com/tcgplayer/3";
 const USER_AGENT = "collection-tracker (+https://github.com/JakeDeFord/collection-tracker)";
 const GAP_MS = 150;
 
@@ -177,7 +179,7 @@ export class TcgcsvClient {
       this.last = Date.now();
       try {
         const res = await fetch(`${BASE}${path}`, {
-          headers: { "User-Agent": USER_AGENT },
+          headers: IN_BROWSER ? undefined : { "User-Agent": USER_AGENT },
           signal: AbortSignal.timeout(30_000),
           cache: "no-store",
         });

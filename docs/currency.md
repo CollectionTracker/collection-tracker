@@ -13,7 +13,7 @@ USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, HKD, NZD (`CURRENCIES` in `src/lib/curre
 ## Storage and caching
 
 - Rates are stored in the `fx_rates` table, one row per rate day and currency, under the ECB publication date (not the fetch date).
-- They are refreshed by the daily price sync (`/api/cron/sync` and the Sync prices button) and, if that has not run, lazily on the first page load of the day. They are fetched at most once per day.
+- They are refreshed by the price sync (automatic when the app is opened with stale prices, or the Sync prices button) and, if that has not run, lazily on the first page load of the day. They are fetched at most once per day.
 - A failed fetch never fails the price sync or a page load. Page loads wait an hour before retrying.
 
 ## Fallbacks

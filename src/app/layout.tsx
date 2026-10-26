@@ -5,6 +5,8 @@ import { BottomTabBar } from "@/components/bottom-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { CardPreviewLayer } from "@/components/card-preview-layer";
 import { AssetSheetProvider } from "@/components/asset-sheet";
+import { AutoSync } from "@/components/auto-sync";
+import { DataProvider } from "@/components/data-provider";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -29,11 +31,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${jakarta.variable} ${grotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col pb-16 md:pb-0">
-        <SiteHeader />
-        <AssetSheetProvider>{children}</AssetSheetProvider>
-        <SiteFooter />
-        <BottomTabBar />
-        <CardPreviewLayer />
+        <DataProvider>
+          <AutoSync />
+          <SiteHeader />
+          <AssetSheetProvider>{children}</AssetSheetProvider>
+          <SiteFooter />
+          <BottomTabBar />
+          <CardPreviewLayer />
+        </DataProvider>
       </body>
     </html>
   );

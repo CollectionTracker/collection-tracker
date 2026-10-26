@@ -1,16 +1,27 @@
-import { cookies } from "next/headers";
 import { BASE_CURRENCY, type Currency, isCurrency } from "./currencies";
 import { type Money, moneyFor } from "./format";
 import { getFxRates } from "./forex";
 
-/** Cookie holding the chosen display currency, so server components render in it without a flash of USD. */
-export const CURRENCY_COOKIE = "currency";
-export const CURRENCY_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+/** localStorage key holding the chosen display currency, kept per browser like the collection itself. */
+export const CURRENCY_KEY = "currency";
 
-/** The visitor's display currency; USD when unset or unknown. Reads a cookie, so call it inside a Suspense boundary. */
-export async function getCurrency(): Promise<Currency> {
-  const value = (await cookies()).get(CURRENCY_COOKIE)?.value;
-  return value && isCurrency(value) ? value : BASE_CURRENCY;
+/** The visitor's display currency; USD when unset, unknown or when storage is unavailable. */
+export function getCurrency(): Currency {
+  try {
+    const value = localStorage.getItem(CURRENCY_KEY);
+    return value && isCurrency(value) ? value : BASE_CURRENCY;
+  } catch {
+    return BASE_CURRENCY;
+  }
+}
+
+/** Remember the display currency in this browser; re-read the page's data afterwards to show it. */
+export function setCurrency(code: Currency) {
+  try {
+    localStorage.setItem(CURRENCY_KEY, code);
+  } catch {
+    // Storage blocked (private window): the choice lasts until the page reloads.
+  }
 }
 
 /**
@@ -18,6 +29,5 @@ export async function getCurrency(): Promise<Currency> {
  * (history and comparisons included) at this one rate, so charts show portfolio moves rather than exchange-rate moves.
  */
 export async function getDisplayMoney(asOf?: string): Promise<Money> {
-  const [currency, fx] = await Promise.all([getCurrency(), getFxRates(asOf)]);
-  return moneyFor(currency, fx);
+  return moneyFor(getCurrency(), await getFxRates(asOf));
 }

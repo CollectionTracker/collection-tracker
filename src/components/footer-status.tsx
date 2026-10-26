@@ -1,10 +1,13 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
+import { useData } from "@/components/data-provider";
+import { listSnapshots } from "@/lib/snapshots";
 import { VIEWS, isActive } from "@/lib/views";
 
-/** Snapshot date and current view/page for the footer; `days` are the stored snapshot days, newest first. */
-export function FooterStatus({ days }: { days: string[] }) {
+/** Snapshot date and current view/page for the footer. */
+export function FooterStatus() {
+  const days = useData(["snapshots"], listSnapshots).map((s) => s.day);
   const pathname = usePathname();
   const requested = useSearchParams().get("snapshot");
   const day = requested && days.includes(requested) ? requested : null;

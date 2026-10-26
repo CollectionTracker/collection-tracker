@@ -2,8 +2,11 @@ import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { syncRuns } from "@/db/schema";
 
-/** A successful sync older than this is shown as stale (the job is meant to run daily). */
+/** A successful sync older than this is shown as stale, and synced again when the app is opened. */
 export const STALE_AFTER_HOURS = 36;
+
+/** The sync runs in the browser, so closing the tab stops it; a run still "running" after this long was interrupted. */
+const INTERRUPTED_AFTER_MS = 15 * 60_000;
 
 export type SyncStatus = {
   state: "never" | "verified" | "stale" | "failed" | "running";
@@ -13,7 +16,7 @@ export type SyncStatus = {
 
 /** Derive the header state from the latest run and the latest successful run. */
 export function syncState(
-  latest: { status: string; error: string | null } | undefined,
+  latest: { status: string; error: string | null; startedAt?: Date } | undefined,
   lastSuccess: Date | null,
   now = new Date(),
 ): SyncStatus {
@@ -21,7 +24,12 @@ export function syncState(
   if (!latest) return { ...base, state: "never" };
   // A run that never finished (crashed process) is not "running" forever; only the newest one counts.
   if (latest.status === "failed") return { state: "failed", lastSuccess, lastError: latest.error };
-  if (latest.status === "running") return { ...base, state: "running" };
+  if (latest.status === "running") {
+    if (latest.startedAt && now.getTime() - latest.startedAt.getTime() > INTERRUPTED_AFTER_MS) {
+      return { state: "failed", lastSuccess, lastError: "The last sync was interrupted (the page was closed)" };
+    }
+    return { ...base, state: "running" };
+  }
   const age = lastSuccess ? now.getTime() - lastSuccess.getTime() : Infinity;
   return { ...base, state: age > STALE_AFTER_HOURS * 3_600_000 ? "stale" : "verified" };
 }

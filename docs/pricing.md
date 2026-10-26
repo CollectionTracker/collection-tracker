@@ -1,11 +1,11 @@
 # Prices and catalog
 
-Card and sealed prices are TCGplayer's, in USD, refreshed by the daily sync (`/api/cron/sync` or the Sync prices button). No API keys are needed.
+Card and sealed prices are TCGplayer's, in USD, refreshed by the price sync, which runs in the browser when the app is opened with prices older than 36 hours, or with the Sync prices button. Prices are stored in the browser's own database, so history only has points for days the app was used. No API keys are needed.
 
 | Source | Used for | Notes |
 |---|---|---|
 | [TCGdex](https://tcgdex.dev) (`api.tcgdex.net/v2/en`) | Card catalog: names, numbers, rarity, images, sets, and each card's TCGplayer product id | Open source, no key. Its own TCGplayer prices lag by days, so they are only a fallback. |
-| [TCGCSV](https://tcgcsv.com) (`tcgcsv.com/tcgplayer/3`) | Daily TCGplayer market / low / mid / high for cards and sealed products | Mirrors TCGplayer's API once a day around 20:00 UTC. Server-side only, with a User-Agent and a pause between requests. |
+| [TCGCSV](https://tcgcsv.com) (`tcgcsv.com/tcgplayer/3`) | Daily TCGplayer market / low / mid / high for cards and sealed products | Mirrors TCGplayer's API once a day around 20:00 UTC. Server-side only, with a User-Agent and a pause between requests: the browser calls it through this app's `/api/tcgcsv/...` proxy, which adds the User-Agent. |
 
 The Pokémon TCG API (`api.pokemontcg.io`) was used before; it goes offline on 1 March 2027.
 

@@ -133,14 +133,17 @@ export function parseExportTarget(params: URLSearchParams): ExportTarget | null 
   return scope === "portfolio" || scope === "raw" || scope === "sealed" ? { scope } : null;
 }
 
-/** Link to the CSV export for `target` at a snapshot day, or at current prices when `asOf` is null. */
+/**
+ * Query string naming the CSV export of `target` at a snapshot day, or at current prices when `asOf` is null.
+ * `ExportLink` builds the file from it in the browser.
+ */
 export function exportHref(target: ExportTarget, asOf: string | null = null): string {
   const q = new URLSearchParams();
   if ("scope" in target) q.set("scope", target.scope);
   else if ("raw" in target) q.set("raw", String(target.raw));
   else q.set("sealed", String(target.sealed));
   if (asOf) q.set("snapshot", asOf);
-  return `/api/export?${q}`;
+  return `?${q}`;
 }
 
 /** e.g. `collection-portfolio-2026-10-23-usd.csv`, `collection-holding-umbreon-ex-2026-10-23-jpy.csv`. */

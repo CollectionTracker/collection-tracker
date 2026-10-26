@@ -3,18 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run db:bundle",
     "dev": "next dev",
+    "prebuild": "npm run db:bundle",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test \"src/**/*.test.ts\""
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
+    "db:bundle": "tsx scripts/bundle-migrations.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.2",
     "papaparse": "^5.7.0",
-    "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "recharts": "^3.10.1",
@@ -24,7 +26,6 @@
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
-    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "drizzle-kit": "^0.31.11",

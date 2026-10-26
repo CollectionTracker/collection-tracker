@@ -1,17 +1,5 @@
-import { Suspense } from "react";
-import { connection } from "next/server";
+import { ClientData } from "@/components/data-provider";
 import { FooterStatus } from "@/components/footer-status";
-import { listSnapshots } from "@/lib/snapshots";
-
-async function Status() {
-  await connection();
-  const snapshots = await listSnapshots();
-  return (
-    <Suspense fallback={null}>
-      <FooterStatus days={snapshots.map((s) => s.day)} />
-    </Suspense>
-  );
-}
 
 export function SiteFooter() {
   return (
@@ -22,9 +10,9 @@ export function SiteFooter() {
           <span>/</span>
           <span>TCGdex catalog + TCGplayer prices via TCGCSV</span>
         </div>
-        <Suspense fallback={null}>
-          <Status />
-        </Suspense>
+        <ClientData fallback={null}>
+          <FooterStatus />
+        </ClientData>
       </div>
     </footer>
   );
