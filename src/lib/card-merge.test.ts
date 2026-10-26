@@ -6,6 +6,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
+import { setDbForTests } from "@/db";
 import * as schema from "@/db/schema";
 import { cards, collectionEntries, priceSnapshots, sets } from "@/db/schema";
 import { type CatalogCard, newClients, resolveByIds } from "./catalog";
@@ -13,7 +14,7 @@ import { upsertCards } from "./sync";
 import type { DexCard } from "./tcgdex";
 
 const db = drizzle({ client: new PGlite(), schema });
-(globalThis as unknown as { __db: Promise<typeof db> }).__db = Promise.resolve(db);
+setDbForTests(db);
 
 const MEW: DexCard = { id: "sv03.5-151", localId: "151", name: "Mew ex", category: "Pokemon", set: { id: "sv03.5", name: "151" } } as DexCard;
 const dex = {

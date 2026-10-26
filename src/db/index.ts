@@ -35,6 +35,11 @@ async function init() {
 type Db = Awaited<ReturnType<typeof init>>;
 let db: Promise<Db> | undefined;
 
+/** Point `getDb` at another database, e.g. an in-memory PGlite in unit tests, which run under Node, not in a browser. */
+export function setDbForTests(other: Db) {
+  db = Promise.resolve(other);
+}
+
 export function getDb(): Promise<Db> {
   return (db ??= init().catch((e) => {
     db = undefined; // let the next call retry
