@@ -13,6 +13,10 @@ type SealedRow = {
   unit: number | null;
   low: number | null;
   high: number | null;
+  price_day: string | null;
+  price_source: string | null;
+  prev: number | null;
+  linked: boolean;
 };
 
 export type SealedHolding = {
@@ -29,6 +33,11 @@ export type SealedHolding = {
   gain: number | null;
   gainPct: number | null;
   valuation: Range; // whole stack: entered low/high, else the default spread around value
+  change: number | null; // whole stack, since the previous stored price; null without one
+  changePct: number | null;
+  priceDay: string | null; // day of the latest price
+  priceSource: "manual" | "tcgcsv" | null; // where the latest price came from, null when unpriced
+  linked: boolean; // matched to a TCGplayer product, so the daily sync prices it
 };
 
 export type CostBasis = {
@@ -57,17 +66,23 @@ export async function getSealed(asOf: string | null = null) {
   const db = await getDb();
   const { rows } = await db.execute<SealedRow>(sql`
     select p.id, p.name, p.product_type, p.set_group, p.sku, p.quantity, p.purchase_price,
-           cur.market as unit, cur.low, cur.high
+           cur.market as unit, cur.low, cur.high, cur.day::text as price_day, cur.price_source,
+           prev.market as prev, p.tcgplayer_product_id is not null as linked
     from sealed_products p
     left join lateral (
       -- Only a hand-entered low/high is a valuation range; TCGCSV's are the cheapest and dearest listings.
-      select market,
+      select market, day, price_source,
              case when price_source = 'manual' then low end as low,
              case when price_source = 'manual' then high end as high
       from sealed_price_snapshots s
       where s.sealed_product_id = p.id and s.market is not null
         and (${asOf}::date is null or s.day <= ${asOf}::date)
-      order by day desc limit 1) cur on true`);
+      order by day desc limit 1) cur on true
+    left join lateral (
+      select market from sealed_price_snapshots s
+      where s.sealed_product_id = p.id and s.market is not null
+        and (${asOf}::date is null or s.day <= ${asOf}::date)
+      order by day desc limit 1 offset 1) prev on true`);
 
   const holdings: SealedHolding[] = rows.map((r) => {
     const unit = r.unit ?? 0;
@@ -87,6 +102,11 @@ export async function getSealed(asOf: string | null = null) {
       gain: cost == null ? null : value - cost,
       gainPct: cost ? ((value - cost) / cost) * 100 : null,
       valuation: rangeOf(value, DEFAULT_SPREAD.sealed, r.low == null ? null : r.low * r.quantity, r.high == null ? null : r.high * r.quantity),
+      change: r.prev == null ? null : (unit - r.prev) * r.quantity,
+      changePct: r.prev ? ((unit - r.prev) / r.prev) * 100 : null,
+      priceDay: r.price_day,
+      priceSource: r.price_source === "manual" || r.price_source === "tcgcsv" ? r.price_source : null,
+      linked: r.linked,
     };
   });
   return {
@@ -99,3 +119,21 @@ export async function getSealed(asOf: string | null = null) {
 }
 
 export type Sealed = Awaited<ReturnType<typeof getSealed>>;
+
+/** Sealed value at every stored price day up to `asOf`, each product at its latest price on or before that day. */
+export async function getSealedHistory(asOf: string | null = null) {
+  const db = await getDb();
+  const { rows } = await db.execute<{ day: string; value: number }>(sql`
+    with days as (
+      select distinct day from sealed_price_snapshots where ${asOf}::date is null or day <= ${asOf}::date
+    )
+    select d.day::text as day,
+      (select coalesce(sum(p.quantity * cur.market), 0)::float8
+       from sealed_products p
+       left join lateral (
+         select market from sealed_price_snapshots s
+         where s.sealed_product_id = p.id and s.market is not null and s.day <= d.day
+         order by day desc limit 1) cur on true) as value
+    from days d order by d.day`);
+  return rows.map((r) => ({ day: r.day, value: Number(r.value) }));
+}

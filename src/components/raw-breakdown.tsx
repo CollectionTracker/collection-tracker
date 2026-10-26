@@ -9,7 +9,7 @@ type Row = { label: string; value: number };
 
 type BarPanelProps = { title: string; rows: Row[]; bar: string; text: string; empty: string; m: Money };
 
-function BarPanel({ title, rows, bar, text, empty, m }: BarPanelProps) {
+export function BarPanel({ title, rows, bar, text, empty, m }: BarPanelProps) {
   const top = rows.slice(0, TOP);
   const max = top[0]?.value ?? 0;
   return (

@@ -40,6 +40,11 @@ const box: SealedHolding = {
   gain: 200,
   gainPct: 100,
   valuation: { low: 350, mid: 400, high: 500 },
+  change: null,
+  changePct: null,
+  priceDay: "2026-10-26",
+  priceSource: "manual",
+  linked: false,
 };
 
 /** Parses the CSV back as the importers do, keyed by lower-case header. */
