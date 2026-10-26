@@ -42,7 +42,7 @@ export function RawBreakdown({ d, m }: { d: Dashboard; m: Money }) {
   return (
     <section className="grid gap-3 md:grid-cols-2 md:gap-5">
       <BarPanel title="Value by card set" rows={sets} bar="bg-mint" text="text-mint" empty={empty} m={m} />
-      <BarPanel title="Value by rarity" rows={d.byRarity} bar="bg-violet" text="text-violet" empty={empty} m={m} />
+      <BarPanel title="Value by rarity" rows={d.byRarity} bar="bg-violet" text="text-violet-soft" empty={empty} m={m} />
     </section>
   );
 }

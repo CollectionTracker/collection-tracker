@@ -9,6 +9,8 @@
   --color-mint: #2dd4bf;
   --color-sky: #38bdf8;
   --color-violet: #a855f7;
+  /* Violet is 4.0:1 on cards, under WCAG AA for text; use this lighter violet (6.0:1) for violet text. */
+  --color-violet-soft: #c084fc;
   --color-amber: #f59e0b;
   --color-ink: #f8fafc;
   --color-slate-2: #94a3b8;
@@ -77,6 +79,23 @@ body {
   font-family: var(--font-jakarta), system-ui, sans-serif;
 }
 
+/*
+ * One visible keyboard focus ring for every control: mint (8.6:1 on cards) with a gap, instead of the
+ * browser default that barely shows on navy. Components with their own focus treatment (field, segment) override it.
+ */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-mint);
+    outline-offset: 2px;
+  }
+}
+
+/* Chart axes and tooltips line their figures up like the rest of the dashboard. */
+.recharts-cartesian-axis-tick-value,
+.recharts-tooltip-wrapper {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Responsive grid per the design system: 4 / 8 / 12 columns below 768px, 768-1024px, above 1024px. */
 @utility page-x {
   padding-inline: 1rem;
@@ -112,7 +131,6 @@ body {
     box-shadow 150ms;
   &::placeholder {
     color: --theme(--color-slate-2);
-    opacity: 0.7;
   }
   &:hover:not(:disabled) {
     border-color: rgb(45 212 191 / 0.4);

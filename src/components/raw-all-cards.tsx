@@ -32,7 +32,7 @@ function CondChip({ c }: { c: string }) {
 }
 
 function Delta({ n, m }: { n: number | null; m: Money }) {
-  return <span className={n == null || n === 0 ? "text-muted" : tone(n)}>{n == null || n === 0 ? "—" : signedMoney(n, m)}</span>;
+  return <span className={n == null || n === 0 ? "text-slate-2" : tone(n)}>{n == null || n === 0 ? "—" : signedMoney(n, m)}</span>;
 }
 
 const ICONS: Record<View, ReactNode> = {
