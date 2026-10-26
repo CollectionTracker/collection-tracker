@@ -62,10 +62,10 @@ export function ValueMixDonut({ slices, m }: { slices: MixSlice[]; m: Money }) {
         </svg>
         <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
           <div>
-            <div className="text-xl font-bold tracking-[-0.015em]">
+            <div className="text-headline-md">
               {share(shown.value).toFixed(1)}%
             </div>
-            <div className="font-label text-[10px] uppercase tracking-wider text-slate-2">
+            <div className="font-label text-label-sm uppercase text-slate-2">
               {shown.label}
             </div>
           </div>

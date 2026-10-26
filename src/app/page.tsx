@@ -31,7 +31,7 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
         <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
           <div className="min-w-0">
             <Eyebrow>Executive dashboard</Eyebrow>
-            <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">
+            <h1 className="mt-1 text-headline-xl-mobile md:text-headline-xl">
               Collection, at a glance
             </h1>
             <Suspense fallback={null}>
@@ -87,7 +87,7 @@ async function SyncChip() {
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-2">
       <span
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-label text-[11px] font-bold uppercase tracking-wider ${tint}`}
+        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-label text-label-sm font-bold uppercase ${tint}`}
       >
         <span className={`size-1.5 rounded-full ${dot}`} />
         {chipLabels[st.state]}
@@ -102,11 +102,11 @@ async function SyncChip() {
 
 const card =
   "rounded-2xl border border-white/5 bg-surface p-5 transition-shadow hover:shadow-[0_8px_24px_-4px_rgba(45,212,191,0.08),0_2px_6px_rgba(0,0,0,0.4)]";
-const labelStyle = "font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2";
-const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
+const labelStyle = "font-label text-label-eyebrow uppercase text-slate-2";
+const heading = "font-label text-label-eyebrow uppercase text-ink";
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <div className="font-label text-[11px] font-bold uppercase leading-[14px] tracking-[0.12em] text-mint">{children}</div>;
+  return <div className="font-label text-label-eyebrow uppercase text-mint">{children}</div>;
 }
 
 const accents = { mint: "bg-mint", sky: "bg-sky", violet: "bg-violet", amber: "bg-amber" };
@@ -128,7 +128,7 @@ function Stat({
     <div className={card}>
       <div className={`mb-3 h-1 w-8 rounded-full ${accents[accent]}`} />
       <div className={labelStyle}>{label}</div>
-      <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{value}</div>
+      <div className="mt-1 text-metric-display tabular-nums">{value}</div>
       {sub && <div className={`mt-1 text-xs tabular-nums ${subTone ?? "text-slate-2"}`}>{sub}</div>}
     </div>
   );
@@ -141,7 +141,7 @@ function TotalCard({ d, ytd, m }: { d: Dashboard; ytd: Comparison | null; m: Mon
     <div className={card}>
       <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
       <div className={labelStyle}>Total portfolio</div>
-      <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{money(total, m)}</div>
+      <div className="mt-1 text-metric-display tabular-nums">{money(total, m)}</div>
       <div className={`mt-1 text-xs tabular-nums ${ytd ? tone(ytd.change) : "text-slate-2"}`}>
         {ytd ? `${ytd.changePct == null ? signedMoney(ytd.change, m) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
       </div>
@@ -312,7 +312,7 @@ function ComparisonCard({ title, c, empty, m }: { title: string; c: Comparison |
       <h2 className={`${heading} mb-3`}>{title}</h2>
       {c ? (
         <>
-          <div className={`text-[28px] font-bold leading-[34px] tabular-nums ${tone(c.change)}`}>
+          <div className={`text-metric-display tabular-nums ${tone(c.change)}`}>
             {c.changePct == null ? signedMoney(c.change, m) : pct(c.changePct)}
           </div>
           <div className="mt-1 text-xs tabular-nums text-slate-2">

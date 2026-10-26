@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Toolbar } from "@/components/toolbar";
 import { VIEWS, isActive } from "@/lib/views";
 
-const label = "px-1 font-label text-[10px] font-bold uppercase tracking-widest";
+const label = "px-1 font-label text-label-eyebrow uppercase";
 
 /** `currency` is the server-rendered currency selector, shown in the controls section. */
 export function HeaderDrawer({ currency }: { currency: ReactNode }) {
@@ -34,7 +34,7 @@ export function HeaderDrawer({ currency }: { currency: ReactNode }) {
           <section className="space-y-2">
             <div className="flex items-center justify-between">
               <span className={`${label} text-mint`}>Views &amp; Categories</span>
-              <span className="font-label text-[10px] text-slate-2">{VIEWS.length} views</span>
+              <span className="font-label text-label-sm text-slate-2">{VIEWS.length} views</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               {VIEWS.map((v) => {

@@ -7,8 +7,8 @@ export function RawIntelHeader({ d, m }: { d: Dashboard; m: Money }) {
   return (
     <section className="flex flex-col justify-between gap-3 rounded-2xl border border-white/5 bg-surface p-5 sm:flex-row sm:items-center">
       <div>
-        <div className="font-label text-[11px] font-bold uppercase leading-[14px] tracking-[0.12em] text-mint">Card-level analytics</div>
-        <h2 className="mt-1 text-xl font-bold tracking-[-0.01em]">Raw card portfolio intelligence</h2>
+        <div className="font-label text-label-eyebrow uppercase text-mint">Card-level analytics</div>
+        <h2 className="mt-1 text-headline-md">Raw card portfolio intelligence</h2>
         <p className="mt-1 text-xs text-slate-2">
           {d.lastUpdated ? `Prices as of ${d.lastUpdated}` : "No prices yet"} · Ungraded / raw only · values shown in{" "}
           <span className="font-semibold text-ink">{m.currency}</span>

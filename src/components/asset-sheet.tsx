@@ -68,7 +68,7 @@ function AssetTelemetry({ a, m }: { a: AssetDetail; m: Money }) {
       <div className="flex items-end gap-4">
         {a.image && <Image src={a.image} alt="" width={72} height={100} className="shrink-0 rounded-lg" />}
         <div className="min-w-0">
-          <div className="text-[32px] font-bold leading-[38px] tracking-[-0.02em] text-mint tabular-nums">{money(a.range.mid, m)}</div>
+          <div className="text-headline-lg text-mint tabular-nums">{money(a.range.mid, m)}</div>
           <div className="mt-1 text-xs text-slate-2 tabular-nums">
             {a.quantity} × {money(a.unit, m)}
             {a.sharePct != null && ` · ${a.sharePct.toFixed(1)}% of portfolio`}

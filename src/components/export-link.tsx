@@ -6,7 +6,7 @@ export function ExportLink({ href, className, children = "Export CSV" }: { href:
       download
       className={
         className ??
-        "inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-4 py-2 font-label text-[13px] font-semibold tracking-wide text-ink hover:brightness-125"
+        "inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-4 py-2 font-label text-label-md text-ink hover:brightness-125"
       }
     >
       <svg aria-hidden className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,7 +2,7 @@ import { type Money, money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
-const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
+const heading = "font-label text-label-eyebrow uppercase text-ink";
 const SETS = 8;
 
 export function RawStructure({ d, m }: { d: Dashboard; m: Money }) {

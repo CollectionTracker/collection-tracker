@@ -96,7 +96,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
         <span className="inline-flex items-center gap-1 rounded border border-mint/20 bg-mint/10 px-1.5 py-0.5 font-semibold text-mint group-hover:border-mint/40">
           <span aria-hidden>{info.flag}</span>
           <span>{selected}</span>
-          <span className="font-label text-[11px]">({info.symbol})</span>
+          <span className="font-label text-label-sm">({info.symbol})</span>
         </span>
         <svg
           aria-hidden
@@ -110,7 +110,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
         </svg>
       </button>
       {error && (
-        <p role="alert" className="absolute top-full mt-1 whitespace-nowrap text-[11px] text-rose-400">
+        <p role="alert" className="absolute top-full mt-1 whitespace-nowrap text-body-sm text-rose-400">
           {error}
         </p>
       )}
@@ -121,8 +121,8 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
           }`}
         >
           <div className="mb-2 flex items-center justify-between border-b border-white/5 pb-2">
-            <span className="font-label text-[11px] font-bold uppercase tracking-widest text-ink">Select currency</span>
-            <span className="font-label text-[10px] text-slate-2">{CURRENCIES.length} currencies</span>
+            <span className="font-label text-label-eyebrow uppercase text-ink">Select currency</span>
+            <span className="font-label text-label-sm text-slate-2">{CURRENCIES.length} currencies</span>
           </div>
           <div className="relative mb-2">
             <svg
@@ -177,13 +177,13 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
                     <span className="min-w-0">
                       <span className="flex items-center gap-1.5">
                         <span className={`text-xs font-bold ${isSelected ? "text-mint" : "text-ink"}`}>{code}</span>
-                        <span className="font-label text-[11px] text-slate-2">({c.symbol})</span>
+                        <span className="font-label text-label-sm text-slate-2">({c.symbol})</span>
                       </span>
-                      <span className="block truncate text-[10px] text-slate-2">{c.name}</span>
+                      <span className="block truncate text-body-sm text-slate-2">{c.name}</span>
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
-                    <span className="font-label text-[11px] text-slate-2">{rateText(code, fx.rates[code])}</span>
+                    <span className="font-label text-label-sm text-slate-2">{rateText(code, fx.rates[code])}</span>
                     <svg aria-hidden viewBox="0 0 20 20" fill="currentColor" className={`size-4 text-mint ${isSelected ? "" : "invisible"}`}>
                       <path
                         fillRule="evenodd"
@@ -199,7 +199,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
               <li className="p-3 text-center text-xs text-slate-2">No currencies match &ldquo;{query}&rdquo;</li>
             )}
           </ul>
-          <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-2 text-[10px] text-slate-2">
+          <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-2 text-body-sm text-slate-2">
             <span>{fx.day ? `ECB reference rate · ${fx.day}` : "Built-in reference rates"}</span>
             <span className="text-mint">per 1 USD</span>
           </div>

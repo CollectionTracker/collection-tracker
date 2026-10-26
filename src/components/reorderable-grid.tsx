@@ -87,7 +87,7 @@ export function ReorderToggle() {
       type="button"
       aria-pressed={editing}
       onClick={() => setEditing(!editing)}
-      className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 font-label text-[13px] font-semibold tracking-wide transition-colors ${
+      className={`inline-flex items-center gap-2 rounded-md border px-3 py-1.5 font-label text-label-md transition-colors ${
         editing ? "border-mint bg-mint/10 text-mint" : "border-white/10 text-slate-2 hover:border-mint/50 hover:text-mint"
       }`}
     >

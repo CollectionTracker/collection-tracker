@@ -15,7 +15,7 @@ export type InspectScope = {
   series: Point[];
 };
 
-const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
+const heading = "font-label text-label-eyebrow uppercase text-ink";
 
 /** Expanded metrics, volatility and a liquidation projection for one scope, in the display currency. */
 export function InspectionPanel({ s, m }: { s: InspectScope; m: Money }) {

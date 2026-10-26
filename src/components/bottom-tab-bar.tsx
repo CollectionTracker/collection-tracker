@@ -18,7 +18,7 @@ export function BottomTabBar() {
             key={v.href}
             href={v.href}
             aria-current={active ? "page" : undefined}
-            className={`flex flex-col items-center gap-1 px-1 py-3 font-label text-[11px] font-bold uppercase tracking-wider ${
+            className={`flex flex-col items-center gap-1 px-1 py-3 font-label text-label-sm font-bold uppercase ${
               active ? "text-mint" : "text-slate-2"
             }`}
           >
