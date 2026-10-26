@@ -7,6 +7,7 @@ import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { ExportLink } from "./export-link";
 import { InspectDialog } from "./inspect-dialog";
 import { MetricTile as Tile } from "./metric-tile";
+import { SealedThumb } from "./sealed-thumb";
 import { StatusDot } from "./status-chip";
 
 type Shown = { asset: AssetDetail; m: Money };
@@ -67,7 +68,11 @@ function AssetTelemetry({ a, m }: { a: AssetDetail; m: Money }) {
   return (
     <div className="space-y-4">
       <div className="flex items-end gap-4">
-        {a.image && <Image src={a.image} alt="" width={72} height={100} className="shrink-0 rounded-lg" />}
+        {a.productType ? (
+          <SealedThumb image={a.image} productType={a.productType} size={88} />
+        ) : (
+          a.image && <Image src={a.image} alt="" width={72} height={100} className="shrink-0 rounded-lg" />
+        )}
         <div className="min-w-0">
           <div className="text-headline-lg text-mint tabular-nums">{money(a.range.mid, m)}</div>
           <div className="mt-1 text-xs text-slate-2 tabular-nums">

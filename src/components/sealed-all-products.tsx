@@ -6,6 +6,7 @@ import { setSealedPriceAction } from "@/app/actions";
 import { type Money, money, signedMoney, tone } from "@/lib/format";
 import { sealedTypeLabel } from "@/lib/sealed-breakdown";
 import type { SealedHolding } from "@/lib/sealed-stats";
+import { SealedThumb } from "@/components/sealed-thumb";
 import { StatusChip } from "@/components/status-chip";
 
 const panel = "card p-5";
@@ -234,12 +235,17 @@ export function SealedAllProducts({ holdings, m }: { holdings: SealedHolding[]; 
                       <Fragment key={h.id}>
                         <tr className="hover:bg-white/[0.02]">
                           <td className={td}>
-                            <div className="max-w-[18rem] truncate font-semibold" title={h.name}>
-                              {h.name}
-                            </div>
-                            <div className="text-xs text-slate-2">
-                              {sealedTypeLabel(h.productType)}
-                              {h.sku && ` · SKU ${h.sku}`}
+                            <div className="flex items-center gap-2.5">
+                              <SealedThumb image={h.image} productType={h.productType} size={36} />
+                              <div className="min-w-0">
+                                <div className="max-w-[18rem] truncate font-semibold" title={h.name}>
+                                  {h.name}
+                                </div>
+                                <div className="text-xs text-slate-2">
+                                  {sealedTypeLabel(h.productType)}
+                                  {h.sku && ` · SKU ${h.sku}`}
+                                </div>
+                              </div>
                             </div>
                           </td>
                           <td className={td}>{h.setGroup ?? <span className="text-slate-2">—</span>}</td>

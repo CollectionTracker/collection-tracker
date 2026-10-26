@@ -6,7 +6,20 @@ const USER_AGENT = "collection-tracker (+https://github.com/JakeDeFord/collectio
 const GAP_MS = 150;
 
 export type Group = { groupId: number; name: string; abbreviation: string | null; isSupplemental: boolean; publishedOn: string };
-export type Product = { productId: number; groupId: number; name: string; extendedData?: { name: string; value: string }[] };
+export type Product = {
+  productId: number;
+  groupId: number;
+  name: string;
+  imageUrl?: string;
+  imageCount?: number;
+  extendedData?: { name: string; value: string }[];
+};
+
+/** A product's photo, or null when TCGplayer has none (its `imageUrl` then points at a stock "no image" picture). */
+export const productImage = (p: Product) => (p.imageUrl && p.imageCount !== 0 ? p.imageUrl : null);
+
+/** The same TCGplayer photo at another size: `_200w`, `_400w` or `_in_1000x1000`. */
+export const productImageAt = (url: string, size: "200w" | "400w" | "in_1000x1000") => url.replace(/_(200w|400w|in_1000x1000)\.jpg$/, `_${size}.jpg`);
 export type CsvPrice = {
   productId: number;
   subTypeName: string;

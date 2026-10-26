@@ -5,6 +5,7 @@ import type { SealedHolding } from "@/lib/sealed-stats";
 import type { Dashboard } from "@/lib/stats";
 import { AssetButton } from "./asset-sheet";
 import { BarPanel } from "./raw-breakdown";
+import { SealedThumb } from "./sealed-thumb";
 import { StatusChip } from "./status-chip";
 import { ValueChart } from "./value-chart";
 
@@ -67,6 +68,8 @@ function LeaderRow({ h, rank, m, total }: { h: SealedHolding; rank: number; m: M
         className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-colors hover:border-sky/40"
       >
         <span className="w-6 shrink-0 font-bold tabular-nums text-sky">{String(rank).padStart(2, "0")}</span>
+        {/* The leaderboard is the first product art on the view, so its thumbnails are often the LCP. */}
+        <SealedThumb image={h.image} productType={h.productType} size={44} eager />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{h.name}</div>
           <div className="truncate text-xs text-slate-2">
@@ -211,6 +214,7 @@ export function SealedMovers({ d, m }: { d: Dashboard; m: Money }) {
           {movers.map((h) => (
             <li key={h.id}>
               <AssetButton asset={sealedAsset(h, d.combined.value)} m={m} className="flex items-center gap-3 rounded-lg">
+                <SealedThumb image={h.image} productType={h.productType} size={40} />
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium">{h.name}</div>
                   <div className="truncate text-xs text-slate-2">

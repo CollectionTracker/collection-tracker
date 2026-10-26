@@ -22,6 +22,7 @@ const h = (id: number, over: Partial<SealedHolding>): SealedHolding => ({
   priceDay: "2026-10-26",
   priceSource: "tcgcsv",
   linked: true,
+  image: null,
   ...over,
 });
 

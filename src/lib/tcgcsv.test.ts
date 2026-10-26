@@ -8,6 +8,8 @@ import {
   matchSealedProduct,
   normNumber,
   pricesByVariant,
+  productImage,
+  productImageAt,
   rankGroups,
   sealedGroup,
   variantKey,
@@ -149,4 +151,13 @@ test("TCGdex prices and product ids", () => {
   };
   assert.deepEqual(dexPrices(dex), { holofoil: { market: 1269.69, low: 1149.97, mid: 1379.99, high: 26533.73 } });
   assert.deepEqual(dexProductIds(dex), [610516]);
+});
+
+test("product photos skip TCGplayer's stock image and resize by name", () => {
+  const url = "https://tcgplayer-cdn.tcgplayer.com/product/502005_200w.jpg";
+  assert.equal(productImage({ ...sealed(1, "151 UPC"), imageUrl: url, imageCount: 1 }), url);
+  assert.equal(productImage({ ...sealed(1, "151 UPC"), imageUrl: url, imageCount: 0 }), null);
+  assert.equal(productImage(sealed(1, "151 UPC")), null);
+  assert.equal(productImageAt(url, "400w"), "https://tcgplayer-cdn.tcgplayer.com/product/502005_400w.jpg");
+  assert.equal(productImageAt(url, "in_1000x1000"), "https://tcgplayer-cdn.tcgplayer.com/product/502005_in_1000x1000.jpg");
 });

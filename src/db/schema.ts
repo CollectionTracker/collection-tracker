@@ -105,6 +105,8 @@ export const sealedProducts = pgTable(
     // TCGplayer product and group (TCGCSV) the daily sync prices this from; null until matched by set and name.
     tcgplayerProductId: integer("tcgplayer_product_id"),
     tcgplayerGroupId: integer("tcgplayer_group_id"),
+    // TCGplayer product photo (200px wide), stored when the product is linked; null shows a placeholder for its type.
+    imageUrl: text("image_url"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (t) => [

@@ -45,6 +45,7 @@ const box: SealedHolding = {
   priceDay: "2026-10-26",
   priceSource: "manual",
   linked: false,
+  image: null,
 };
 
 /** Parses the CSV back as the importers do, keyed by lower-case header. */
