@@ -7,6 +7,7 @@ import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { ExportLink } from "./export-link";
 import { InspectDialog } from "./inspect-dialog";
 import { MetricTile as Tile } from "./metric-tile";
+import { StatusDot } from "./status-chip";
 
 type Shown = { asset: AssetDetail; m: Money };
 
@@ -31,7 +32,7 @@ export function AssetSheetProvider({ children }: { children: ReactNode }) {
         subtitle={view?.asset.meta.join(" · ")}
         eyebrow={
           <span className="inline-flex items-center gap-2">
-            <span className="size-2 rounded-full bg-mint motion-safe:animate-pulse" />
+            <StatusDot pulse />
             Position telemetry
           </span>
         }

@@ -1,5 +1,6 @@
 import { type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, assumptionText, multiplierText, scenarioColor } from "@/lib/scenarios";
+import { StatusChip } from "@/components/status-chip";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
@@ -21,13 +22,9 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                   {s.label}
                 </div>
                 {badge && (
-                  <span
-                    className="rounded-full px-2 py-0.5 font-label text-label-sm font-bold tabular-nums"
-                    style={{ color, background: `${color}1f` }}
-                    title={`Year ${PROJECTION_YEARS} value is ${badge} the starting midpoint`}
-                  >
+                  <StatusChip tone={color} className="px-2" title={`Year ${PROJECTION_YEARS} value is ${badge} the starting midpoint`}>
                     {badge}
-                  </span>
+                  </StatusChip>
                 )}
               </div>
               <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeMoney(s.values[PROJECTION_YEARS], m)}</div>

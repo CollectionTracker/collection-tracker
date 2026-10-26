@@ -1,7 +1,7 @@
 import type { Money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
+import { StatusChip } from "@/components/status-chip";
 
-const chip = "rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs text-slate-2 tabular-nums";
 
 export function RawIntelHeader({ d, m }: { d: Dashboard; m: Money }) {
   return (
@@ -16,10 +16,10 @@ export function RawIntelHeader({ d, m }: { d: Dashboard; m: Money }) {
       </div>
       {d.holdings.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          <span className={chip}>Set diversity: {d.setCount} {d.setCount === 1 ? "set" : "sets"}</span>
-          <span className={chip}>
+          <StatusChip>Set diversity: {d.setCount} {d.setCount === 1 ? "set" : "sets"}</StatusChip>
+          <StatusChip tone="violet">
             {d.byRarity.length} rarity {d.byRarity.length === 1 ? "category" : "categories"}
-          </span>
+          </StatusChip>
         </div>
       )}
     </section>

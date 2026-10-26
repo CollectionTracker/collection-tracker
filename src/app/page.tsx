@@ -20,6 +20,7 @@ import { AssetButton } from "@/components/asset-sheet";
 import { getDisplayMoney } from "@/lib/currency-pref";
 import { type GridCard, type Inspection, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
 import { type InspectScope, InspectionPanel } from "@/components/inspection-panel";
+import { type ChipTone, StatusChip } from "@/components/status-chip";
 import { getValueSeries } from "@/lib/inspection";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
@@ -71,27 +72,25 @@ async function SnapshotBar({ searchParams }: { searchParams: SearchParams }) {
   );
 }
 
-const chipStyles = {
-  verified: ["bg-mint/10 text-mint", "bg-mint"],
-  running: ["bg-sky/10 text-sky", "bg-sky animate-pulse"],
-  stale: ["bg-amber/10 text-amber", "bg-amber"],
-  failed: ["bg-rose-400/10 text-rose-400", "bg-rose-400"],
-  never: ["bg-white/5 text-slate-2", "bg-slate-2"],
+// Tone and whether the dot pulses: a live (verified or running) sync pulses.
+const chipStyles: Record<string, [ChipTone, boolean]> = {
+  verified: ["mint", true],
+  running: ["sky", true],
+  stale: ["amber", false],
+  failed: ["rose", false],
+  never: ["neutral", false],
 };
 const chipLabels = { verified: "Synced", running: "Syncing", stale: "Stale", failed: "Sync failed", never: "Never synced" };
 
 async function SyncChip() {
   await connection();
   const st = await getSyncStatus();
-  const [tint, dot] = chipStyles[st.state];
+  const [tone, pulse] = chipStyles[st.state];
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-2">
-      <span
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-label text-label-sm font-bold uppercase ${tint}`}
-      >
-        <span className={`size-1.5 rounded-full ${dot}`} />
+      <StatusChip tone={tone} dot pulse={pulse}>
         {chipLabels[st.state]}
-      </span>
+      </StatusChip>
       <span>
         {st.lastSuccess ? `Last verified sync ${st.lastSuccess.toISOString().slice(0, 16).replace("T", " ")} UTC · updated ${ago(st.lastSuccess)}` : "No verified sync yet"}
       </span>

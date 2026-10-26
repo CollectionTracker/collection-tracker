@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import { cardPreview } from "@/lib/card-preview";
 import { type Money, money, signedMoney, tone } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
+import { type ChipTone, StatusChip } from "@/components/status-chip";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
@@ -20,11 +21,13 @@ type Sort = { key: SortKey; dir: 1 | -1 };
 const gain = (h: Holding) => (h.cost == null ? null : h.value - h.cost);
 // Card numbers like "4", "GG69", "TG12": numeric part first, prefixed subsets after the main set.
 const numberKey = (n: string) => (parseInt(n.replace(/\D/g, ""), 10) || 0) + (/^\d/.test(n) ? 0 : 10_000);
-const condTone: Record<string, string> = { NM: "bg-mint/15 text-mint", LP: "bg-amber/15 text-amber", MP: "bg-rose-400/15 text-rose-400" };
+const condTone: Record<string, ChipTone> = { NM: "mint", LP: "amber", MP: "rose" };
 
 function CondChip({ c }: { c: string }) {
   return (
-    <span className={`rounded-full px-2 py-0.5 font-label text-label-sm font-bold ${condTone[c] ?? "bg-surface-2 text-slate-2"}`}>{c}</span>
+    <StatusChip tone={condTone[c] ?? "neutral"} className="px-2">
+      {c}
+    </StatusChip>
   );
 }
 
