@@ -9,6 +9,8 @@ type Props = {
   /** Small label above the title. */
   eyebrow?: ReactNode;
   footer?: ReactNode;
+  /** Extra buttons or links beside Done, e.g. an export link. */
+  actions?: ReactNode;
   /** Width cap from the `sm` breakpoint up, as a literal class so Tailwind sees it. */
   width?: string;
   onClose: () => void;
@@ -23,7 +25,7 @@ const SWIPE_CLOSE = 80;
  * click on the backdrop close it, and the page behind is inert while it is open. Below the `sm` breakpoint it is a
  * bottom sheet that slides up and can be swiped down from its grab handle; from `sm` up it is a centred modal.
  */
-export function InspectDialog({ open, title, subtitle, eyebrow = "Detail inspection", footer, width = "sm:max-w-4xl", onClose, children }: Props) {
+export function InspectDialog({ open, title, subtitle, eyebrow = "Detail inspection", footer, actions, width = "sm:max-w-4xl", onClose, children }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const swipe = useRef<{ y: number; dy: number } | null>(null);
@@ -97,13 +99,16 @@ export function InspectDialog({ open, title, subtitle, eyebrow = "Detail inspect
           <div className="py-6">{children}</div>
           <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-4 text-xs">
             <div className="text-slate-2">{footer}</div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md bg-mint px-4 py-2 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110"
-            >
-              Done
-            </button>
+            <div className="flex items-center gap-2">
+              {actions}
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md bg-mint px-4 py-2 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110"
+              >
+                Done
+              </button>
+            </div>
           </footer>
         </div>
       )}

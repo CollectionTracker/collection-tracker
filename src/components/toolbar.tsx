@@ -3,6 +3,8 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { syncNow } from "@/app/actions";
+import { exportHref } from "@/lib/export";
+import { ExportLink } from "./export-link";
 
 export function Toolbar() {
   const router = useRouter();
@@ -48,6 +50,9 @@ export function Toolbar() {
       <button className={btn} disabled={pending} onClick={() => fileRef.current?.click()}>
         Import CSV
       </button>
+      <ExportLink href={exportHref({ scope: "portfolio" })} className={`inline-flex items-center gap-1.5 ${btn}`}>
+        Export CSV
+      </ExportLink>
       <button
         className="rounded-md bg-mint px-3 py-1.5 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110 disabled:opacity-50"
         disabled={pending}

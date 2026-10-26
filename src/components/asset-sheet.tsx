@@ -4,6 +4,7 @@ import Image from "next/image";
 import { type ReactNode, createContext, useCallback, useContext, useState } from "react";
 import type { AssetDetail } from "@/lib/asset-detail";
 import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
+import { ExportLink } from "./export-link";
 import { InspectDialog } from "./inspect-dialog";
 import { MetricTile as Tile } from "./metric-tile";
 
@@ -35,6 +36,7 @@ export function AssetSheetProvider({ children }: { children: ReactNode }) {
           </span>
         }
         footer={view?.asset.kind}
+        actions={view && <ExportLink href={view.asset.exportHref} />}
         width="sm:max-w-lg"
         onClose={() => setShown(null)}
       >

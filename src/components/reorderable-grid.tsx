@@ -12,6 +12,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { isDefaultOrder, moveCard, parseOrder, resolveOrder, shiftCard } from "@/lib/card-order";
+import { ExportLink } from "./export-link";
 import { InspectDialog } from "./inspect-dialog";
 
 export type GridCard = {
@@ -25,7 +26,12 @@ export type GridCard = {
   inspect?: string;
 };
 
-export type Inspection = { subtitle: string; body: ReactNode };
+export type Inspection = {
+  subtitle: string;
+  body: ReactNode;
+  /** CSV export of the holdings this inspection covers. */
+  exportHref?: string;
+};
 
 // The order is saved per browser in localStorage (#44). The storage event only fires in other tabs, so writes here
 // notify this tab's subscribers themselves.
@@ -274,6 +280,7 @@ export function ReorderableGrid({
         title={open?.card.label ?? ""}
         subtitle={open?.view.subtitle}
         footer={inspectFooter}
+        actions={open?.view.exportHref && <ExportLink href={open.view.exportHref} />}
         onClose={() => setInspecting(null)}
       >
         {open?.view.body}
