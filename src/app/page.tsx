@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Image from "next/image";
 import { connection } from "next/server";
 import { Toolbar } from "@/components/toolbar";
-import { SnapshotPicker, snapshotName } from "@/components/snapshot-picker";
+import { SnapshotPicker } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
 import { ValueChart } from "@/components/value-chart";
 import { ValueMixDonut } from "@/components/value-mix-donut";
@@ -10,6 +10,7 @@ import { type Dashboard, type Holding, getDashboard } from "@/lib/stats";
 import { COMPARISON_DAYS, type Comparison, getComparisons } from "@/lib/comparison";
 import { getSyncStatus } from "@/lib/sync-status";
 import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
+import { snapshotName } from "@/lib/snapshot-name";
 import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
@@ -27,7 +28,7 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
     <ReorderProvider>
       <main className="mx-auto w-full max-w-7xl space-y-3 py-6 page-x md:space-y-5">
         <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
-          <div>
+          <div className="min-w-0">
             <Eyebrow>Executive dashboard</Eyebrow>
             <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">
               Collection, at a glance
@@ -269,13 +270,13 @@ function StructurePanel({ d, m }: { d: Dashboard; m: Money }) {
             ))}
           </ul>
           <dl className="mt-5 grid gap-3 border-t border-white/5 pt-4 text-sm sm:grid-cols-2">
-            <div>
+            <div className="min-w-0">
               <dt className={labelStyle}>Sealed market range</dt>
               <dd className="mt-1 tabular-nums">
                 {money(valuation.low, m)} – {money(valuation.high, m)}
               </dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className={labelStyle}>Largest holding</dt>
               <dd className="mt-1 truncate tabular-nums">
                 {largest && value > 0 ? `${((largest.value / value) * 100).toFixed(1)}% of sealed · ${largest.name}` : "—"}

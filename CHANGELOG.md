@@ -52,6 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `usd`, `wholeUsd`, `compactUsd` and `signed`; use `money`, `wholeMoney`, `compactMoney` and `signedMoney` with the page's `Money` (from `getDisplayMoney()`) (#42).
 
 ### Fixed
+- Viewing a snapshot on the Overview (`/?snapshot=<day>`) no longer breaks the page: the server-rendered snapshot bar called `snapshotName()` from the client-only snapshot picker, so the page logged an error and buttons and dialogs stopped responding. The helper now lives in `src/lib/snapshot-name.ts` and is shared by both (#107).
+- The Overview no longer scrolls sideways on phones: at 375px a long "Largest holding" line in the Collection structure card widened the page by about 15px, and the snapshot picker, sized to its longest option, by 3px more, so mobile browsers zoomed out. The line now truncates within the card and the picker shrinks to fit (#107).
 - Compact amounts no longer show `$1000` or `$1000.0k` just below a threshold (they now read `$1.0k` and `$1.0M`), and negative compact amounts read `-$3.1k` instead of `$-3100` (#40).
 - Top 8 raw card holdings leaderboard no longer makes the Raw Cards page scroll sideways on phones: below the two-column breakpoint the list now has an explicit single column, so long set · rarity · variant lines truncate instead of widening the page (#90).
 - Value-over-time chart logged duplicate React key errors when every snapshot had the same total (flat history gave repeated Y-axis ticks); the axis range is now computed from the data and padded by 2 % so ticks stay distinct.
