@@ -27,16 +27,29 @@ The collection is stored **in your browser**, not on the server: an embedded Pos
 
 `npm run dev` starts with a pre-filled demo collection (cards, sealed products and price history) in a separate `collection-tracker-demo` browser database, so it never mixes with your real data. Delete that IndexedDB database in the browser's dev tools to regenerate it, or set `SEED_DEV_DATA=0` to use your real collection in dev.
 
+### Opening it from another computer
+
+Browsers only run the in-browser database on HTTPS or `localhost`, so `http://<this computer's IP>:3000` shows "This page couldn't load" on other machines. Serve it over HTTPS instead:
+
+```bash
+npm run serve:lan
+```
+
+This builds the app (`npm run start:lan` skips the build and serves the last one), then starts the app on `127.0.0.1:3000` and an HTTPS proxy on port `3443` on every network interface, and prints the addresses to open, e.g. `https://192.168.7.153:3443`. The first run creates a self-signed certificate in `.certs/` (it needs `openssl`) and makes a new one whenever this computer's IP addresses change. Each browser warns about the certificate the first time; choose **Advanced → Proceed** (Chrome, Edge) or **Accept the risk** (Firefox). Allow port 3443 through the firewall if needed (e.g. `sudo ufw allow 3443/tcp`). Remember the other computer gets its own, empty collection (see above): move data between them with Export CSV and Import CSV.
+
 ### Environment variables
 
 | Variable | Purpose |
 |---|---|
 | `SEED_DEV_DATA` | Set to `0` to skip the demo data in `npm run dev`. |
+| `PORT`, `HTTPS_PORT` | Ports `npm run start:lan` uses for the app (default `3000`, local only) and the HTTPS proxy (default `3443`). |
 
 ## Scripts
 
 - `npm run dev` – start the dev server
 - `npm run build` / `npm start` – production build and server
+- `npm run serve:lan` – build, then serve over HTTPS to other computers on the network
+- `npm run start:lan` – serve the last build over HTTPS to the network, without rebuilding
 - `npm run lint` – lint
 - `npm test` – unit tests
 - `npm run db:bundle` – bundle the `drizzle/` migrations for the browser (runs before `dev` and `build`; run it after `drizzle-kit generate`)
