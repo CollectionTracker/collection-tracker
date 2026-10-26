@@ -1,6 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { isDefaultOrder, moveCard, parseOrder, resolveOrder, shiftCard } from "./card-order";
+import {
+  applyVisibleOrder,
+  isDefaultOrder,
+  moveCard,
+  parseOrder,
+  resolveHidden,
+  resolveOrder,
+  setHidden,
+  shiftCard,
+  visibleOrder,
+} from "./card-order";
 
 const defaults = ["a", "b", "c", "d"];
 
@@ -42,4 +52,25 @@ test("parseOrder accepts only a list of strings", () => {
 test("isDefaultOrder", () => {
   assert.equal(isDefaultOrder(defaults, [...defaults]), true);
   assert.equal(isDefaultOrder(defaults, ["b", "a", "c", "d"]), false);
+});
+
+test("visibleOrder drops hidden cards", () => {
+  assert.deepEqual(visibleOrder(defaults, ["b", "x"]), ["a", "c", "d"]);
+  assert.deepEqual(visibleOrder(defaults, []), defaults);
+});
+
+test("applyVisibleOrder keeps hidden cards in their slots", () => {
+  assert.deepEqual(applyVisibleOrder(defaults, ["b"], ["d", "c", "a"]), ["d", "b", "c", "a"]);
+  assert.deepEqual(applyVisibleOrder(defaults, [], ["d", "c", "b", "a"]), ["d", "c", "b", "a"]);
+});
+
+test("resolveHidden keeps only known ids once", () => {
+  assert.deepEqual(resolveHidden(defaults, ["c", "x", "c", "a"]), ["c", "a"]);
+  assert.deepEqual(resolveHidden(defaults, null), []);
+});
+
+test("setHidden hides and shows without duplicates", () => {
+  assert.deepEqual(setHidden([], "a", false), ["a"]);
+  assert.deepEqual(setHidden(["a"], "a", false), ["a"]);
+  assert.deepEqual(setHidden(["a", "b"], "a", true), ["b"]);
 });

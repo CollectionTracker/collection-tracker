@@ -47,3 +47,31 @@ export function parseOrder(raw: string | null): string[] | null {
 export function isDefaultOrder(defaults: readonly string[], order: readonly string[]): boolean {
   return defaults.length === order.length && defaults.every((id, i) => order[i] === id);
 }
+
+/** Cards to show: the order without the hidden ids. Hidden ids that no longer exist are ignored. */
+export function visibleOrder(order: readonly string[], hidden: readonly string[]): string[] {
+  const gone = new Set(hidden);
+  return order.filter((id) => !gone.has(id));
+}
+
+/**
+ * Writes a new order of the visible cards back into the full order. Hidden cards keep their slots, so a card that is
+ * added back returns where it was.
+ */
+export function applyVisibleOrder(order: readonly string[], hidden: readonly string[], visible: readonly string[]): string[] {
+  const gone = new Set(hidden);
+  let i = 0;
+  return order.map((id) => (gone.has(id) ? id : (visible[i++] ?? id)));
+}
+
+/** The saved hidden ids that still exist, without duplicates. */
+export function resolveHidden(defaults: readonly string[], saved: readonly string[] | null): string[] {
+  const known = new Set(defaults);
+  return [...new Set(saved ?? [])].filter((id) => known.has(id));
+}
+
+/** Hides `id`, or shows it again when `show` is true. Unknown ids leave the list unchanged. */
+export function setHidden(hidden: readonly string[], id: string, show: boolean): string[] {
+  const rest = hidden.filter((x) => x !== id);
+  return show ? rest : [...rest, id];
+}

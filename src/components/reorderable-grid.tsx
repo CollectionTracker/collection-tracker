@@ -11,7 +11,17 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { isDefaultOrder, moveCard, parseOrder, resolveOrder, shiftCard } from "@/lib/card-order";
+import {
+  applyVisibleOrder,
+  isDefaultOrder,
+  moveCard,
+  parseOrder,
+  resolveHidden,
+  resolveOrder,
+  setHidden,
+  shiftCard,
+  visibleOrder,
+} from "@/lib/card-order";
 import { ExportLink } from "./export-link";
 import { InspectDialog } from "./inspect-dialog";
 
@@ -33,7 +43,7 @@ export type Inspection = {
   exportHref?: string;
 };
 
-// The order is saved per browser in localStorage (#44). The storage event only fires in other tabs, so writes here
+// The order and the hidden cards are saved per browser in localStorage (#44, #132). The storage event only fires in other tabs, so writes here
 // notify this tab's subscribers themselves.
 const listeners = new Set<() => void>();
 
@@ -66,7 +76,7 @@ function subscribe(onChange: () => void) {
 
 const EditingContext = createContext<{ editing: boolean; setEditing: (on: boolean) => void } | null>(null);
 
-/** Shares the "reorder layout" mode between the header toggle and the grid. */
+/** Shares the "customize layout" mode between the header toggle and the grid. */
 export function ReorderProvider({ children }: { children: ReactNode }) {
   const [editing, setEditing] = useState(false);
   const value = useMemo(() => ({ editing, setEditing }), [editing]);
@@ -79,7 +89,7 @@ function useEditing() {
   return ctx;
 }
 
-/** Header button that turns reorder mode on and off. */
+/** Header button that turns layout editing (reorder, remove, add) on and off. */
 export function ReorderToggle() {
   const { editing, setEditing } = useEditing();
   return (
@@ -94,14 +104,15 @@ export function ReorderToggle() {
       <svg aria-hidden className="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M4 6h16M4 12h16m-7 6h7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
       </svg>
-      {editing ? "Done reordering" : "Reorder layout"}
+      {editing ? "Done customizing" : "Customize layout"}
     </button>
   );
 }
 
 /**
- * Cards in one grid whose order the visitor can change while reorder mode is on: drag a card onto another to take its
- * place, or use the ◀ ▶ buttons (keyboard and touch). The order is saved in localStorage under `storageKey`.
+ * Cards in one grid whose layout the visitor can change while edit mode is on: drag a card onto another to take its
+ * place, use the ◀ ▶ buttons (keyboard and touch), remove a card with ✕ and bring it back from the tray of removed
+ * cards. The order is saved in localStorage under `storageKey`, the removed cards under `${storageKey}-hidden`.
  */
 export function ReorderableGrid({
   cards,
@@ -120,7 +131,11 @@ export function ReorderableGrid({
   // The server has no saved order, so the first render matches it and the saved order applies right after hydration.
   const raw = useSyncExternalStore(subscribe, () => readStored(storageKey), () => null);
   const defaults = useMemo(() => cards.map((c) => c.id), [cards]);
-  const order = useMemo(() => resolveOrder(defaults, parseOrder(raw)), [defaults, raw]);
+  const hiddenKey = `${storageKey}-hidden`;
+  const rawHidden = useSyncExternalStore(subscribe, () => readStored(hiddenKey), () => null);
+  const fullOrder = useMemo(() => resolveOrder(defaults, parseOrder(raw)), [defaults, raw]);
+  const hidden = useMemo(() => resolveHidden(defaults, parseOrder(rawHidden)), [defaults, rawHidden]);
+  const order = useMemo(() => visibleOrder(fullOrder, hidden), [fullOrder, hidden]);
   const byId = useMemo(() => new Map(cards.map((c) => [c.id, c])), [cards]);
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<string | null>(null);
@@ -128,10 +143,21 @@ export function ReorderableGrid({
   const refocus = useRef<{ id: string; dir: -1 | 1 } | null>(null);
   const grid = useRef<HTMLDivElement>(null);
 
+  // `next` is the new order of the visible cards; hidden cards keep their slots in the saved order.
   const save = useCallback(
-    (next: string[]) => writeStored(storageKey, isDefaultOrder(defaults, next) ? null : JSON.stringify(next)),
-    [defaults, storageKey],
+    (next: string[]) => {
+      const full = applyVisibleOrder(fullOrder, hidden, next);
+      writeStored(storageKey, isDefaultOrder(defaults, full) ? null : JSON.stringify(full));
+    },
+    [defaults, fullOrder, hidden, storageKey],
   );
+
+  const saveHidden = (next: string[]) => writeStored(hiddenKey, next.length ? JSON.stringify(next) : null);
+
+  const toggle = (id: string, show: boolean) => {
+    saveHidden(setHidden(hidden, id, show));
+    setAnnouncement(`${byId.get(id)?.label} ${show ? "added" : "removed"}`);
+  };
 
   const announce = (id: string, next: string[]) =>
     setAnnouncement(`${byId.get(id)?.label} moved to position ${next.indexOf(id) + 1} of ${next.length}`);
@@ -175,20 +201,41 @@ export function ReorderableGrid({
       {editing && (
         <div className="col-span-full flex flex-wrap items-center justify-between gap-2 rounded-xl border border-mint/40 bg-mint/10 px-4 py-2.5 text-xs text-mint">
           <span>
-            <span className="font-bold">Reorder layout:</span> drag cards or use the ◀ ▶ buttons to arrange your view. The order is
-            saved in this browser.
+            <span className="font-bold">Customize layout:</span> drag cards or use the ◀ ▶ buttons to arrange your view, ✕ to
+            remove a card. Your layout is saved in this browser.
           </span>
           <button
             type="button"
             className="underline hover:text-ink"
             onClick={() => {
-              save(defaults);
-              setAnnouncement("Layout reset to the default order");
+              writeStored(storageKey, null);
+              writeStored(hiddenKey, null);
+              setAnnouncement("Layout reset to the default cards and order");
             }}
           >
-            Reset to default order
+            Reset layout
           </button>
         </div>
+      )}
+      {editing && hidden.length > 0 && (
+        <div className="col-span-full flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-surface-2/40 px-4 py-2.5 text-xs text-slate-2">
+          <span className="font-bold text-ink">Removed cards:</span>
+          {hidden.map((id) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => toggle(id, true)}
+              className="rounded-md border border-white/10 px-2 py-1 hover:border-mint/50 hover:text-mint"
+            >
+              + {byId.get(id)?.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {order.length === 0 && (
+        <p className="col-span-full rounded-2xl border border-dashed border-white/10 py-12 text-center text-sm text-slate-2">
+          All cards are removed. Use “Customize layout” to add some back.
+        </p>
       )}
       {order.map((id, i) => {
         const c = byId.get(id)!;
@@ -247,6 +294,15 @@ export function ReorderableGrid({
                   onClick={() => shift(id, 1)}
                 >
                   ▶
+                </button>
+                <button
+                  type="button"
+                  className={`${shiftBtn} ml-0.5 border-l border-white/10 pl-2`}
+                  aria-label={`Remove ${c.label}`}
+                  title="Remove card"
+                  onClick={() => toggle(id, false)}
+                >
+                  ✕
                 </button>
               </div>
             )}
