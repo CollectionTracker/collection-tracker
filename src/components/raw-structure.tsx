@@ -1,7 +1,7 @@
 import { type Money, money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 const SETS = 8;
 
@@ -23,7 +23,7 @@ export function RawStructure({ d, m }: { d: Dashboard; m: Money }) {
                     <span className="truncate text-slate-2">{s.name}</span>
                     <span className="font-bold tabular-nums">{money(s.value, m)}</span>
                   </div>
-                  <div className="mt-1.5 h-2 rounded-full bg-track">
+                  <div className="mt-1.5 h-2 track">
                     <div className="h-full rounded-full bg-sky" style={{ width: `${done}%` }} />
                   </div>
                   <div className="mt-0.5 text-xs tabular-nums text-slate-2">
@@ -51,7 +51,7 @@ export function RawStructure({ d, m }: { d: Dashboard; m: Money }) {
                     {((b.value / d.totalValue) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {money(b.value, m)}</span>
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-track">
+                <div className="mt-1.5 h-2 track">
                   <div className="h-full rounded-full bg-amber" style={{ width: `${(b.value / d.totalValue) * 100}%` }} />
                 </div>
               </li>

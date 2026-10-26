@@ -8,7 +8,7 @@ import { type Money, money, signedMoney, tone } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
 import { type ChipTone, StatusChip } from "@/components/status-chip";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 const control = "field rounded-lg text-sm";
 const PAGE = 25;
@@ -214,7 +214,7 @@ function GridView({ rows, m }: { rows: Holding[]; m: Money }) {
     <>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {rows.slice(0, limit).map((h) => (
-          <li key={h.id} className="grid gap-2 rounded-xl border border-white/5 bg-inset p-2 transition-colors hover:border-mint/40" {...cardPreview(h)}>
+          <li key={h.id} className="grid gap-2 inset-well rounded-xl p-2 transition-colors hover:border-mint/40" {...cardPreview(h)}>
             <div className="relative aspect-[63/88] overflow-hidden rounded-md bg-surface-2">
               {h.image && <Image src={h.image} alt={h.name} fill sizes="(min-width: 1024px) 180px, 45vw" className="object-cover" />}
               <span className="absolute left-1.5 top-1.5">
@@ -280,7 +280,7 @@ function SetsView({ rows, sets, filtered, m }: { rows: Holding[]; sets: SetProgr
           const isOpen = filtered || open.has(g.id);
           const done = g.total ? Math.min(100, (g.owned / g.total) * 100) : 0;
           return (
-            <li key={g.id} className="overflow-hidden rounded-xl border border-white/5 bg-inset">
+            <li key={g.id} className="overflow-hidden inset-well rounded-xl">
               <button
                 type="button"
                 aria-expanded={isOpen}
@@ -297,7 +297,7 @@ function SetsView({ rows, sets, filtered, m }: { rows: Holding[]; sets: SetProgr
                   </span>
                 </span>
                 <span className="hidden md:block">
-                  <span className="block h-1.5 rounded-full bg-track">
+                  <span className="block h-1.5 track">
                     <span className="block h-full rounded-full bg-sky" style={{ width: `${done}%` }} />
                   </span>
                   <span className="mt-1 block text-xs tabular-nums text-slate-2">

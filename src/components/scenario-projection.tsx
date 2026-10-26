@@ -2,7 +2,7 @@ import { type Money, money } from "@/lib/format";
 import { type Scenario, PROJECTION_YEARS } from "@/lib/scenarios";
 import { ScenarioChart } from "./scenario-chart";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 
 /** "Projected portfolio scenarios" panel: the 10-year chart from the portfolio midpoint. */
 export function ScenarioProjection({ start, scenarios, m }: { start: number; scenarios: Scenario[]; m: Money }) {
@@ -19,7 +19,7 @@ export function ScenarioProjection({ start, scenarios, m }: { start: number; sce
         <div className="font-label text-xs text-slate-2">Milestones across {PROJECTION_YEARS} years</div>
       </div>
       {start > 0 ? (
-        <div className="rounded-xl border border-white/5 bg-inset p-4">
+        <div className="inset-well rounded-xl p-4">
           <ScenarioChart scenarios={scenarios} m={m} />
         </div>
       ) : (

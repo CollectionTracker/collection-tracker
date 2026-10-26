@@ -1,7 +1,7 @@
 import { compactMoney, type Money } from "@/lib/format";
 import type { Dashboard } from "@/lib/stats";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 const TOP = 5;
 
@@ -24,7 +24,7 @@ function BarPanel({ title, rows, bar, text, empty, m }: BarPanelProps) {
               <span className="col-span-5 truncate text-slate-2" title={r.label}>
                 {r.label}
               </span>
-              <div className="col-span-5 h-2 overflow-hidden rounded-full bg-track">
+              <div className="col-span-5 h-2 overflow-hidden track">
                 <div className={`h-full rounded-full ${bar}`} style={{ width: `${(r.value / max) * 100}%` }} />
               </div>
               <span className={`col-span-2 text-right tabular-nums ${i === 0 ? `font-bold ${text}` : ""}`}>{compactMoney(r.value, m)}</span>

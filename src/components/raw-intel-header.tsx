@@ -5,7 +5,7 @@ import { StatusChip } from "@/components/status-chip";
 
 export function RawIntelHeader({ d, m }: { d: Dashboard; m: Money }) {
   return (
-    <section className="flex flex-col justify-between gap-3 rounded-2xl border border-white/5 bg-surface p-5 sm:flex-row sm:items-center">
+    <section className="flex flex-col justify-between gap-3 card p-5 sm:flex-row sm:items-center">
       <div>
         <div className="font-label text-label-eyebrow uppercase text-mint">Card-level analytics</div>
         <h2 className="mt-1 text-headline-md">Raw card portfolio intelligence</h2>

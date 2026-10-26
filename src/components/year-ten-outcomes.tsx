@@ -2,7 +2,7 @@ import { type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, assumptionText, multiplierText, scenarioColor } from "@/lib/scenarios";
 import { StatusChip } from "@/components/status-chip";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 
 /** One card per scenario: its year-10 value, the assumptions behind it and a "× start" multiplier badge. */
@@ -15,7 +15,7 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
           const color = scenarioColor(s.id);
           const badge = multiplierText(s.multiplier);
           return (
-            <li key={s.id} className="rounded-xl border border-white/5 bg-inset p-3.5">
+            <li key={s.id} className="inset-well rounded-xl p-3.5">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-2">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
