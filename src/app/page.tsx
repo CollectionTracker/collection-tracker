@@ -14,33 +14,39 @@ import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
 import { getDisplayMoney } from "@/lib/currency-pref";
+import { type GridCard, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-3 py-6 page-x md:space-y-5">
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
-        <div>
-          <Eyebrow>Executive dashboard</Eyebrow>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">
-            Collection, at a glance
-          </h1>
-          <Suspense fallback={null}>
-            <SnapshotBar searchParams={searchParams} />
-          </Suspense>
-          <Suspense fallback={null}>
-            <SyncChip />
-          </Suspense>
-        </div>
-        <div className="hidden lg:block">
-          <Toolbar />
-        </div>
-      </header>
-      <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
-        <Dashboard searchParams={searchParams} />
-      </Suspense>
-    </main>
+    <ReorderProvider>
+      <main className="mx-auto w-full max-w-7xl space-y-3 py-6 page-x md:space-y-5">
+        <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/5 pb-5">
+          <div>
+            <Eyebrow>Executive dashboard</Eyebrow>
+            <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] md:text-[40px] md:leading-[48px]">
+              Collection, at a glance
+            </h1>
+            <Suspense fallback={null}>
+              <SnapshotBar searchParams={searchParams} />
+            </Suspense>
+            <Suspense fallback={null}>
+              <SyncChip />
+            </Suspense>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <ReorderToggle />
+            <div className="hidden lg:block">
+              <Toolbar />
+            </div>
+          </div>
+        </header>
+        <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
+          <Dashboard searchParams={searchParams} />
+        </Suspense>
+      </main>
+    </ReorderProvider>
   );
 }
 
@@ -122,53 +128,30 @@ function Stat({
   );
 }
 
-function SummaryCards({ d, ytd, m }: { d: Dashboard; ytd: Comparison | null; m: Money }) {
+function TotalCard({ d, ytd, m }: { d: Dashboard; ytd: Comparison | null; m: Money }) {
   const total = d.combined.value;
   const rawShare = total ? (d.totalValue / total) * 100 : 0;
-  const { low, high } = d.combined.valuation;
   return (
-    <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-3">
-      <div className={card}>
-        <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
-        <div className={labelStyle}>Total portfolio</div>
-        <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{money(total, m)}</div>
-        <div className={`mt-1 text-xs tabular-nums ${ytd ? tone(ytd.change) : "text-slate-2"}`}>
-          {ytd ? `${ytd.changePct == null ? signedMoney(ytd.change, m) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
-        </div>
-        <div
-          className="mt-3 flex h-2 overflow-hidden rounded-full bg-track"
-          role="img"
-          aria-label={`${(100 - rawShare).toFixed(0)}% sealed, ${rawShare.toFixed(0)}% raw`}
-        >
-          <div className="bg-sky" style={{ width: `${total ? 100 - rawShare : 0}%` }} />
-          <div className="bg-violet" style={{ width: `${rawShare}%` }} />
-        </div>
-        <div className="mt-1 flex justify-between text-xs text-slate-2">
-          <span>Sealed {total ? (100 - rawShare).toFixed(0) : 0}%</span>
-          <span>Raw {rawShare.toFixed(0)}%</span>
-        </div>
+    <div className={card}>
+      <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
+      <div className={labelStyle}>Total portfolio</div>
+      <div className="mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums">{money(total, m)}</div>
+      <div className={`mt-1 text-xs tabular-nums ${ytd ? tone(ytd.change) : "text-slate-2"}`}>
+        {ytd ? `${ytd.changePct == null ? signedMoney(ytd.change, m) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
       </div>
-      <Stat
-        accent="sky"
-        label="Sealed inventory"
-        value={money(d.sealed.value, m)}
-        sub={`${d.sealed.units.toLocaleString()} units${d.sealed.gain == null ? "" : ` · ${signedMoney(d.sealed.gain, m)} gain / loss`}`}
-        subTone={d.sealed.gain == null ? undefined : tone(d.sealed.gain)}
-      />
-      <Stat
-        accent="violet"
-        label="Raw cards"
-        value={money(d.totalValue, m)}
-        sub={`${d.totalCopies.toLocaleString()} cards · ${d.uniqueCards} unique · ${d.setCount} sets${d.gain == null ? "" : ` · ${signedMoney(d.gain, m)} gain / loss`}`}
-        subTone={d.gain == null ? undefined : tone(d.gain)}
-      />
-      <Stat
-        accent="amber"
-        label="Valuation range"
-        value={`${money(low, m)} – ${money(high, m)}`}
-        sub={`Midpoint ${money(d.combined.valuation.mid, m)}`}
-      />
-    </section>
+      <div
+        className="mt-3 flex h-2 overflow-hidden rounded-full bg-track"
+        role="img"
+        aria-label={`${(100 - rawShare).toFixed(0)}% sealed, ${rawShare.toFixed(0)}% raw`}
+      >
+        <div className="bg-sky" style={{ width: `${total ? 100 - rawShare : 0}%` }} />
+        <div className="bg-violet" style={{ width: `${rawShare}%` }} />
+      </div>
+      <div className="mt-1 flex justify-between text-xs text-slate-2">
+        <span>Sealed {total ? (100 - rawShare).toFixed(0) : 0}%</span>
+        <span>Raw {rawShare.toFixed(0)}%</span>
+      </div>
+    </div>
   );
 }
 
@@ -178,7 +161,7 @@ function ValuationPanel({ d, m }: { d: Dashboard; m: Money }) {
   const midPos = high > low ? ((mid - low) / (high - low)) * 100 : 50;
   const risky = largest != null && largest.pct >= CONCENTRATION_WARNING_PCT;
   return (
-    <div className={card + " col-span-full"}>
+    <div className={card}>
       <h2 className={`${heading} mb-4`}>Valuation &amp; concentration</h2>
       <div className="grid gap-6 md:grid-cols-2">
         <div>
@@ -222,7 +205,7 @@ function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
   const top = ranked.slice(0, 5);
   const max = top[0]?.value ?? 0;
   return (
-    <div className={card + " col-span-full lg:col-span-6"}>
+    <div className={card}>
       <div className="mb-4 flex items-baseline justify-between">
         <h2 className={heading}>Top sealed holdings</h2>
         <span className="text-xs text-slate-2">{d.sealed.holdings.length} SKUs</span>
@@ -258,7 +241,7 @@ function StructurePanel({ d, m }: { d: Dashboard; m: Money }) {
   const weights = [...groups].filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   const largest = holdings.reduce<(typeof holdings)[number] | null>((a, h) => (!a || h.value > a.value ? h : a), null);
   return (
-    <div className={card + " col-span-full lg:col-span-6"}>
+    <div className={card}>
       <h2 className={`${heading} mb-4`}>Collection structure</h2>
       {weights.length === 0 ? (
         <p className="text-sm text-slate-2">No priced sealed products yet. Enter a price on the Sealed Inventory view.</p>
@@ -301,7 +284,7 @@ function StructurePanel({ d, m }: { d: Dashboard; m: Money }) {
 
 function AssumptionsCard() {
   return (
-    <div className={card + " col-span-full"}>
+    <div className={card}>
       <h2 className={`${heading} mb-3`}>Valuation context &amp; assumptions</h2>
       <ul className="list-disc space-y-1.5 pl-5 text-xs text-slate-2">
         <li>Values are estimates based on market prices and are not guaranteed realized sale proceeds.</li>
@@ -371,32 +354,79 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
       </div>
     );
 
-  return (
-    <>
-      <SummaryCards d={d} ytd={cmp.ytd} m={m} />
-
-      <section className="page-grid [&>*]:col-span-4 lg:[&>*]:col-span-6">
-        <ComparisonCard
-          title="Year to date"
-          c={cmp.ytd}
-          m={m}
-          empty="Needs at least two snapshots this year, or one from last year."
+  const { low, high, mid } = d.combined.valuation;
+  const cards: GridCard[] = [
+    { id: "total", label: "Total portfolio", span: "col-span-4 lg:col-span-3", node: <TotalCard d={d} ytd={cmp.ytd} m={m} /> },
+    {
+      id: "sealed",
+      label: "Sealed inventory",
+      span: "col-span-4 lg:col-span-3",
+      node: (
+        <Stat
+          accent="sky"
+          label="Sealed inventory"
+          value={money(d.sealed.value, m)}
+          sub={`${d.sealed.units.toLocaleString()} units${d.sealed.gain == null ? "" : ` · ${signedMoney(d.sealed.gain, m)} gain / loss`}`}
+          subTone={d.sealed.gain == null ? undefined : tone(d.sealed.gain)}
         />
+      ),
+    },
+    {
+      id: "raw",
+      label: "Raw cards",
+      span: "col-span-4 lg:col-span-3",
+      node: (
+        <Stat
+          accent="violet"
+          label="Raw cards"
+          value={money(d.totalValue, m)}
+          sub={`${d.totalCopies.toLocaleString()} cards · ${d.uniqueCards} unique · ${d.setCount} sets${d.gain == null ? "" : ` · ${signedMoney(d.gain, m)} gain / loss`}`}
+          subTone={d.gain == null ? undefined : tone(d.gain)}
+        />
+      ),
+    },
+    {
+      id: "range",
+      label: "Valuation range",
+      span: "col-span-4 lg:col-span-3",
+      node: <Stat accent="amber" label="Valuation range" value={`${money(low, m)} – ${money(high, m)}`} sub={`Midpoint ${money(mid, m)}`} />,
+    },
+    {
+      id: "ytd",
+      label: "Year to date",
+      span: "col-span-4 lg:col-span-6",
+      node: <ComparisonCard title="Year to date" c={cmp.ytd} m={m} empty="Needs at least two snapshots this year, or one from last year." />,
+    },
+    {
+      id: "thirty-day",
+      label: `${COMPARISON_DAYS}-day comparison`,
+      span: "col-span-4 lg:col-span-6",
+      node: (
         <ComparisonCard
           title={`${COMPARISON_DAYS}-day comparison`}
           c={cmp.thirtyDay}
           m={m}
           empty={`Needs a snapshot at least ${COMPARISON_DAYS} days older than the latest one.`}
         />
-      </section>
-
-      <section className={card}>
-        <h2 className={`${heading} mb-4`}>Value over time</h2>
-        <ValueChart data={d.history} m={m} />
-      </section>
-
-      <section className="page-grid">
-        <div className={card + " col-span-full lg:col-span-5"}>
+      ),
+    },
+    {
+      id: "history",
+      label: "Value over time",
+      span: "col-span-full",
+      node: (
+        <section className={card}>
+          <h2 className={`${heading} mb-4`}>Value over time</h2>
+          <ValueChart data={d.history} m={m} />
+        </section>
+      ),
+    },
+    {
+      id: "mix",
+      label: "Portfolio value mix",
+      span: "col-span-full lg:col-span-5",
+      node: (
+        <div className={card}>
           <h2 className={`${heading} mb-4`}>Portfolio value mix</h2>
           {d.combined.value > 0 ? (
             <ValueMixDonut
@@ -410,20 +440,35 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
             <p className="text-sm text-slate-2">No priced holdings yet.</p>
           )}
         </div>
-        <div className={card + " col-span-full lg:col-span-7"}>
+      ),
+    },
+    {
+      id: "top-cards",
+      label: "Most valuable",
+      span: "col-span-full lg:col-span-7",
+      node: (
+        <div className={card}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
           <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} />)}</ul>
         </div>
-        <ValuationPanel d={d} m={m} />
-        <TopSealedPanel d={d} m={m} />
-        <StructurePanel d={d} m={m} />
-        <AssumptionsCard />
-      </section>
+      ),
+    },
+    { id: "valuation", label: "Valuation & concentration", span: "col-span-full", node: <ValuationPanel d={d} m={m} /> },
+    { id: "top-sealed", label: "Top sealed holdings", span: "col-span-full lg:col-span-6", node: <TopSealedPanel d={d} m={m} /> },
+    { id: "structure", label: "Collection structure", span: "col-span-full lg:col-span-6", node: <StructurePanel d={d} m={m} /> },
+    { id: "assumptions", label: "Valuation context & assumptions", span: "col-span-full", node: <AssumptionsCard /> },
+    {
+      id: "snapshots",
+      label: "Snapshots",
+      span: "col-span-full",
+      node: (
+        <section className={card}>
+          <h2 className={`${heading} mb-4`}>Snapshots</h2>
+          <SnapshotList snapshots={snapshots} />
+        </section>
+      ),
+    },
+  ];
 
-      <section className={card}>
-        <h2 className={`${heading} mb-4`}>Snapshots</h2>
-        <SnapshotList snapshots={snapshots} />
-      </section>
-    </>
-  );
+  return <ReorderableGrid cards={cards} storageKey="overview-card-order" />;
 }
