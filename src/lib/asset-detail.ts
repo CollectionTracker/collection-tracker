@@ -1,5 +1,6 @@
 import { exportHref } from "./export";
 import { sealedTypeLabel } from "./sealed-breakdown";
+import { productImageAt } from "./tcgcsv";
 import type { SealedHolding } from "./sealed-stats";
 import type { Holding } from "./stats";
 import { DEFAULT_SPREAD, type Range, rangeOf } from "./valuation";
@@ -14,6 +15,8 @@ export type AssetDetail = {
   /** Identifying details, e.g. set, number, rarity, variant and condition. */
   meta: string[];
   image: string | null;
+  /** Sealed product type, drawn as a placeholder when there is no image. */
+  productType: string | null;
   quantity: number;
   unit: number;
   range: Range;
@@ -40,6 +43,7 @@ export function rawAsset(h: Holding, portfolioValue: number, asOf: string | null
     name: h.name,
     meta: [h.setName, `#${h.number}`, h.rarity, h.variant, h.condition],
     image: h.imageLarge ?? h.image,
+    productType: null,
     quantity: h.quantity,
     unit: h.unit,
     range: rangeOf(h.value, DEFAULT_SPREAD.raw),
@@ -58,7 +62,8 @@ export function sealedAsset(h: SealedHolding, portfolioValue: number, asOf: stri
     kind: "Sealed",
     name: h.name,
     meta: [sealedTypeLabel(h.productType), h.setGroup, h.sku && `SKU ${h.sku}`].filter((x): x is string => !!x),
-    image: null,
+    image: h.image && productImageAt(h.image, "400w"),
+    productType: h.productType,
     quantity: h.quantity,
     unit: h.unit,
     range: h.valuation,

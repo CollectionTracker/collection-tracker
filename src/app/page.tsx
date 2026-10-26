@@ -15,6 +15,7 @@ import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
 import { rawAsset, sealedAsset } from "@/lib/asset-detail";
+import { SealedThumb } from "@/components/sealed-thumb";
 import { exportHref } from "@/lib/export";
 import { AssetButton } from "@/components/asset-sheet";
 import { getDisplayMoney } from "@/lib/currency-pref";
@@ -221,16 +222,19 @@ function TopSealedPanel({ d, m, asOf }: { d: Dashboard; m: Money; asOf: string |
         <ol className="space-y-3">
           {top.map((h, i) => (
             <li key={h.id}>
-              <AssetButton asset={sealedAsset(h, d.combined.value, asOf)} m={m} className="block rounded-lg">
-                <div className="flex justify-between gap-3 text-sm">
-                  <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
-                    {i + 1}. {h.name}
-                    {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
-                  </span>
-                  <span className="font-bold tabular-nums">{money(h.value, m)}</span>
-                </div>
-                <div className="mt-1.5 h-2 track">
-                  <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
+              <AssetButton asset={sealedAsset(h, d.combined.value, asOf)} m={m} className="flex items-center gap-3 rounded-lg">
+                <SealedThumb image={h.image} productType={h.productType} size={36} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex justify-between gap-3 text-sm">
+                    <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
+                      {i + 1}. {h.name}
+                      {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
+                    </span>
+                    <span className="font-bold tabular-nums">{money(h.value, m)}</span>
+                  </div>
+                  <div className="mt-1.5 h-2 track">
+                    <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
+                  </div>
                 </div>
               </AssetButton>
             </li>

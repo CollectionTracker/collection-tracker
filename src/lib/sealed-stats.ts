@@ -17,6 +17,7 @@ type SealedRow = {
   price_source: string | null;
   prev: number | null;
   linked: boolean;
+  image_url: string | null;
 };
 
 export type SealedHolding = {
@@ -38,6 +39,7 @@ export type SealedHolding = {
   priceDay: string | null; // day of the latest price
   priceSource: "manual" | "tcgcsv" | null; // where the latest price came from, null when unpriced
   linked: boolean; // matched to a TCGplayer product, so the daily sync prices it
+  image: string | null; // TCGplayer photo (200px wide), null when unlinked or TCGplayer has none
 };
 
 export type CostBasis = {
@@ -67,7 +69,7 @@ export async function getSealed(asOf: string | null = null) {
   const { rows } = await db.execute<SealedRow>(sql`
     select p.id, p.name, p.product_type, p.set_group, p.sku, p.quantity, p.purchase_price,
            cur.market as unit, cur.low, cur.high, cur.day::text as price_day, cur.price_source,
-           prev.market as prev, p.tcgplayer_product_id is not null as linked
+           prev.market as prev, p.tcgplayer_product_id is not null as linked, p.image_url
     from sealed_products p
     left join lateral (
       -- Only a hand-entered low/high is a valuation range; TCGCSV's are the cheapest and dearest listings.
@@ -107,6 +109,7 @@ export async function getSealed(asOf: string | null = null) {
       priceDay: r.price_day,
       priceSource: r.price_source === "manual" || r.price_source === "tcgcsv" ? r.price_source : null,
       linked: r.linked,
+      image: r.image_url,
     };
   });
   return {

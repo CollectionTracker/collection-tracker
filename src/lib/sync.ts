@@ -3,7 +3,7 @@ import { getDb } from "@/db";
 import { cards, collectionEntries, priceSnapshots, sealedPriceSnapshots, sealedProducts, sets, syncRuns } from "@/db/schema";
 import { type CatalogCard, type Priceable, linkTcgplayer, newClients, priceCards, resolveByIds } from "./catalog";
 import { refreshFxRates } from "./forex";
-import { type TcgcsvClient, matchSealedProduct, sealedGroup } from "./tcgcsv";
+import { type TcgcsvClient, matchSealedProduct, productImage, sealedGroup } from "./tcgcsv";
 
 export const today = () => new Date().toISOString().slice(0, 10);
 
@@ -105,8 +105,8 @@ export async function snapshotPrices(list: Pick<CatalogCard, "id" | "prices">[])
 
 /**
  * Link sealed products to their TCGplayer product (by set group and name, or a numeric SKU that is a
- * TCGplayer product id) and store today's TCGCSV price for every linked one. A price entered by hand for
- * the same day is never overwritten. Returns the number of products priced.
+ * TCGplayer product id), store its photo, and store today's TCGCSV price for every linked one. A price
+ * entered by hand for the same day is never overwritten. Returns the number of products priced.
  */
 export async function syncSealedPrices(csv: TcgcsvClient) {
   const db = await getDb();
@@ -122,11 +122,19 @@ export async function syncSealedPrices(csv: TcgcsvClient) {
       if (!match) continue;
       p.tcgplayerProductId = match.productId;
       p.tcgplayerGroupId = g.groupId;
+      p.imageUrl = productImage(match);
       await db
         .update(sealedProducts)
-        .set({ tcgplayerProductId: match.productId, tcgplayerGroupId: g.groupId })
+        .set({ tcgplayerProductId: match.productId, tcgplayerGroupId: g.groupId, imageUrl: p.imageUrl })
         .where(sql`${sealedProducts.id} = ${p.id}`);
     }
+  }
+
+  // Products linked before photos were stored (or whose photo TCGplayer added later) get one now.
+  for (const p of products.filter((x) => x.tcgplayerProductId != null && x.tcgplayerGroupId != null && !x.imageUrl)) {
+    const match = (await csv.products(p.tcgplayerGroupId!)).find((i) => i.productId === p.tcgplayerProductId);
+    const url = match && productImage(match);
+    if (url) await db.update(sealedProducts).set({ imageUrl: url }).where(sql`${sealedProducts.id} = ${p.id}`);
   }
 
   const linked = products.filter((p) => p.tcgplayerProductId != null && p.tcgplayerGroupId != null);
