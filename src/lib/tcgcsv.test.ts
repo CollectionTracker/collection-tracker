@@ -15,6 +15,7 @@ import {
   variantKey,
 } from "./tcgcsv";
 import { dexPrices, dexProductIds, toDexSetId } from "./tcgdex";
+import { sealedPreview } from "./card-preview";
 
 const group = (groupId: number, name: string, abbreviation: string, publishedOn: string, isSupplemental = false): Group => ({
   groupId,
@@ -160,4 +161,12 @@ test("product photos skip TCGplayer's stock image and resize by name", () => {
   assert.equal(productImage(sealed(1, "151 UPC")), null);
   assert.equal(productImageAt(url, "400w"), "https://tcgplayer-cdn.tcgplayer.com/product/502005_400w.jpg");
   assert.equal(productImageAt(url, "in_1000x1000"), "https://tcgplayer-cdn.tcgplayer.com/product/502005_in_1000x1000.jpg");
+});
+
+test("sealed hover previews use the large square photo, and none without a photo", () => {
+  assert.deepEqual(sealedPreview({ image: "https://tcgplayer-cdn.tcgplayer.com/product/593355_200w.jpg" }), {
+    "data-card-preview": "https://tcgplayer-cdn.tcgplayer.com/product/593355_in_1000x1000.jpg",
+    "data-card-preview-shape": "square",
+  });
+  assert.deepEqual(sealedPreview({ image: null }), {});
 });

@@ -1,4 +1,5 @@
 import { sealedAsset } from "@/lib/asset-detail";
+import { sealedPreview } from "@/lib/card-preview";
 import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { byType, bySetGroup, priceCoverage, returnsByType, sealedMovers, sealedTypeLabel, STALE_PRICE_DAYS } from "@/lib/sealed-breakdown";
 import type { SealedHolding } from "@/lib/sealed-stats";
@@ -61,7 +62,7 @@ export function SealedBreakdown({ d, m }: { d: Dashboard; m: Money }) {
 
 function LeaderRow({ h, rank, m, total }: { h: SealedHolding; rank: number; m: Money; total: number }) {
   return (
-    <li>
+    <li {...sealedPreview(h)}>
       <AssetButton
         asset={sealedAsset(h, total)}
         m={m}
@@ -212,7 +213,7 @@ export function SealedMovers({ d, m }: { d: Dashboard; m: Money }) {
       ) : (
         <ul className="space-y-3">
           {movers.map((h) => (
-            <li key={h.id}>
+            <li key={h.id} {...sealedPreview(h)}>
               <AssetButton asset={sealedAsset(h, d.combined.value)} m={m} className="flex items-center gap-3 rounded-lg">
                 <SealedThumb image={h.image} productType={h.productType} size={40} />
                 <div className="min-w-0 flex-1">

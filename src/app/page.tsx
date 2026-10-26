@@ -13,7 +13,7 @@ import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { snapshotName } from "@/lib/snapshot-name";
 import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
-import { cardPreview } from "@/lib/card-preview";
+import { cardPreview, sealedPreview } from "@/lib/card-preview";
 import { rawAsset, sealedAsset } from "@/lib/asset-detail";
 import { SealedThumb } from "@/components/sealed-thumb";
 import { exportHref } from "@/lib/export";
@@ -221,7 +221,7 @@ function TopSealedPanel({ d, m, asOf }: { d: Dashboard; m: Money; asOf: string |
       ) : (
         <ol className="space-y-3">
           {top.map((h, i) => (
-            <li key={h.id}>
+            <li key={h.id} {...sealedPreview(h)}>
               <AssetButton asset={sealedAsset(h, d.combined.value, asOf)} m={m} className="flex items-center gap-3 rounded-lg">
                 <SealedThumb image={h.image} productType={h.productType} size={36} />
                 <div className="min-w-0 flex-1">
