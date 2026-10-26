@@ -1,6 +1,7 @@
 import { type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { type Point, VOLATILITY_WINDOW_DAYS, liquidation, volatility } from "@/lib/inspection";
 import type { Range } from "@/lib/valuation";
+import { MetricTile as Tile } from "./metric-tile";
 
 /** What a card's detail inspection covers: the whole portfolio, or the raw or sealed side of it. */
 export type InspectScope = {
@@ -14,18 +15,7 @@ export type InspectScope = {
   series: Point[];
 };
 
-const labelStyle = "font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2";
 const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
-
-function Tile({ label, value, sub, valueTone }: { label: string; value: string; sub?: string; valueTone?: string }) {
-  return (
-    <div className="rounded-xl border border-white/5 bg-inset p-4">
-      <div className={labelStyle}>{label}</div>
-      <div className={`mt-1 text-xl font-bold tabular-nums ${valueTone ?? ""}`}>{value}</div>
-      {sub && <div className="mt-0.5 text-[11px] text-slate-2">{sub}</div>}
-    </div>
-  );
-}
 
 /** Expanded metrics, volatility and a liquidation projection for one scope, in the display currency. */
 export function InspectionPanel({ s, m }: { s: InspectScope; m: Money }) {

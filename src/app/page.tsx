@@ -13,6 +13,8 @@ import { listSnapshots, pickSnapshot } from "@/lib/snapshots";
 import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
+import { rawAsset, sealedAsset } from "@/lib/asset-detail";
+import { AssetButton } from "@/components/asset-sheet";
 import { getDisplayMoney } from "@/lib/currency-pref";
 import { type GridCard, type Inspection, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
 import { type InspectScope, InspectionPanel } from "@/components/inspection-panel";
@@ -218,16 +220,18 @@ function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
         <ol className="space-y-3">
           {top.map((h, i) => (
             <li key={h.id}>
-              <div className="flex justify-between gap-3 text-sm">
-                <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
-                  {i + 1}. {h.name}
-                  {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
-                </span>
-                <span className="font-bold tabular-nums">{money(h.value, m)}</span>
-              </div>
-              <div className="mt-1.5 h-2 rounded-full bg-track">
-                <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
-              </div>
+              <AssetButton asset={sealedAsset(h, d.combined.value)} m={m} className="block rounded-lg">
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
+                    {i + 1}. {h.name}
+                    {h.quantity > 1 && <span className="text-slate-2"> ×{h.quantity}</span>}
+                  </span>
+                  <span className="font-bold tabular-nums">{money(h.value, m)}</span>
+                </div>
+                <div className="mt-1.5 h-2 rounded-full bg-track">
+                  <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
+                </div>
+              </AssetButton>
             </li>
           ))}
         </ol>
@@ -320,25 +324,27 @@ function ComparisonCard({ title, c, empty, m }: { title: string; c: Comparison |
   );
 }
 
-function CardRow({ h, m, showChange }: { h: Holding; m: Money; showChange?: boolean }) {
+function CardRow({ h, m, total, showChange }: { h: Holding; m: Money; total: number; showChange?: boolean }) {
   return (
-    <li className="flex items-center gap-3" {...cardPreview(h)}>
-      {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{h.name}</div>
-        <div className="truncate text-xs text-slate-2">
-          {h.setName} · #{h.number} · {h.variant} · {h.condition}
-          {h.quantity > 1 && ` · ×${h.quantity}`}
-        </div>
-      </div>
-      <div className="text-right text-sm tabular-nums">
-        <div>{money(h.value, m)}</div>
-        {showChange && (
-          <div className={`text-xs ${tone(h.change)}`}>
-            {signedMoney(h.change, m)} ({pct(h.changePct)})
+    <li {...cardPreview(h)}>
+      <AssetButton asset={rawAsset(h, total)} m={m} className="flex items-center gap-3 rounded-lg">
+        {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium">{h.name}</div>
+          <div className="truncate text-xs text-slate-2">
+            {h.setName} · #{h.number} · {h.variant} · {h.condition}
+            {h.quantity > 1 && ` · ×${h.quantity}`}
           </div>
-        )}
-      </div>
+        </div>
+        <div className="text-right text-sm tabular-nums">
+          <div>{money(h.value, m)}</div>
+          {showChange && (
+            <div className={`text-xs ${tone(h.change)}`}>
+              {signedMoney(h.change, m)} ({pct(h.changePct)})
+            </div>
+          )}
+        </div>
+      </AssetButton>
     </li>
   );
 }
@@ -514,7 +520,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
       node: (
         <div className={card}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
-          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} />)}</ul>
+          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} total={d.combined.value} />)}</ul>
         </div>
       ),
     },
