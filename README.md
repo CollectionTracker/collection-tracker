@@ -1,6 +1,6 @@
 # Collection Tracker
 
-Track a Pokémon trading card collection and its value over time. Import a CSV, sync daily prices from the [Pokémon TCG API](https://pokemontcg.io), and see totals, gains, movers and breakdowns on a dashboard.
+Track a Pokémon trading card collection and its value over time. Import a CSV, sync daily TCGplayer prices for cards and sealed products (catalog from [TCGdex](https://tcgdex.dev), prices from [TCGCSV](https://tcgcsv.com), both free with no API key; see [docs/pricing.md](docs/pricing.md)), and see totals, gains, movers and breakdowns on a dashboard.
 
 ## What it will look like
 
@@ -26,7 +26,6 @@ With no configuration the app uses an embedded Postgres (PGlite) stored in `.dat
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | Use a real Postgres server instead of the embedded one. |
-| `POKEMONTCG_API_KEY` | Optional API key for higher Pokémon TCG API rate limits. |
 | `CRON_SECRET` | Secret that protects the `/api/cron/sync` endpoint. |
 | `SEED_DEV_DATA` | Set to `0` to skip the demo data in `npm run dev`. |
 

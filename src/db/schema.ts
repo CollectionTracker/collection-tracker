@@ -19,6 +19,8 @@ export const sets = pgTable("sets", {
   printedTotal: integer("printed_total").notNull(),
   releaseDate: text("release_date"),
   logo: text("logo"),
+  // TCGdex set id ("sv03.5"); null until a sync maps it. Ids stored before TCGdex are Pokémon TCG API ids ("sv3pt5").
+  tcgdexId: text("tcgdex_id"),
 });
 
 export const cards = pgTable(
@@ -34,8 +36,12 @@ export const cards = pgTable(
     supertype: text("supertype"),
     imageSmall: text("image_small"),
     imageLarge: text("image_large"),
+    // Catalog and price links, filled by the sync: TCGdex card id and the TCGplayer product and group (TCGCSV) it is priced from.
+    tcgdexId: text("tcgdex_id"),
+    tcgplayerProductId: integer("tcgplayer_product_id"),
+    tcgplayerGroupId: integer("tcgplayer_group_id"),
   },
-  (t) => [index("cards_set_idx").on(t.setId)],
+  (t) => [index("cards_set_idx").on(t.setId), uniqueIndex("cards_tcgdex_idx").on(t.tcgdexId)],
 );
 
 export const collectionEntries = pgTable(
@@ -96,6 +102,9 @@ export const sealedProducts = pgTable(
     quantity: integer("quantity").notNull().default(1),
     purchasePrice: doublePrecision("purchase_price"), // per unit
     notes: text("notes"),
+    // TCGplayer product and group (TCGCSV) the daily sync prices this from; null until matched by set and name.
+    tcgplayerProductId: integer("tcgplayer_product_id"),
+    tcgplayerGroupId: integer("tcgplayer_group_id"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (t) => [
@@ -115,7 +124,7 @@ export const sealedPriceSnapshots = pgTable(
     low: doublePrecision("low"),
     mid: doublePrecision("mid"),
     high: doublePrecision("high"),
-    // Where the price came from: "manual" for hand-entered values, a service name once an API is wired in.
+    // Where the price came from: "manual" for hand-entered values, "tcgcsv" for the daily TCGplayer price.
     priceSource: text("price_source").notNull().default("manual"),
   },
   (t) => [primaryKey({ columns: [t.sealedProductId, t.day] })],

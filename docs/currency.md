@@ -1,6 +1,6 @@
 # Currency
 
-All prices are stored in USD (the Pokémon TCG API and manual sealed prices are USD). Other currencies are a display conversion: `amount × rate`, where the rate is units of that currency per 1 USD.
+All prices are stored in USD (TCGplayer prices via TCGCSV and manual sealed prices are USD). Other currencies are a display conversion: `amount × rate`, where the rate is units of that currency per 1 USD.
 
 ## Supported currencies
 

@@ -20,7 +20,7 @@ export function SiteFooter() {
         <div className="flex items-center gap-2">
           <span className="font-bold text-ink">PokeVault Analytics</span>
           <span>/</span>
-          <span>Pokémon TCG API + manual sealed prices</span>
+          <span>TCGdex catalog + TCGplayer prices via TCGCSV</span>
         </div>
         <Suspense fallback={null}>
           <Status />

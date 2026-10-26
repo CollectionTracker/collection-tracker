@@ -43,6 +43,13 @@
       "when": 1792780340582,
       "tag": "0005_fx_rates",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793033090408,
+      "tag": "0006_tcgdex_tcgcsv_links",
+      "breakpoints": true
     }
   ]
 }
