@@ -4,6 +4,7 @@
 import { eq, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { cards, sets } from "@/db/schema";
+import { type StoredCard, type StoredSet, matchStoredCard } from "./card-ids";
 import { type DexCard, type DexSet, TcgdexClient, dexImages, dexPrices, dexProductIds, toDexSetId } from "./tcgdex";
 import { type PriceRow, TcgcsvClient, matchCardProduct, pricesByVariant, rankGroups } from "./tcgcsv";
 
@@ -42,30 +43,36 @@ type Clients = ReturnType<typeof newClients>;
 // TCGdex says "Pokemon"/"Trainer"/"Energy"; the Pokémon TCG API (and existing rows) say "Pokémon".
 const supertype = (category?: string) => (category === "Pokemon" ? "Pokémon" : (category ?? null));
 
-/** Maps TCGdex ids to our stored ids, loading the cards and sets tables once. */
+/** Maps TCGdex cards and sets to our stored ids, loading the cards and sets tables once. */
 class IdMap {
-  private setRows?: Promise<{ id: string; tcgdexId: string | null; name: string }[]>;
+  private cardRows?: Promise<StoredCard[]>;
+  private setRows?: Promise<(StoredSet & { name: string })[]>;
 
-  async card(dexId: string): Promise<{ id: string; setId: string } | null> {
-    const db = await getDb();
-    const [row] = await db.select({ id: cards.id, setId: cards.setId }).from(cards).where(eq(cards.tcgdexId, dexId));
-    return row ?? null;
+  /** The stored row for a TCGdex card, including one stored under a legacy id that the sync hasn't linked yet. */
+  async card(dex: DexCard): Promise<{ id: string; setId: string } | null> {
+    this.cardRows ??= getDb().then((db) =>
+      db.select({ id: cards.id, setId: cards.setId, number: cards.number, tcgdexId: cards.tcgdexId }).from(cards),
+    );
+    return matchStoredCard(dex, await this.cardRows, await this.sets());
   }
 
   async set(dex: DexSet): Promise<string> {
-    this.setRows ??= getDb().then((db) => db.select({ id: sets.id, tcgdexId: sets.tcgdexId, name: sets.name }).from(sets));
-    const rows = await this.setRows;
+    const rows = await this.sets();
     return (
       rows.find((r) => r.tcgdexId === dex.id)?.id ??
       rows.find((r) => r.id === dex.id || toDexSetId(r.id) === dex.id)?.id ??
       dex.id
     );
   }
+
+  private sets() {
+    return (this.setRows ??= getDb().then((db) => db.select({ id: sets.id, tcgdexId: sets.tcgdexId, name: sets.name }).from(sets)));
+  }
 }
 
 async function toCatalog(card: DexCard, dex: TcgdexClient, ids: IdMap, known?: { id: string; setId: string }): Promise<CatalogCard> {
   const set = (await dex.set(card.set.id)) ?? ({ ...card.set, cards: [] } as DexSet);
-  const mapped = known ?? (await ids.card(card.id));
+  const mapped = known ?? (await ids.card(card));
   const images = dexImages(card.image);
   return {
     id: mapped?.id ?? card.id,

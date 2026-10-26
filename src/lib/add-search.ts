@@ -1,9 +1,10 @@
 // Autocomplete for the add dialog: cards from TCGdex, sealed products from TCGCSV, with copies already owned.
-import { desc, eq, inArray, or, sql } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { cards, collectionEntries, sealedProducts, sets } from "@/db/schema";
 import { type CardSuggestion, type SealedSuggestion, type Suggestion, type SuggestionKind } from "./add-types";
 import { inferSealedType, parseCardQuery, pickPrice, sealedGroupsFor, sealedScore, sealedTokens } from "./add-query";
+import { matchStoredCard } from "./card-ids";
 import { newClients } from "./catalog";
 import { type DexCard, type TcgdexClient, dexImages, dexPrices } from "./tcgdex";
 import { type Group, type Product, type TcgcsvClient, groupTitle, isSingleCard, normNumber, productImage } from "./tcgcsv";
@@ -102,20 +103,32 @@ export async function withOwned(list: Suggestion[]): Promise<Suggestion[]> {
   const cardIds = list.flatMap((s) => (s.kind === "card" ? [s.id] : []));
   const productIds = list.flatMap((s) => (s.kind === "sealed" && s.productId != null ? [s.productId] : []));
   const [cardRows, sealedRows] = await Promise.all([
+    // Every owned card, so ones stored under a legacy id the sync hasn't linked yet are found by set and number.
     cardIds.length
       ? db
-          .select({ id: cards.id, tcgdexId: cards.tcgdexId, qty: sql<number>`sum(${collectionEntries.quantity})::int` })
+          .select({
+            id: cards.id,
+            setId: cards.setId,
+            number: cards.number,
+            tcgdexId: cards.tcgdexId,
+            qty: sql<number>`sum(${collectionEntries.quantity})::int`,
+          })
           .from(collectionEntries)
           .innerJoin(cards, eq(cards.id, collectionEntries.cardId))
-          .where(or(inArray(cards.tcgdexId, cardIds), inArray(cards.id, cardIds)))
-          .groupBy(cards.id, cards.tcgdexId)
+          .groupBy(cards.id)
       : [],
     productIds.length
       ? db.select({ id: sealedProducts.tcgplayerProductId, qty: sealedProducts.quantity }).from(sealedProducts).where(inArray(sealedProducts.tcgplayerProductId, productIds))
       : [],
   ]);
+  const setRows = cardIds.length ? await db.select({ id: sets.id, tcgdexId: sets.tcgdexId }).from(sets) : [];
   return list.map((s) => {
-    if (s.kind === "card") return { ...s, owned: cardRows.filter((r) => r.tcgdexId === s.id || r.id === s.id).reduce((n, r) => n + r.qty, 0) };
+    if (s.kind === "card") {
+      // Card suggestion ids are TCGdex ids, "<set>-<number>".
+      const [, set, localId] = s.id.match(/^(.+)-([^-]+)$/) ?? [];
+      const legacy = set ? matchStoredCard({ id: s.id, localId, set: { id: set } }, cardRows, setRows) : null;
+      return { ...s, owned: cardRows.filter((r) => r.tcgdexId === s.id || r.id === s.id || r === legacy).reduce((n, r) => n + r.qty, 0) };
+    }
     return { ...s, owned: sealedRows.filter((r) => r.id === s.productId).reduce((n, r) => n + r.qty, 0) };
   });
 }
