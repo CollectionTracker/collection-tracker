@@ -14,6 +14,7 @@ import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
 import { rawAsset, sealedAsset } from "@/lib/asset-detail";
+import { exportHref } from "@/lib/export";
 import { AssetButton } from "@/components/asset-sheet";
 import { getDisplayMoney } from "@/lib/currency-pref";
 import { type GridCard, type Inspection, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
@@ -204,7 +205,7 @@ function ValuationPanel({ d, m }: { d: Dashboard; m: Money }) {
   );
 }
 
-function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
+function TopSealedPanel({ d, m, asOf }: { d: Dashboard; m: Money; asOf: string | null }) {
   const ranked = d.sealed.holdings.filter((h) => h.value > 0).sort((a, b) => b.value - a.value);
   const top = ranked.slice(0, 5);
   const max = top[0]?.value ?? 0;
@@ -220,7 +221,7 @@ function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
         <ol className="space-y-3">
           {top.map((h, i) => (
             <li key={h.id}>
-              <AssetButton asset={sealedAsset(h, d.combined.value)} m={m} className="block rounded-lg">
+              <AssetButton asset={sealedAsset(h, d.combined.value, asOf)} m={m} className="block rounded-lg">
                 <div className="flex justify-between gap-3 text-sm">
                   <span className={`truncate ${i === 0 ? "font-bold text-ink" : "text-slate-2"}`}>
                     {i + 1}. {h.name}
@@ -324,10 +325,10 @@ function ComparisonCard({ title, c, empty, m }: { title: string; c: Comparison |
   );
 }
 
-function CardRow({ h, m, total, showChange }: { h: Holding; m: Money; total: number; showChange?: boolean }) {
+function CardRow({ h, m, total, asOf, showChange }: { h: Holding; m: Money; total: number; asOf: string | null; showChange?: boolean }) {
   return (
     <li {...cardPreview(h)}>
-      <AssetButton asset={rawAsset(h, total)} m={m} className="flex items-center gap-3 rounded-lg">
+      <AssetButton asset={rawAsset(h, total, asOf)} m={m} className="flex items-center gap-3 rounded-lg">
         {h.image && <Image src={h.image} alt="" width={36} height={50} className="rounded-md" />}
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium">{h.name}</div>
@@ -370,7 +371,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
 
   const { low, high, mid } = d.combined.valuation;
   const rawShare = d.combined.value ? (d.totalValue / d.combined.value) * 100 : 0;
-  const scopes: Record<string, InspectScope & { subtitle: string }> = {
+  const scopes: Record<"portfolio" | "sealed" | "raw", InspectScope & { subtitle: string }> = {
     portfolio: {
       subtitle: "Whole portfolio, raw cards and sealed combined",
       range: d.combined.valuation,
@@ -412,7 +413,10 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
   };
   const inspections: Record<string, Inspection> = Object.fromEntries(
-    Object.entries(scopes).map(([key, sc]) => [key, { subtitle: sc.subtitle, body: <InspectionPanel s={sc} m={m} /> }]),
+    (Object.keys(scopes) as (keyof typeof scopes)[]).map((scope) => [
+      scope,
+      { subtitle: scopes[scope].subtitle, body: <InspectionPanel s={scopes[scope]} m={m} />, exportHref: exportHref({ scope }, asOf) },
+    ]),
   );
   const inspectFooter = sync.lastSuccess
     ? `Last verified sync ${sync.lastSuccess.toISOString().slice(0, 16).replace("T", " ")} UTC`
@@ -520,12 +524,12 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
       node: (
         <div className={card}>
           <h2 className={`${heading} mb-4`}>Most valuable</h2>
-          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} total={d.combined.value} />)}</ul>
+          <ul className="space-y-3">{d.topCards.map((h) => <CardRow key={h.id} h={h} m={m} total={d.combined.value} asOf={asOf} />)}</ul>
         </div>
       ),
     },
     { id: "valuation", inspect: "portfolio", label: "Valuation & concentration", span: "col-span-full", node: <ValuationPanel d={d} m={m} /> },
-    { id: "top-sealed", inspect: "sealed", label: "Top sealed holdings", span: "col-span-full lg:col-span-6", node: <TopSealedPanel d={d} m={m} /> },
+    { id: "top-sealed", inspect: "sealed", label: "Top sealed holdings", span: "col-span-full lg:col-span-6", node: <TopSealedPanel d={d} m={m} asOf={asOf} /> },
     { id: "structure", inspect: "sealed", label: "Collection structure", span: "col-span-full lg:col-span-6", node: <StructurePanel d={d} m={m} /> },
     { id: "assumptions", inspect: "portfolio", label: "Valuation context & assumptions", span: "col-span-full", node: <AssumptionsCard /> },
     {

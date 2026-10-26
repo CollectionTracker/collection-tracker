@@ -1,3 +1,4 @@
+import { exportHref } from "./export";
 import type { SealedHolding } from "./sealed-stats";
 import type { Holding } from "./stats";
 import { DEFAULT_SPREAD, type Range, rangeOf } from "./valuation";
@@ -23,13 +24,16 @@ export type AssetDetail = {
   changePct: number | null;
   /** Share of the whole portfolio's value, null when the portfolio has no value. */
   sharePct: number | null;
+  /** CSV export of this one holding. */
+  exportHref: string;
 };
 
 const share = (value: number, total: number) => (total > 0 ? (value / total) * 100 : null);
 const gainOf = (value: number, cost: number | null) => (cost == null ? null : value - cost);
 const gainPctOf = (value: number, cost: number | null) => (cost ? ((value - cost) / cost) * 100 : null);
 
-export function rawAsset(h: Holding, portfolioValue: number): AssetDetail {
+/** `asOf` is the snapshot day being shown, null for current prices. */
+export function rawAsset(h: Holding, portfolioValue: number, asOf: string | null = null): AssetDetail {
   return {
     kind: "Raw card",
     name: h.name,
@@ -44,10 +48,11 @@ export function rawAsset(h: Holding, portfolioValue: number): AssetDetail {
     change: h.change,
     changePct: h.changePct,
     sharePct: share(h.value, portfolioValue),
+    exportHref: exportHref({ raw: h.id }, asOf),
   };
 }
 
-export function sealedAsset(h: SealedHolding, portfolioValue: number): AssetDetail {
+export function sealedAsset(h: SealedHolding, portfolioValue: number, asOf: string | null = null): AssetDetail {
   return {
     kind: "Sealed",
     name: h.name,
@@ -62,5 +67,6 @@ export function sealedAsset(h: SealedHolding, portfolioValue: number): AssetDeta
     change: null,
     changePct: null,
     sharePct: share(h.value, portfolioValue),
+    exportHref: exportHref({ sealed: h.id }, asOf),
   };
 }
