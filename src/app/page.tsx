@@ -14,7 +14,9 @@ import { CONCENTRATION_WARNING_PCT, largestHolding } from "@/lib/concentration";
 import { ago, type Money, money, pct, signedMoney, tone } from "@/lib/format";
 import { cardPreview } from "@/lib/card-preview";
 import { getDisplayMoney } from "@/lib/currency-pref";
-import { type GridCard, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
+import { type GridCard, type Inspection, ReorderableGrid, ReorderProvider, ReorderToggle } from "@/components/reorderable-grid";
+import { type InspectScope, InspectionPanel } from "@/components/inspection-panel";
+import { getValueSeries } from "@/lib/inspection";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -206,7 +208,7 @@ function TopSealedPanel({ d, m }: { d: Dashboard; m: Money }) {
   const max = top[0]?.value ?? 0;
   return (
     <div className={card}>
-      <div className="mb-4 flex items-baseline justify-between">
+      <div className="mb-4 flex items-baseline justify-between pr-8">
         <h2 className={heading}>Top sealed holdings</h2>
         <span className="text-xs text-slate-2">{d.sealed.holdings.length} SKUs</span>
       </div>
@@ -345,7 +347,13 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
   await connection(); // always render per request, never at build time
   const snapshots = await listSnapshots();
   const asOf = pickSnapshot((await searchParams).snapshot, snapshots);
-  const [d, cmp, m] = await Promise.all([getDashboard(asOf), getComparisons(asOf), getDisplayMoney(asOf ?? undefined)]);
+  const [d, cmp, m, series, sync] = await Promise.all([
+    getDashboard(asOf),
+    getComparisons(asOf),
+    getDisplayMoney(asOf ?? undefined),
+    getValueSeries(asOf),
+    getSyncStatus(),
+  ]);
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>
@@ -355,10 +363,60 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     );
 
   const { low, high, mid } = d.combined.valuation;
+  const rawShare = d.combined.value ? (d.totalValue / d.combined.value) * 100 : 0;
+  const scopes: Record<string, InspectScope & { subtitle: string }> = {
+    portfolio: {
+      subtitle: "Whole portfolio, raw cards and sealed combined",
+      range: d.combined.valuation,
+      costBasis: d.combined.costBasis,
+      gain: d.combined.gain,
+      gainPct: d.combined.gainPct,
+      facts: [
+        { label: "Holdings", value: `${d.totalCopies.toLocaleString()} cards · ${d.sealed.units.toLocaleString()} sealed` },
+        { label: "Raw / sealed split", value: d.combined.value ? `${rawShare.toFixed(0)}% / ${(100 - rawShare).toFixed(0)}%` : "—" },
+      ],
+      largest: largestHolding(d.holdings, d.sealed.holdings, d.combined.value),
+      series: series.portfolio,
+    },
+    sealed: {
+      subtitle: "Sealed products only",
+      range: d.sealed.valuation,
+      costBasis: d.sealed.costBasis,
+      gain: d.sealed.gain,
+      gainPct: d.sealed.gainPct,
+      facts: [
+        { label: "Units", value: `${d.sealed.units.toLocaleString()} units · ${d.sealed.holdings.length} SKUs` },
+        { label: "Average unit cost", value: d.sealed.avgUnitCost == null ? "—" : money(d.sealed.avgUnitCost, m) },
+      ],
+      largest: largestHolding([], d.sealed.holdings, d.sealed.value),
+      series: series.sealed,
+    },
+    raw: {
+      subtitle: "Raw (ungraded) cards only",
+      range: d.rawValuation,
+      costBasis: d.costBasis,
+      gain: d.gain,
+      gainPct: d.gainPct,
+      facts: [
+        { label: "Cards", value: `${d.totalCopies.toLocaleString()} copies · ${d.uniqueCards} unique · ${d.setCount} sets` },
+        { label: "Since last snapshot", value: signedMoney(d.dayChange, m) },
+      ],
+      largest: largestHolding(d.holdings, [], d.totalValue),
+      series: series.raw,
+    },
+  };
+  const inspections: Record<string, Inspection> = Object.fromEntries(
+    Object.entries(scopes).map(([key, sc]) => [key, { subtitle: sc.subtitle, body: <InspectionPanel s={sc} m={m} /> }]),
+  );
+  const inspectFooter = sync.lastSuccess
+    ? `Last verified sync ${sync.lastSuccess.toISOString().slice(0, 16).replace("T", " ")} UTC`
+    : "No verified sync yet";
+
   const cards: GridCard[] = [
-    { id: "total", label: "Total portfolio", span: "col-span-4 lg:col-span-3", node: <TotalCard d={d} ytd={cmp.ytd} m={m} /> },
+    { id: "total", inspect: "portfolio", label: "Total portfolio", span: "col-span-4 lg:col-span-3", node: <TotalCard d={d} ytd={cmp.ytd} m={m} /> },
     {
       id: "sealed",
+      inspect: "sealed",
       label: "Sealed inventory",
       span: "col-span-4 lg:col-span-3",
       node: (
@@ -373,6 +431,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
     {
       id: "raw",
+      inspect: "raw",
       label: "Raw cards",
       span: "col-span-4 lg:col-span-3",
       node: (
@@ -387,18 +446,21 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
     {
       id: "range",
+      inspect: "portfolio",
       label: "Valuation range",
       span: "col-span-4 lg:col-span-3",
       node: <Stat accent="amber" label="Valuation range" value={`${money(low, m)} – ${money(high, m)}`} sub={`Midpoint ${money(mid, m)}`} />,
     },
     {
       id: "ytd",
+      inspect: "portfolio",
       label: "Year to date",
       span: "col-span-4 lg:col-span-6",
       node: <ComparisonCard title="Year to date" c={cmp.ytd} m={m} empty="Needs at least two snapshots this year, or one from last year." />,
     },
     {
       id: "thirty-day",
+      inspect: "portfolio",
       label: `${COMPARISON_DAYS}-day comparison`,
       span: "col-span-4 lg:col-span-6",
       node: (
@@ -412,6 +474,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
     {
       id: "history",
+      inspect: "raw",
       label: "Value over time",
       span: "col-span-full",
       node: (
@@ -423,6 +486,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
     {
       id: "mix",
+      inspect: "portfolio",
       label: "Portfolio value mix",
       span: "col-span-full lg:col-span-5",
       node: (
@@ -444,6 +508,7 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
     {
       id: "top-cards",
+      inspect: "raw",
       label: "Most valuable",
       span: "col-span-full lg:col-span-7",
       node: (
@@ -453,12 +518,13 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
         </div>
       ),
     },
-    { id: "valuation", label: "Valuation & concentration", span: "col-span-full", node: <ValuationPanel d={d} m={m} /> },
-    { id: "top-sealed", label: "Top sealed holdings", span: "col-span-full lg:col-span-6", node: <TopSealedPanel d={d} m={m} /> },
-    { id: "structure", label: "Collection structure", span: "col-span-full lg:col-span-6", node: <StructurePanel d={d} m={m} /> },
-    { id: "assumptions", label: "Valuation context & assumptions", span: "col-span-full", node: <AssumptionsCard /> },
+    { id: "valuation", inspect: "portfolio", label: "Valuation & concentration", span: "col-span-full", node: <ValuationPanel d={d} m={m} /> },
+    { id: "top-sealed", inspect: "sealed", label: "Top sealed holdings", span: "col-span-full lg:col-span-6", node: <TopSealedPanel d={d} m={m} /> },
+    { id: "structure", inspect: "sealed", label: "Collection structure", span: "col-span-full lg:col-span-6", node: <StructurePanel d={d} m={m} /> },
+    { id: "assumptions", inspect: "portfolio", label: "Valuation context & assumptions", span: "col-span-full", node: <AssumptionsCard /> },
     {
       id: "snapshots",
+      inspect: "portfolio",
       label: "Snapshots",
       span: "col-span-full",
       node: (
@@ -470,5 +536,5 @@ async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
     },
   ];
 
-  return <ReorderableGrid cards={cards} storageKey="overview-card-order" />;
+  return <ReorderableGrid cards={cards} storageKey="overview-card-order" inspections={inspections} inspectFooter={inspectFooter} />;
 }
