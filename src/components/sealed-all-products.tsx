@@ -209,7 +209,8 @@ export function SealedAllProducts({ holdings, m }: { holdings: SealedHolding[]; 
             <p className="py-6 text-center text-sm text-slate-2">No products match these filters.</p>
           ) : (
             <>
-              <div className="-mx-5 overflow-x-auto px-5">
+              {/* relative: keeps the sr-only header label inside the scroll area, or it widens the page. */}
+              <div className="relative -mx-5 overflow-x-auto px-5">
                 <table className="w-full min-w-[920px] border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-white/5">
