@@ -73,7 +73,7 @@ export function AddMenu() {
           </a>
         </div>
       )}
-      <AddDialog open={open} tab={tab} onTab={setTab} rows={rows} setRows={(f) => setRows(f)} onClose={() => setOpen(false)} />
+      <AddDialog open={open} tab={tab} onTab={setTab} rows={rows} setRows={(f) => setRows(f)} onOpen={() => setOpen(true)} onClose={() => setOpen(false)} />
     </div>
   );
 }
