@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { cardPreview } from "@/lib/card-preview";
 import { type Money, money, signedMoney, tone } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
@@ -10,7 +10,7 @@ import { type ChipTone, StatusChip } from "@/components/status-chip";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
-const control = "rounded-lg border border-white/5 bg-inset text-sm outline-none focus:border-mint/60 focus:ring-2 focus:ring-mint/15";
+const control = "field rounded-lg text-sm";
 const PAGE = 25;
 const GRID_PAGE = 24;
 
@@ -64,7 +64,13 @@ const VIEWS: { id: View; label: string; hint: string }[] = [
 
 function ViewSwitcher({ view, onChange }: { view: View; onChange: (v: View) => void }) {
   return (
-    <div role="radiogroup" aria-label="View" className="flex gap-1 rounded-xl border border-white/5 bg-inset p-1">
+    <div
+      role="radiogroup"
+      aria-label="View"
+      className="segmented"
+      style={{ "--segment-width": "2rem", "--active": VIEWS.findIndex((v) => v.id === view) } as CSSProperties}
+    >
+      <span className="segmented-thumb" aria-hidden />
       {VIEWS.map((v) => (
         <div key={v.id} className="group relative">
           <button
@@ -74,9 +80,7 @@ function ViewSwitcher({ view, onChange }: { view: View; onChange: (v: View) => v
             aria-label={`${v.label} view`}
             aria-describedby={`view-hint-${v.id}`}
             onClick={() => onChange(v.id)}
-            className={`grid size-8 place-items-center rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-mint ${
-              view === v.id ? "bg-mint text-[#053a33]" : "text-slate-2 hover:bg-surface-2 hover:text-ink"
-            }`}
+            className="segment grid h-8 place-items-center"
           >
             <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="currentColor" aria-hidden>
               {ICONS[v.id]}
@@ -411,7 +415,7 @@ export function RawAllCards({ holdings, sets, m }: { holdings: Holding[]; sets: 
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name, set or number"
               aria-label="Search cards"
-              className={`${control} min-w-0 flex-[1_1_220px] px-3 py-2 placeholder:text-muted`}
+              className={`${control} min-w-0 flex-[1_1_220px] px-3 py-2`}
             />
             <select value={setId} onChange={(e) => setSetId(e.target.value)} aria-label="Filter by set" className={`${control} px-3 py-2`}>
               <option value="">All sets</option>

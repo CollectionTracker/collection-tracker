@@ -151,7 +151,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
                 setActive(0);
               }}
               onKeyDown={onKeyDown}
-              className="w-full rounded-lg border border-white/10 bg-surface py-1.5 pl-7 pr-3 text-xs text-ink placeholder:text-muted focus:border-mint focus:outline-none focus:ring-1 focus:ring-mint"
+              className="field w-full rounded-lg py-1.5 pl-7 pr-3 text-xs"
             />
           </div>
           <ul id={listId} role="listbox" aria-label="Currencies" className="max-h-60 space-y-1 overflow-y-auto pr-0.5">

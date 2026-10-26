@@ -11,7 +11,7 @@ export function SnapshotPicker({ snapshots, selected }: { snapshots: SnapshotSum
       aria-label="Snapshot"
       value={selected ?? ""}
       onChange={(e) => router.push(e.target.value ? `/?snapshot=${e.target.value}` : "/")}
-      className="max-w-full rounded-md border border-white/10 bg-track px-3 py-1.5 text-sm"
+      className="field max-w-full rounded-md px-3 py-1.5 text-sm"
     >
       <option value="">Current</option>
       {snapshots.map((s) => (

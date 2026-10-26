@@ -97,3 +97,75 @@ body {
     grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 }
+
+/* Inputs & filters per DESIGN.md: inset fill, surface-2 border, mint border and diffuse glow on focus. */
+@utility field {
+  background-color: --theme(--color-inset);
+  border: 1px solid --theme(--color-surface-2);
+  color: --theme(--color-ink);
+  outline: none;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+  &::placeholder {
+    color: --theme(--color-slate-2);
+    opacity: 0.7;
+  }
+  &:hover:not(:disabled) {
+    border-color: rgb(45 212 191 / 0.4);
+  }
+  &:focus,
+  &:focus-visible {
+    border-color: --theme(--color-mint);
+    box-shadow:
+      0 0 0 3px rgb(45 212 191 / 0.15),
+      0 0 16px rgb(45 212 191 / 0.15);
+  }
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+/*
+ * Segmented control per DESIGN.md: an inset pill holding equal-width segments; the active one sits on a
+ * surface-2 thumb that slides between them. Set --segment-width and --active (index) on the container.
+ */
+@utility segmented {
+  position: relative;
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  background-color: --theme(--color-inset);
+  border: 1px solid rgb(255 255 255 / 0.05);
+}
+
+@utility segmented-thumb {
+  position: absolute;
+  inset-block: 0.25rem;
+  left: 0.25rem;
+  width: var(--segment-width);
+  border-radius: 9999px;
+  background-color: --theme(--color-surface-2);
+  transform: translateX(calc(var(--active) * (var(--segment-width) + 0.25rem)));
+  transition: transform 250ms cubic-bezier(0.2, 0, 0, 1);
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+@utility segment {
+  position: relative;
+  width: var(--segment-width);
+  border-radius: 9999px;
+  color: --theme(--color-slate-2);
+  transition: color 150ms;
+  &:hover,
+  &[aria-checked="true"] {
+    color: --theme(--color-ink);
+  }
+  &:focus-visible {
+    outline: 2px solid --theme(--color-mint);
+    outline-offset: 2px;
+  }
+}
