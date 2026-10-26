@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { PREVIEW_ATTR } from "@/lib/card-preview";
+import { PREVIEW_ATTR, PREVIEW_SHAPE_ATTR, type PreviewShape } from "@/lib/card-preview";
 
-// Card art is 63:88. One layer serves every card on the page through event delegation, so rows carry
-// only a data attribute: no per-card listeners, state or hidden images.
-const W = 250;
-const H = 349;
+// Card art is 63:88; sealed product photos are shown whole in a square. One layer serves every card and
+// product on the page through event delegation, so rows carry only data attributes: no per-row listeners,
+// state or hidden images.
+const SIZES: Record<PreviewShape, { w: number; h: number }> = { card: { w: 250, h: 349 }, square: { w: 300, h: 300 } };
 const GAP = 24;
 const EDGE = 8;
 const DELAY = 120; // hover intent, so sweeping across a table does not fetch every card
@@ -15,6 +15,7 @@ const DELAY = 120; // hover intent, so sweeping across a table does not fetch ev
 export function CardPreviewLayer() {
   const box = useRef<HTMLDivElement>(null);
   const [src, setSrc] = useState<string | null>(null);
+  const [shape, setShape] = useState<PreviewShape>("card");
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState<string | null>(null);
 
@@ -25,25 +26,29 @@ export function CardPreviewLayer() {
     let frame = 0;
     let x = 0;
     let y = 0;
+    let size = SIZES.card;
 
     // Position is written straight to the DOM once per frame; React only renders when the card changes.
     const place = () => {
       frame = 0;
       const el = box.current;
       if (!el) return;
+      const { w, h } = size;
       let left = x + GAP;
-      if (left + W > window.innerWidth - EDGE) left = x - GAP - W;
+      if (left + w > window.innerWidth - EDGE) left = x - GAP - w;
       left = Math.max(EDGE, left);
-      const top = Math.max(EDGE, Math.min(y - H / 2, window.innerHeight - H - EDGE));
+      const top = Math.max(EDGE, Math.min(y - h / 2, window.innerHeight - h - EDGE));
       el.style.transform = `translate3d(${left}px, ${top}px, 0)`;
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(place);
     };
-    const show = (next: string) => {
+    const show = (next: string, nextShape: PreviewShape) => {
       open = true;
+      size = SIZES[nextShape];
       schedule();
       setSrc(next);
+      setShape(nextShape);
       setVisible(true);
     };
     const hide = () => {
@@ -65,9 +70,10 @@ export function CardPreviewLayer() {
       x = e.clientX;
       y = e.clientY;
       const next = el.getAttribute(PREVIEW_ATTR)!;
+      const nextShape: PreviewShape = el.getAttribute(PREVIEW_SHAPE_ATTR) === "square" ? "square" : "card";
       // Moving from one card straight to the next swaps at once; a fresh hover waits for intent.
-      if (open) show(next);
-      else timer = window.setTimeout(() => show(next), DELAY);
+      if (open) show(next, nextShape);
+      else timer = window.setTimeout(() => show(next, nextShape), DELAY);
     };
     const onMove = (e: PointerEvent) => {
       if (!target) return;
@@ -98,11 +104,12 @@ export function CardPreviewLayer() {
     };
   }, []);
 
+  const { w, h } = SIZES[shape];
   return (
     <div
       ref={box}
       aria-hidden
-      style={{ width: W, height: H }}
+      style={{ width: w, height: h }}
       className={`pointer-events-none fixed left-0 top-0 z-50 overflow-hidden rounded-[14px] border border-white/10 bg-surface-2 shadow-2xl shadow-black/60 transition-opacity duration-150 will-change-transform ${
         visible ? "opacity-100" : "opacity-0"
       }`}
@@ -112,11 +119,11 @@ export function CardPreviewLayer() {
           key={src}
           src={src}
           alt=""
-          width={W}
-          height={H}
+          width={w}
+          height={h}
           loading="eager"
           onLoad={() => setLoaded(src)}
-          className={`size-full object-cover transition-opacity duration-150 ${loaded === src ? "opacity-100" : "opacity-0"}`}
+          className={`size-full transition-opacity duration-150 ${shape === "square" ? "bg-white object-contain p-3" : "object-cover"} ${loaded === src ? "opacity-100" : "opacity-0"}`}
         />
       )}
     </div>

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Fragment, useState, useTransition } from "react";
 import { setSealedPriceAction } from "@/app/actions";
+import { sealedPreview } from "@/lib/card-preview";
 import { type Money, money, signedMoney, tone } from "@/lib/format";
 import { sealedTypeLabel } from "@/lib/sealed-breakdown";
 import type { SealedHolding } from "@/lib/sealed-stats";
@@ -234,7 +235,7 @@ export function SealedAllProducts({ holdings, m }: { holdings: SealedHolding[]; 
                   <tbody className="tabular-nums">
                     {shown.map((h) => (
                       <Fragment key={h.id}>
-                        <tr className="hover:bg-white/[0.02]">
+                        <tr className="hover:bg-white/[0.02]" {...sealedPreview(h)}>
                           <td className={td}>
                             <div className="flex items-center gap-2.5">
                               <SealedThumb image={h.image} productType={h.productType} size={36} />
