@@ -12,6 +12,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { isDefaultOrder, moveCard, parseOrder, resolveOrder, shiftCard } from "@/lib/card-order";
+import { InspectDialog } from "./inspect-dialog";
 
 export type GridCard = {
   id: string;
@@ -20,7 +21,11 @@ export type GridCard = {
   /** Grid span classes, e.g. "col-span-full lg:col-span-6". They travel with the card when it moves. */
   span: string;
   node: ReactNode;
+  /** Key into the grid's `inspections`; cards with one get an inspect button. */
+  inspect?: string;
 };
+
+export type Inspection = { subtitle: string; body: ReactNode };
 
 // The order is saved per browser in localStorage (#44). The storage event only fires in other tabs, so writes here
 // notify this tab's subscribers themselves.
@@ -92,8 +97,20 @@ export function ReorderToggle() {
  * Cards in one grid whose order the visitor can change while reorder mode is on: drag a card onto another to take its
  * place, or use the ◀ ▶ buttons (keyboard and touch). The order is saved in localStorage under `storageKey`.
  */
-export function ReorderableGrid({ cards, storageKey }: { cards: GridCard[]; storageKey: string }) {
+export function ReorderableGrid({
+  cards,
+  storageKey,
+  inspections = {},
+  inspectFooter,
+}: {
+  cards: GridCard[];
+  storageKey: string;
+  /** Detail views opened by a card's inspect button. Rendered by the server, so they follow the selected currency. */
+  inspections?: Record<string, Inspection>;
+  inspectFooter?: ReactNode;
+}) {
   const { editing } = useEditing();
+  const [inspecting, setInspecting] = useState<string | null>(null);
   // The server has no saved order, so the first render matches it and the saved order applies right after hydration.
   const raw = useSyncExternalStore(subscribe, () => readStored(storageKey), () => null);
   const defaults = useMemo(() => cards.map((c) => c.id), [cards]);
@@ -140,6 +157,11 @@ export function ReorderableGrid({ cards, storageKey }: { cards: GridCard[]; stor
     setOver(null);
   };
 
+  // Looked up on every render, so a currency or snapshot change refreshes an open inspection in place.
+  const inspected = inspecting ? byId.get(inspecting) : undefined;
+  const view = inspected?.inspect ? inspections[inspected.inspect] : undefined;
+  const open = inspected && view ? { card: inspected, view } : null;
+
   const shiftBtn = "rounded px-1.5 py-0.5 text-slate-2 hover:bg-white/5 hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent";
 
   return (
@@ -168,7 +190,7 @@ export function ReorderableGrid({ cards, storageKey }: { cards: GridCard[]; stor
           <div
             key={id}
             data-card-id={id}
-            className={`relative ${c.span} ${editing ? "cursor-grab rounded-2xl outline-1 outline-dashed outline-mint/30" : ""} ${
+            className={`group relative ${c.span} ${editing ? "cursor-grab rounded-2xl outline-1 outline-dashed outline-mint/30" : ""} ${
               over === id && dragging !== id ? "outline-2 outline-mint" : ""
             } ${dragging === id ? "opacity-50" : ""}`}
             draggable={editing}
@@ -222,6 +244,24 @@ export function ReorderableGrid({ cards, storageKey }: { cards: GridCard[]; stor
                 </button>
               </div>
             )}
+            {!editing && c.inspect && inspections[c.inspect] && (
+              <button
+                type="button"
+                aria-label={`Inspect ${c.label}`}
+                title="Inspect details"
+                onClick={() => setInspecting(id)}
+                className="absolute right-3 top-3 z-10 rounded-lg p-1.5 text-slate-2 transition-opacity hover:bg-surface-2 hover:text-mint focus-visible:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
+              >
+                <svg aria-hidden className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                  />
+                </svg>
+              </button>
+            )}
             {/* While reordering, the card's own controls are inert so a drag never edits or follows a link. */}
             <div className={`h-full [&>*]:h-full ${editing ? "pointer-events-none select-none" : ""}`} inert={editing}>
               {c.node}
@@ -229,6 +269,15 @@ export function ReorderableGrid({ cards, storageKey }: { cards: GridCard[]; stor
           </div>
         );
       })}
+      <InspectDialog
+        open={open != null}
+        title={open?.card.label ?? ""}
+        subtitle={open?.view.subtitle}
+        footer={inspectFooter}
+        onClose={() => setInspecting(null)}
+      >
+        {open?.view.body}
+      </InspectDialog>
       <p aria-live="polite" className="sr-only">
         {announcement}
       </p>
