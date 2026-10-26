@@ -6,7 +6,7 @@ import type { Dashboard } from "@/lib/stats";
 import { AssetButton } from "./asset-sheet";
 import { ValueChart } from "./value-chart";
 
-const panel = "rounded-2xl border border-white/5 bg-surface p-5";
+const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 
 export function RawHistory({ d, m }: { d: Dashboard; m: Money }) {

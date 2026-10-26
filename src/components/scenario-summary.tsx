@@ -2,7 +2,7 @@ import { compactMoney, money, type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, multiplierText } from "@/lib/scenarios";
 import type { Range } from "@/lib/valuation";
 
-const card = "col-span-4 rounded-2xl border border-white/5 bg-surface p-5";
+const card = "col-span-4 card p-5";
 const labelStyle = "font-label text-label-eyebrow uppercase text-slate-2";
 const value = "mt-1 text-metric-display tabular-nums";
 

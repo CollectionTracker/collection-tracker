@@ -100,7 +100,7 @@ async function SyncChip() {
 }
 
 const card =
-  "rounded-2xl border border-white/5 bg-surface p-5 transition-shadow hover:shadow-[0_8px_24px_-4px_rgba(45,212,191,0.08),0_2px_6px_rgba(0,0,0,0.4)]";
+  "card p-5";
 const labelStyle = "font-label text-label-eyebrow uppercase text-slate-2";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
 
@@ -145,7 +145,7 @@ function TotalCard({ d, ytd, m }: { d: Dashboard; ytd: Comparison | null; m: Mon
         {ytd ? `${ytd.changePct == null ? signedMoney(ytd.change, m) : pct(ytd.changePct)} YTD` : "YTD needs more snapshots"}
       </div>
       <div
-        className="mt-3 flex h-2 overflow-hidden rounded-full bg-track"
+        className="mt-3 flex h-2 overflow-hidden track"
         role="img"
         aria-label={`${(100 - rawShare).toFixed(0)}% sealed, ${rawShare.toFixed(0)}% raw`}
       >
@@ -171,7 +171,7 @@ function ValuationPanel({ d, m }: { d: Dashboard; m: Money }) {
       <div className="grid gap-6 md:grid-cols-2">
         <div>
           <div className={labelStyle}>Estimated range</div>
-          <div className="relative mt-4 h-2 rounded-full bg-track" role="img" aria-label={`Low ${money(low, m)}, midpoint ${money(mid, m)}, high ${money(high, m)}`}>
+          <div className="relative mt-4 h-2 track" role="img" aria-label={`Low ${money(low, m)}, midpoint ${money(mid, m)}, high ${money(high, m)}`}>
             <div className="absolute inset-y-0 left-0 right-0 rounded-full bg-sky/40" />
             <div className="absolute -top-1 h-4 w-1 -translate-x-1/2 rounded-full bg-mint" style={{ left: `${midPos}%` }} />
           </div>
@@ -229,7 +229,7 @@ function TopSealedPanel({ d, m, asOf }: { d: Dashboard; m: Money; asOf: string |
                   </span>
                   <span className="font-bold tabular-nums">{money(h.value, m)}</span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-track">
+                <div className="mt-1.5 h-2 track">
                   <div className={`h-full rounded-full ${i === 0 ? "bg-mint" : "bg-sky"}`} style={{ width: `${(h.value / max) * 100}%` }} />
                 </div>
               </AssetButton>
@@ -263,7 +263,7 @@ function StructurePanel({ d, m }: { d: Dashboard; m: Money }) {
                     {((v / value) * 100).toFixed(1)}% <span className="font-normal text-slate-2">· {money(v, m)}</span>
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-track">
+                <div className="mt-1.5 h-2 track">
                   <div className="h-full rounded-full bg-violet" style={{ width: `${(v / value) * 100}%` }} />
                 </div>
               </li>

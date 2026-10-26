@@ -43,6 +43,8 @@ export function ValueMixDonut({ slices, m }: { slices: MixSlice[]; m: Money }) {
             strokeWidth="20"
             className="stroke-track"
           />
+          {/* Inset hub behind the centre callout */}
+          <circle cx="80" cy="80" r={R - 14} className="fill-inset stroke-white/[0.03]" />
           {arcs.map((s) => (
             <circle
               key={s.label}
