@@ -38,7 +38,7 @@ export function RawLeaderboard({ d, m }: { d: Dashboard; m: Money }) {
   const half = Math.ceil(top.length / 2);
   return (
     <section className="rounded-2xl border border-white/5 bg-surface p-5">
-      <h3 className="mb-4 font-label text-xs font-bold uppercase tracking-[0.12em] text-ink">Top {TOP} raw card holdings</h3>
+      <h3 className="mb-4 font-label text-label-eyebrow uppercase text-ink">Top {TOP} raw card holdings</h3>
       {top.length === 0 ? (
         <p className="text-sm text-slate-2">No priced raw cards yet.</p>
       ) : (

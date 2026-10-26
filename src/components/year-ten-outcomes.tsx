@@ -2,7 +2,7 @@ import { type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, assumptionText, multiplierText, scenarioColor } from "@/lib/scenarios";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
-const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
+const heading = "font-label text-label-eyebrow uppercase text-ink";
 
 /** One card per scenario: its year-10 value, the assumptions behind it and a "× start" multiplier badge. */
 export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Money }) {
@@ -22,7 +22,7 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                 </div>
                 {badge && (
                   <span
-                    className="rounded-full px-2 py-0.5 font-label text-[11px] font-bold tabular-nums"
+                    className="rounded-full px-2 py-0.5 font-label text-label-sm font-bold tabular-nums"
                     style={{ color, background: `${color}1f` }}
                     title={`Year ${PROJECTION_YEARS} value is ${badge} the starting midpoint`}
                   >
@@ -31,7 +31,7 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                 )}
               </div>
               <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeMoney(s.values[PROJECTION_YEARS], m)}</div>
-              <div className="mt-0.5 text-[11px] text-slate-2">{assumptionText(s)}</div>
+              <div className="mt-0.5 text-body-sm text-slate-2">{assumptionText(s)}</div>
             </li>
           );
         })}

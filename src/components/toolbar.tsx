@@ -36,7 +36,7 @@ export function Toolbar() {
     });
 
   const btn =
-    "rounded-md border border-sky/60 px-3 py-1.5 font-label text-[13px] font-semibold tracking-wide text-sky hover:bg-sky/10 disabled:opacity-50";
+    "rounded-md border border-sky/60 px-3 py-1.5 font-label text-label-md text-sky hover:bg-sky/10 disabled:opacity-50";
   return (
     <div className="flex flex-wrap items-center gap-3">
       {msg && <span className="text-sm text-slate-2">{msg}</span>}
@@ -54,7 +54,7 @@ export function Toolbar() {
         Export CSV
       </ExportLink>
       <button
-        className="rounded-md bg-mint px-3 py-1.5 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110 disabled:opacity-50"
+        className="rounded-md bg-mint px-3 py-1.5 font-label text-label-md font-bold text-canvas hover:brightness-110 disabled:opacity-50"
         disabled={pending}
         onClick={sync}
       >

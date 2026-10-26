@@ -3,8 +3,8 @@ import { PROJECTION_YEARS, type Scenario, multiplierText } from "@/lib/scenarios
 import type { Range } from "@/lib/valuation";
 
 const card = "col-span-4 rounded-2xl border border-white/5 bg-surface p-5";
-const labelStyle = "font-label text-[11px] font-bold uppercase tracking-[0.12em] text-slate-2";
-const value = "mt-1 text-[28px] font-bold leading-[34px] tracking-[-0.02em] tabular-nums";
+const labelStyle = "font-label text-label-eyebrow uppercase text-slate-2";
+const value = "mt-1 text-metric-display tabular-nums";
 
 /** Header strip for the Scenarios view: where projections start, today's range, and the year-10 spread. */
 export function ScenarioSummary({ valuation, scenarios, m }: { valuation: Range; scenarios: Scenario[]; m: Money }) {
@@ -28,7 +28,7 @@ export function ScenarioSummary({ valuation, scenarios, m }: { valuation: Range;
           <span>Low to high estimate today</span>
           <span className="font-label text-amber tabular-nums">Δ {wholeMoney(valuation.high - valuation.low, m)}</span>
         </div>
-        <div className="mt-3 flex justify-between border-t border-white/5 pt-3 text-[11px] text-slate-2 tabular-nums">
+        <div className="mt-3 flex justify-between border-t border-white/5 pt-3 text-body-sm text-slate-2 tabular-nums">
           <span>
             Low <strong className="text-ink">{wholeMoney(valuation.low, m)}</strong>
           </span>

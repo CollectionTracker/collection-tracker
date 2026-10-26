@@ -8,7 +8,7 @@ import { type Money, money, signedMoney, tone } from "@/lib/format";
 import type { Holding, SetProgress } from "@/lib/stats";
 
 const panel = "rounded-2xl border border-white/5 bg-surface p-5";
-const heading = "font-label text-xs font-bold uppercase tracking-[0.12em] text-ink";
+const heading = "font-label text-label-eyebrow uppercase text-ink";
 const control = "rounded-lg border border-white/5 bg-inset text-sm outline-none focus:border-mint/60 focus:ring-2 focus:ring-mint/15";
 const PAGE = 25;
 const GRID_PAGE = 24;
@@ -24,7 +24,7 @@ const condTone: Record<string, string> = { NM: "bg-mint/15 text-mint", LP: "bg-a
 
 function CondChip({ c }: { c: string }) {
   return (
-    <span className={`rounded-full px-2 py-0.5 font-label text-[10px] font-bold tracking-wider ${condTone[c] ?? "bg-surface-2 text-slate-2"}`}>{c}</span>
+    <span className={`rounded-full px-2 py-0.5 font-label text-label-sm font-bold ${condTone[c] ?? "bg-surface-2 text-slate-2"}`}>{c}</span>
   );
 }
 
@@ -84,7 +84,7 @@ function ViewSwitcher({ view, onChange }: { view: View; onChange: (v: View) => v
             role="tooltip"
             className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-56 rounded-lg border border-white/10 bg-surface-2 px-3 py-2 text-xs text-slate-2 opacity-0 shadow-xl transition-opacity group-hover:opacity-100 group-has-[:focus-visible]:opacity-100"
           >
-            <span className="mb-0.5 block font-label text-[11px] font-bold uppercase tracking-[0.12em] text-ink">{v.label}</span>
+            <span className="mb-0.5 block font-label text-label-eyebrow uppercase text-ink">{v.label}</span>
             {v.hint}
           </div>
         </div>
@@ -112,7 +112,7 @@ function TableView({ rows, sort, onSort, m }: { rows: Holding[]; sort: Sort; onS
   const shown = rows.slice(current * PAGE, (current + 1) * PAGE);
   const sum = (f: (h: Holding) => number) => rows.reduce((a, h) => a + f(h), 0);
   const costed = rows.filter((h) => h.cost != null);
-  const th = "whitespace-nowrap px-2.5 pb-2.5 font-label text-[10px] font-bold uppercase tracking-[0.12em]";
+  const th = "whitespace-nowrap px-2.5 pb-2.5 font-label text-label-eyebrow uppercase";
   const td = "whitespace-nowrap border-b border-white/5 px-2.5 py-2";
   return (
     <>
@@ -214,7 +214,7 @@ function GridView({ rows, m }: { rows: Holding[]; m: Money }) {
                 <CondChip c={h.condition} />
               </span>
               {h.quantity > 1 && (
-                <span className="absolute right-1.5 top-1.5 rounded-full bg-canvas/85 px-2 py-0.5 font-label text-[10px] font-bold">×{h.quantity}</span>
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-canvas/85 px-2 py-0.5 font-label text-label-sm font-bold">×{h.quantity}</span>
               )}
             </div>
             <div className="min-w-0">
@@ -225,7 +225,7 @@ function GridView({ rows, m }: { rows: Holding[]; m: Money }) {
             </div>
             <div className="flex items-baseline justify-between gap-1 tabular-nums">
               <span className="text-sm font-bold">{money(h.value, m)}</span>
-              <span className="text-[11px]">
+              <span className="text-body-sm">
                 <Delta n={h.change} m={m} />
               </span>
             </div>
@@ -259,7 +259,7 @@ function SetsView({ rows, sets, filtered, m }: { rows: Holding[]; sets: SetProgr
     });
   return (
     <>
-      <div className="mb-3 flex gap-2 font-label text-[11px] font-semibold uppercase tracking-[0.06em]">
+      <div className="mb-3 flex gap-2 font-label text-label-sm font-semibold uppercase">
         <button type="button" onClick={() => setOpen(new Set(groups.map((g) => g.id)))} className="rounded-md bg-inset px-2.5 py-1 text-slate-2 hover:text-ink">
           Expand all
         </button>

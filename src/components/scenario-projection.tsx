@@ -10,7 +10,7 @@ export function ScenarioProjection({ start, scenarios, m }: { start: number; sce
     <section className={panel}>
       <div className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div>
-          <div className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-mint">Forward outlook</div>
+          <div className="font-label text-label-eyebrow uppercase text-mint">Forward outlook</div>
           <h2 className="text-xl font-bold tracking-tight">Projected portfolio scenarios</h2>
           <p className="text-xs text-slate-2">
             Illustrative, not a prediction · starting midpoint {money(start, m)} · nominal values before transaction costs

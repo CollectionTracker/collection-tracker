@@ -90,8 +90,8 @@ export function InspectDialog({ open, title, subtitle, eyebrow = "Detail inspect
             </svg>
           </button>
           <header className="border-b border-white/5 pb-4 pr-12">
-            <div className="font-label text-[11px] font-bold uppercase tracking-[0.12em] text-mint">{eyebrow}</div>
-            <h2 id={titleId} className="mt-1 text-2xl font-extrabold tracking-[-0.02em]">
+            <div className="font-label text-label-eyebrow uppercase text-mint">{eyebrow}</div>
+            <h2 id={titleId} className="mt-1 text-headline-md">
               {title}
             </h2>
             {subtitle && <p className="mt-1 text-xs text-slate-2">{subtitle}</p>}
@@ -104,7 +104,7 @@ export function InspectDialog({ open, title, subtitle, eyebrow = "Detail inspect
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-md bg-mint px-4 py-2 font-label text-[13px] font-bold tracking-wide text-canvas hover:brightness-110"
+                className="rounded-md bg-mint px-4 py-2 font-label text-label-md font-bold text-canvas hover:brightness-110"
               >
                 Done
               </button>

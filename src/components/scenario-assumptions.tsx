@@ -7,7 +7,7 @@ const pct = (n: number) => `±${Math.round(n * 100)}%`;
 export function ScenarioAssumptions() {
   return (
     <section className="rounded-2xl border border-white/5 bg-inset p-5">
-      <h2 className="mb-3 flex items-center gap-2 font-label text-xs font-bold uppercase tracking-[0.12em] text-slate-2">
+      <h2 className="mb-3 flex items-center gap-2 font-label text-label-eyebrow uppercase text-slate-2">
         <svg className="h-4 w-4 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
         </svg>
