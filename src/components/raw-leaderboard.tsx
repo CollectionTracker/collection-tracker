@@ -16,7 +16,8 @@ function Row({ h, rank, m, total }: { h: Holding; rank: number; m: Money; total:
         className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-colors hover:border-mint/40"
       >
         <span className="w-6 shrink-0 font-bold tabular-nums text-mint">{String(rank).padStart(2, "0")}</span>
-        {h.image && <Image src={h.image} alt="" width={36} height={50} className="shrink-0 rounded-md" />}
+        {/* The leaderboard is the first card art on Raw Cards, so its thumbnails are often the LCP. */}
+        {h.image && <Image src={h.image} alt="" width={36} height={50} loading="eager" className="shrink-0 rounded-md" />}
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{h.name}</div>
           <div className="truncate text-xs text-slate-2">
