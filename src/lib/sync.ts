@@ -1,5 +1,7 @@
-import { inArray, sql } from "drizzle-orm";
+import { and, inArray, isNotNull, sql } from "drizzle-orm";
+import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { getDb } from "@/db";
+import type * as schema from "@/db/schema";
 import { cards, collectionEntries, priceSnapshots, sealedPriceSnapshots, sealedProducts, sets, syncRuns } from "@/db/schema";
 import { type CatalogCard, type Priceable, linkTcgplayer, newClients, priceCards, resolveByIds } from "./catalog";
 import { refreshFxRates } from "./forex";
@@ -39,6 +41,17 @@ export async function upsertCards(list: CatalogCard[]) {
         tcgdexId: sql`excluded.tcgdex_id`,
       },
     });
+  // A TCGdex id already held by another row means the card was stored twice (a legacy-id row and a TCGdex-id row,
+  // from a quick-add before the legacy row was linked). That row is merged into this one once it is stored;
+  // until then this one is stored without the TCGdex id so the unique index holds.
+  const holders = await db
+    .select({ id: cards.id, tcgdexId: cards.tcgdexId })
+    .from(cards)
+    .where(and(isNotNull(cards.tcgdexId), inArray(cards.tcgdexId, list.map((c) => c.tcgdexId))));
+  const duplicates = list.flatMap((c) => {
+    const dup = holders.find((h) => h.tcgdexId === c.tcgdexId && h.id !== c.id);
+    return dup ? [{ keep: c, dup: dup.id }] : [];
+  });
   await db
     .insert(cards)
     .values(
@@ -51,7 +64,7 @@ export async function upsertCards(list: CatalogCard[]) {
         supertype: c.supertype,
         imageSmall: c.images.small ?? null,
         imageLarge: c.images.large ?? null,
-        tcgdexId: c.tcgdexId,
+        tcgdexId: duplicates.some((d) => d.keep === c) ? null : c.tcgdexId,
         tcgplayerProductId: c.tcgplayerProductId,
         tcgplayerGroupId: c.tcgplayerGroupId,
       })),
@@ -68,6 +81,33 @@ export async function upsertCards(list: CatalogCard[]) {
         tcgplayerGroupId: sql`coalesce(excluded.tcgplayer_group_id, ${cards.tcgplayerGroupId})`,
       },
     });
+  for (const { keep, dup } of duplicates) {
+    await db.transaction(async (tx) => {
+      await mergeCard(tx, keep.id, dup);
+      await tx.update(cards).set({ tcgdexId: keep.tcgdexId }).where(sql`${cards.id} = ${keep.id}`);
+    });
+  }
+}
+
+/**
+ * Fold card `dup` into card `keep`: its collection entries add to `keep`'s (keeping `keep`'s purchase price when
+ * it has one), its price history fills days `keep` lacks, and the `dup` row is deleted.
+ */
+export async function mergeCard(db: PgDatabase<PgQueryResultHKT, typeof schema>, keep: string, dup: string) {
+  await db.execute(sql`
+    insert into collection_entries (card_id, variant, condition, quantity, purchase_price, acquired_at, notes, created_at)
+    select ${keep}, variant, condition, quantity, purchase_price, acquired_at, notes, created_at
+    from collection_entries where card_id = ${dup}
+    on conflict (card_id, variant, condition) do update set
+      quantity = collection_entries.quantity + excluded.quantity,
+      purchase_price = coalesce(collection_entries.purchase_price, excluded.purchase_price)`);
+  await db.delete(collectionEntries).where(sql`${collectionEntries.cardId} = ${dup}`);
+  await db.execute(sql`
+    insert into price_snapshots (card_id, variant, day, market, low, mid, high)
+    select ${keep}, variant, day, market, low, mid, high from price_snapshots where card_id = ${dup}
+    on conflict do nothing`);
+  await db.delete(priceSnapshots).where(sql`${priceSnapshots.cardId} = ${dup}`);
+  await db.delete(cards).where(sql`${cards.id} = ${dup}`);
 }
 
 /** Store today's price for every variant of the given cards. */
