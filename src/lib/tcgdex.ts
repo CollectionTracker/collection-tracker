@@ -142,6 +142,12 @@ export class TcgdexClient {
     return set ? this.cardInSet(set.id, m[2]) : null;
   }
 
+  /** Cards whose name contains `name` (TCGdex matches partial, case-insensitive text), as briefs without set or prices. */
+  async searchCards(name: string, limit = 40, localId?: string): Promise<{ id: string; localId: string; name: string; image?: string }[]> {
+    const q = `name=${encodeURIComponent(name)}${localId ? `&localId=${encodeURIComponent(localId)}` : ""}&pagination:page=1&pagination:itemsPerPage=${limit}`;
+    return (await this.get<{ id: string; localId: string; name: string; image?: string }[]>(`/cards?${q}`)) ?? [];
+  }
+
   /** Cards whose name is exactly `name` (case-insensitive), newest set last as TCGdex lists them. */
   async cardsNamed(name: string): Promise<DexCard[]> {
     const briefs = (await this.get<{ id: string; name: string }[]>(`/cards?name=${encodeURIComponent(`eq:${name}`)}`)) ?? [];

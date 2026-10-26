@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { collectionEntries } from "@/db/schema";
 import { type CatalogCard, linkTcgplayer, newClients, priceCards, resolveByIds, resolveCard } from "./catalog";
+import type { Condition } from "./add-types";
 import { snapshotPrices, upsertCards } from "./sync";
 
 const ALIASES: Record<string, string[]> = {
@@ -25,7 +26,7 @@ const CONDITIONS: [RegExp, string][] = [
   [/damag|^dmg/i, "DMG"],
 ];
 
-function normVariant(v: string | undefined): string | null {
+export function normVariant(v: string | undefined): string | null {
   if (!v) return null;
   const s = v.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (!s || s === "no" || s === "false") return null;
@@ -36,7 +37,7 @@ function normVariant(v: string | undefined): string | null {
   return null;
 }
 
-type Row = {
+export type Row = {
   id?: string;
   name?: string;
   setName?: string;
@@ -48,7 +49,9 @@ type Row = {
   price: number | null;
 };
 
-function mapRows(text: string): Row[] {
+export const normCondition = (v: string | undefined): Condition => (CONDITIONS.find(([re]) => re.test(v ?? ""))?.[1] ?? "NM") as Condition;
+
+export function mapRows(text: string): Row[] {
   const parsed = Papa.parse<Record<string, string>>(text.trim(), {
     header: true,
     skipEmptyLines: true,
@@ -66,7 +69,7 @@ function mapRows(text: string): Row[] {
       setId: get("setId"),
       number: get("number"),
       quantity: Math.max(1, parseInt(get("quantity") ?? "1", 10) || 1),
-      condition: CONDITIONS.find(([re]) => re.test(cond))?.[1] ?? "NM",
+      condition: normCondition(cond),
       variant: normVariant(get("variant")),
       price: parseFloat((get("price") ?? "").replace(/[^0-9.]/g, "")) || null,
     };
@@ -106,6 +109,15 @@ export async function importCsv(text: string): Promise<ImportResult> {
     }),
   );
 
+  const { imported, copies } = await saveCards(rows, resolved, clients);
+  return { imported, copies, failed: failed.sort((a, b) => a.row - b.row) };
+}
+
+/**
+ * Price and store the matched cards, then add each row's copies to the collection (rows for the same
+ * card, printing and condition merge). `resolved[i]` is the catalog card for `rows[i]`, or null when unmatched.
+ */
+export async function saveCards(rows: Row[], resolved: (CatalogCard | null)[], clients: ReturnType<typeof newClients>) {
   const byCard = new Map(resolved.filter((c): c is CatalogCard => !!c).map((c) => [c.id, c]));
   const matched = [...byCard.values()];
   await linkTcgplayer(matched, clients);
@@ -143,5 +155,5 @@ export async function importCsv(text: string): Promise<ImportResult> {
         },
       });
   }
-  return { imported: merged.size, copies, failed: failed.sort((a, b) => a.row - b.row) };
+  return { imported: merged.size, copies };
 }
