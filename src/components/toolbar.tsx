@@ -3,8 +3,8 @@
 import { useRef, useState, useTransition } from "react";
 import { useRefresh } from "@/components/data-provider";
 import { exportHref } from "@/lib/export";
-import { importCsv } from "@/lib/import";
 import { syncPricesWhenFree } from "@/lib/sync";
+import { importIntoAddDialog } from "./add-dialog";
 import { ExportLink } from "./export-link";
 
 export function Toolbar() {
@@ -13,21 +13,11 @@ export function Toolbar() {
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
-  const upload = (file: File) =>
-    start(async () => {
-      setMsg("Importing…");
-      let json;
-      try {
-        json = await importCsv(await file.text());
-      } catch (e) {
-        return setMsg(e instanceof Error ? e.message : "Import failed");
-      }
-      setMsg(
-        `Imported ${json.copies} cards (${json.imported} entries)` +
-          (json.failed.length ? ` · ${json.failed.length} rows unmatched (first: row ${json.failed[0].row})` : ""),
-      );
-      refresh();
-    });
+  // Imports go through the add dialog's review list, so nothing is saved until the user confirms it there.
+  const upload = (file: File) => {
+    importIntoAddDialog(file);
+    if (fileRef.current) fileRef.current.value = "";
+  };
 
   const sync = () =>
     start(async () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { type DragEvent, useRef, useState } from "react";
+import { type DragEvent, useEffect, useEffectEvent, useRef, useState } from "react";
 import { AddAutocomplete } from "@/components/add-autocomplete";
 import { AddReview } from "@/components/add-review";
 import { useRefresh } from "@/components/data-provider";
@@ -13,6 +13,10 @@ import { parseImport } from "@/lib/add-parse";
 export type AddTab = "search" | "import" | "paste";
 
 const MAX_FILE_BYTES = 1_000_000;
+const IMPORT_EVENT = "add:import-file";
+
+/** Read `file` into the add dialog's review list and open it, so nothing is saved until the user confirms it there. */
+export const importIntoAddDialog = (file: File) => window.dispatchEvent(new CustomEvent<File>(IMPORT_EVENT, { detail: file }));
 
 const TABS: { id: AddTab; label: string }[] = [
   { id: "search", label: "Search" },
@@ -26,6 +30,8 @@ type Props = {
   onTab: (t: AddTab) => void;
   rows: DraftRow[];
   setRows: (update: (rows: DraftRow[]) => DraftRow[]) => void;
+  /** Opens the dialog when a file is handed in with `importIntoAddDialog`. */
+  onOpen: () => void;
   onClose: () => void;
 };
 
@@ -46,7 +52,7 @@ const plural = (n: number, word: string) => `${n} ${n === 1 ? word : word.endsWi
  * The add dialog: find items by search, file or pasted list, review and edit them in one list, then save them all.
  * The list lives in the parent so closing the dialog by accident does not lose it.
  */
-export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
+export function AddDialog({ open, tab, onTab, rows, setRows, onOpen, onClose }: Props) {
   const refresh = useRefresh();
   const lastCondition = useRef<Condition>("NM");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -107,6 +113,15 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
     if (file.size > MAX_FILE_BYTES) return setError("File is too large (1 MB max)");
     return file.text().then(read);
   };
+
+  const onImport = useEffectEvent((e: Event) => {
+    onOpen();
+    void readFile((e as CustomEvent<File>).detail);
+  });
+  useEffect(() => {
+    window.addEventListener(IMPORT_EVENT, onImport);
+    return () => window.removeEventListener(IMPORT_EVENT, onImport);
+  }, []);
 
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
@@ -186,7 +201,11 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
           {tab === "search" && <AddAutocomplete onPick={addSuggestion} onCustom={addCustom} compact={rows.length > 0} />}
           {tab === "import" && (
             <div>
-              <input ref={fileRef} type="file" accept=".csv,text/csv,text/plain" hidden onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0])} />
+              <input ref={fileRef} type="file" accept=".csv,text/csv,text/plain" hidden onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = "";
+                  if (f) void readFile(f);
+                }} />
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
