@@ -200,8 +200,16 @@ export async function syncSealedPrices(csv: TcgcsvClient) {
   return rows.length;
 }
 
+/** Browser lock held while a sync runs, so two tabs never sync at once. */
+export const SYNC_LOCK = "price-sync";
+
+/** `syncCollectionPrices`, after any sync already running in another tab has finished. */
+export function syncPricesWhenFree() {
+  return navigator.locks.request(SYNC_LOCK, () => syncCollectionPrices());
+}
+
 /**
- * Daily job: refresh prices for every card and sealed product in the collection, recording the outcome in sync_runs.
+ * Refresh prices for every card and sealed product in the collection, recording the outcome in sync_runs.
  * Cards not yet linked to TCGdex/TCGplayer are looked up first; linked cards cost one TCGCSV request per set.
  * Exchange rates and sealed prices are refreshed too; a failure in either is logged and never fails the card sync.
  */

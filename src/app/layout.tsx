@@ -5,6 +5,7 @@ import { BottomTabBar } from "@/components/bottom-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { CardPreviewLayer } from "@/components/card-preview-layer";
 import { AssetSheetProvider } from "@/components/asset-sheet";
+import { AutoSync } from "@/components/auto-sync";
 import { DataProvider } from "@/components/data-provider";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col pb-16 md:pb-0">
         <DataProvider>
+          <AutoSync />
           <SiteHeader />
           <AssetSheetProvider>{children}</AssetSheetProvider>
           <SiteFooter />

@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRefresh } from "@/components/data-provider";
 import { exportHref } from "@/lib/export";
 import { importCsv } from "@/lib/import";
-import { syncCollectionPrices } from "@/lib/sync";
+import { syncPricesWhenFree } from "@/lib/sync";
 import { ExportLink } from "./export-link";
 
 export function Toolbar() {
@@ -33,7 +33,7 @@ export function Toolbar() {
     start(async () => {
       setMsg("Syncing prices…");
       try {
-        const r = await syncCollectionPrices();
+        const r = await syncPricesWhenFree();
         setMsg(`Updated ${r.snapshots} prices for ${r.cards} cards`);
       } catch (e) {
         setMsg(e instanceof Error ? e.message : String(e));

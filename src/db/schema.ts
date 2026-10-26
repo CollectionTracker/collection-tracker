@@ -153,7 +153,7 @@ export const fxRates = pgTable(
   (t) => [primaryKey({ columns: [t.day, t.currency] })],
 );
 
-// One row per price sync (manual button or daily cron), so the header can show the last sync and whether it failed.
+// One row per price sync (Sync prices button, or automatic when the app is opened), so the header can show the last sync and whether it failed.
 export const syncRuns = pgTable("sync_runs", {
   id: serial("id").primaryKey(),
   startedAt: timestamp("started_at").defaultNow().notNull(),
