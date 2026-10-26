@@ -31,7 +31,7 @@ function Row({ s }: { s: SnapshotSummary }) {
         onChange={(e) => setLabel(e.target.value)}
         onBlur={() => label.trim() !== (s.label ?? "") && save()}
         onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
-        className="min-w-0 flex-1 rounded-md border border-white/10 bg-track px-3 py-1.5 text-sm"
+        className="field min-w-0 flex-1 rounded-md px-3 py-1.5 text-sm"
       />
       <div className="text-xs text-slate-2">
         {s.cards} cards · {s.sealed} sealed
