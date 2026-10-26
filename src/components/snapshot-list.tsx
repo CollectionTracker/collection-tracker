@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { setSnapshotLabelAction } from "@/app/actions";
+import { useRefresh } from "@/components/data-provider";
+import { setSnapshotLabelAction } from "@/lib/actions";
 import type { SnapshotSummary } from "@/lib/snapshots";
 
 function Row({ s }: { s: SnapshotSummary }) {
-  const router = useRouter();
+  const refresh = useRefresh();
   const [label, setLabel] = useState(s.label ?? "");
   const [err, setErr] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -16,7 +16,7 @@ function Row({ s }: { s: SnapshotSummary }) {
       const r = await setSnapshotLabelAction({ day: s.day, label });
       if (!r.ok) return setErr(r.error);
       setErr(null);
-      router.refresh();
+      refresh();
     });
 
   return (

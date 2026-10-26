@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRefresh } from "@/components/data-provider";
 import { Fragment, useState, useTransition } from "react";
-import { setSealedPriceAction } from "@/app/actions";
+import { setSealedPriceAction } from "@/lib/actions";
 import { sealedPreview } from "@/lib/card-preview";
 import { type Money, money, signedMoney, tone } from "@/lib/format";
 import { sealedTypeLabel } from "@/lib/sealed-breakdown";
@@ -51,7 +51,7 @@ function SourceChip({ h }: { h: SealedHolding }) {
 
 /** Today's price for one product, in USD like every stored price; low and high are optional. */
 function PriceForm({ h, onDone }: { h: SealedHolding; onDone: () => void }) {
-  const router = useRouter();
+  const refresh = useRefresh();
   const [market, setMarket] = useState(h.unit ? String(h.unit) : "");
   const [low, setLow] = useState("");
   const [high, setHigh] = useState("");
@@ -65,7 +65,7 @@ function PriceForm({ h, onDone }: { h: SealedHolding; onDone: () => void }) {
       if (!r.ok) return setErr(r.error);
       setErr(null);
       onDone();
-      router.refresh();
+      refresh();
     });
 
   const input = `${control} w-28 px-2.5 py-1.5 tabular-nums`;

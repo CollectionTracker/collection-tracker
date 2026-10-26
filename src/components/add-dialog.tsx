@@ -1,14 +1,18 @@
 "use client";
 
 import { type DragEvent, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { AddAutocomplete } from "@/components/add-autocomplete";
 import { AddReview } from "@/components/add-review";
+import { useRefresh } from "@/components/data-provider";
 import { InspectDialog } from "@/components/inspect-dialog";
 import { type CommitItem, type CommitResult, type Condition, type DraftRow, type Suggestion, suggestionKey } from "@/lib/add-types";
 import { defaultVariant, inferSealedType } from "@/lib/add-query";
+import { commitInput, commitItems } from "@/lib/add-commit";
+import { parseImport } from "@/lib/add-parse";
 
 export type AddTab = "search" | "import" | "paste";
+
+const MAX_FILE_BYTES = 1_000_000;
 
 const TABS: { id: AddTab; label: string }[] = [
   { id: "search", label: "Search" },
@@ -43,7 +47,7 @@ const plural = (n: number, word: string) => `${n} ${n === 1 ? word : word.endsWi
  * The list lives in the parent so closing the dialog by accident does not lose it.
  */
 export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
-  const router = useRouter();
+  const refresh = useRefresh();
   const lastCondition = useRef<Condition>("NM");
   const fileRef = useRef<HTMLInputElement>(null);
   const [pasted, setPasted] = useState("");
@@ -74,16 +78,15 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
   const addCustom = (name: string) =>
     addSuggestion({ kind: "sealed", productId: null, groupId: null, name, group: null, type: inferSealedType(name), image: null, price: null, owned: 0 });
 
-  const read = async (body: FormData) => {
+  const read = async (text: string) => {
     setBusy("read");
     setError(null);
     setSaved(null);
     setMessage("Reading and matching your list…");
     try {
-      const res = await fetch("/api/add/parse", { method: "POST", body });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Could not read the file");
-      const got = json.rows as DraftRow[];
+      if (!text.trim()) throw new Error("Missing file");
+      const json = await parseImport(text);
+      const got = json.rows;
       setRows((rs) => [...rs, ...got]);
       const open = got.filter((r) => !r.item).length;
       setMessage(
@@ -101,9 +104,8 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
   };
 
   const readFile = (file: File) => {
-    const body = new FormData();
-    body.set("file", file);
-    return read(body);
+    if (file.size > MAX_FILE_BYTES) return setError("File is too large (1 MB max)");
+    return file.text().then(read);
   };
 
   const onDrop = (e: DragEvent) => {
@@ -122,16 +124,11 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
     setError(null);
     setMessage(null);
     try {
-      const res = await fetch("/api/add/commit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: toItems(ready) }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Could not save");
-      setSaved(json as CommitResult);
+      const parsed = commitInput.safeParse({ items: toItems(ready) });
+      if (!parsed.success) throw new Error("Invalid items");
+      setSaved(await commitItems(parsed.data));
       setRows((rs) => rs.filter((r) => !r.item));
-      router.refresh();
+      refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -233,9 +230,7 @@ export function AddDialog({ open, tab, onTab, rows, setRows, onClose }: Props) {
                 type="button"
                 disabled={!pasted.trim() || busy !== null}
                 onClick={() => {
-                  const body = new FormData();
-                  body.set("text", pasted);
-                  void read(body).then(() => setPasted(""));
+                  void read(pasted).then(() => setPasted(""));
                 }}
                 className="rounded-md bg-mint px-4 py-2 font-label text-label-md font-bold text-canvas hover:brightness-110 disabled:opacity-40"
               >

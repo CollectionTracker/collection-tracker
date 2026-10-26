@@ -1,6 +1,8 @@
-import { Suspense } from "react";
+"use client";
+
 import Image from "next/image";
-import { connection } from "next/server";
+import { useSearchParams } from "next/navigation";
+import { ClientData, useData } from "@/components/data-provider";
 import { Toolbar } from "@/components/toolbar";
 import { SnapshotPicker } from "@/components/snapshot-picker";
 import { SnapshotList } from "@/components/snapshot-list";
@@ -24,9 +26,8 @@ import { type InspectScope, InspectionPanel } from "@/components/inspection-pane
 import { type ChipTone, StatusChip } from "@/components/status-chip";
 import { getValueSeries } from "@/lib/inspection";
 
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-
-export default function Home({ searchParams }: { searchParams: SearchParams }) {
+// Everything below reads this browser's own database, so the page renders on the client.
+export default function Home() {
   return (
     <ReorderProvider>
       <main className="mx-auto w-full max-w-7xl space-y-3 py-6 page-x md:space-y-5">
@@ -36,12 +37,12 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
             <h1 className="mt-1 text-headline-xl-mobile md:text-headline-xl">
               Collection, at a glance
             </h1>
-            <Suspense fallback={null}>
-              <SnapshotBar searchParams={searchParams} />
-            </Suspense>
-            <Suspense fallback={null}>
+            <ClientData fallback={null}>
+              <SnapshotBar />
+            </ClientData>
+            <ClientData fallback={null}>
               <SyncChip />
-            </Suspense>
+            </ClientData>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <ReorderToggle />
@@ -50,18 +51,22 @@ export default function Home({ searchParams }: { searchParams: SearchParams }) {
             </div>
           </div>
         </header>
-        <Suspense fallback={<p className="text-slate-2">Loading collection…</p>}>
-          <Dashboard searchParams={searchParams} />
-        </Suspense>
+        <ClientData fallback={<p className="text-slate-2">Loading collection…</p>}>
+          <Dashboard />
+        </ClientData>
       </main>
     </ReorderProvider>
   );
 }
 
-async function SnapshotBar({ searchParams }: { searchParams: SearchParams }) {
-  await connection();
-  const snapshots = await listSnapshots();
-  const selected = pickSnapshot((await searchParams).snapshot, snapshots);
+/** The snapshot day in the URL (`?snapshot=YYYY-MM-DD`) when it is a stored one, else null for current prices. */
+function useSnapshot() {
+  const snapshots = useData(["snapshots"], listSnapshots);
+  return { snapshots, asOf: pickSnapshot(useSearchParams().get("snapshot") ?? undefined, snapshots) };
+}
+
+function SnapshotBar() {
+  const { snapshots, asOf: selected } = useSnapshot();
   const current = snapshots.find((s) => s.day === selected) ?? null;
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -83,9 +88,8 @@ const chipStyles: Record<string, [ChipTone, boolean]> = {
 };
 const chipLabels = { verified: "Synced", running: "Syncing", stale: "Stale", failed: "Sync failed", never: "Never synced" };
 
-async function SyncChip() {
-  await connection();
-  const st = await getSyncStatus();
+function SyncChip() {
+  const st = useData(["sync-status"], getSyncStatus);
   const [tone, pulse] = chipStyles[st.state];
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-2">
@@ -354,17 +358,11 @@ function CardRow({ h, m, total, asOf, showChange }: { h: Holding; m: Money; tota
   );
 }
 
-async function Dashboard({ searchParams }: { searchParams: SearchParams }) {
-  await connection(); // always render per request, never at build time
-  const snapshots = await listSnapshots();
-  const asOf = pickSnapshot((await searchParams).snapshot, snapshots);
-  const [d, cmp, m, series, sync] = await Promise.all([
-    getDashboard(asOf),
-    getComparisons(asOf),
-    getDisplayMoney(asOf ?? undefined),
-    getValueSeries(asOf),
-    getSyncStatus(),
-  ]);
+function Dashboard() {
+  const { snapshots, asOf } = useSnapshot();
+  const [d, cmp, m, series, sync] = useData(["overview", asOf], () =>
+    Promise.all([getDashboard(asOf), getComparisons(asOf), getDisplayMoney(asOf ?? undefined), getValueSeries(asOf), getSyncStatus()]),
+  );
   if (!d.holdings.length)
     return (
       <div className={`${card} py-16 text-center text-slate-2`}>

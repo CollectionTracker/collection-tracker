@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { syncNow } from "@/app/actions";
+import { useRefresh } from "@/components/data-provider";
 import { exportHref } from "@/lib/export";
+import { importCsv } from "@/lib/import";
+import { syncCollectionPrices } from "@/lib/sync";
 import { ExportLink } from "./export-link";
 
 export function Toolbar() {
-  const router = useRouter();
+  const refresh = useRefresh();
   const fileRef = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -15,24 +16,29 @@ export function Toolbar() {
   const upload = (file: File) =>
     start(async () => {
       setMsg("Importing…");
-      const body = new FormData();
-      body.set("file", file);
-      const res = await fetch("/api/import", { method: "POST", body });
-      const json = await res.json();
-      if (!res.ok) return setMsg(json.error ?? "Import failed");
+      let json;
+      try {
+        json = await importCsv(await file.text());
+      } catch (e) {
+        return setMsg(e instanceof Error ? e.message : "Import failed");
+      }
       setMsg(
         `Imported ${json.copies} cards (${json.imported} entries)` +
           (json.failed.length ? ` · ${json.failed.length} rows unmatched (first: row ${json.failed[0].row})` : ""),
       );
-      router.refresh();
+      refresh();
     });
 
   const sync = () =>
     start(async () => {
       setMsg("Syncing prices…");
-      const r = await syncNow();
-      setMsg(r.ok ? `Updated ${r.snapshots} prices for ${r.cards} cards` : r.error);
-      router.refresh();
+      try {
+        const r = await syncCollectionPrices();
+        setMsg(`Updated ${r.snapshots} prices for ${r.cards} cards`);
+      } catch (e) {
+        setMsg(e instanceof Error ? e.message : String(e));
+      }
+      refresh();
     });
 
   const btn =

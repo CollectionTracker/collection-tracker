@@ -1,7 +1,8 @@
 "use client";
 
-import { type KeyboardEvent, useEffect, useId, useRef, useState, useTransition } from "react";
-import { setCurrencyAction } from "@/app/actions";
+import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
+import { useRefresh } from "@/components/data-provider";
+import { setCurrency } from "@/lib/currency-pref";
 import { CURRENCIES, CURRENCY_INFO, type Currency, type FxRates, rateText, searchCurrencies } from "@/lib/currencies";
 
 type Props = {
@@ -11,19 +12,16 @@ type Props = {
   align?: "left" | "right";
 };
 
-/** Searchable currency menu: flag, code, symbol, name and rate per 1 USD. The choice is saved in a cookie. */
+/** Searchable currency menu: flag, code, symbol, name and rate per 1 USD. The choice is saved in this browser. */
 export function CurrencySelector({ currency, fx, align = "right" }: Props) {
-  // Shown straight away while the cookie is saved; the server value takes over once the page re-renders.
-  const [chosen, setChosen] = useState<Currency | null>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [pending, start] = useTransition();
+  const refresh = useRefresh();
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const id = useId();
-  const selected = chosen ?? currency;
+  const selected = currency;
   const options = searchCurrencies(query);
   const info = CURRENCY_INFO[selected];
 
@@ -50,16 +48,9 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
 
   const choose = (code: Currency) => {
     close();
-    setError(null);
     if (code === selected) return;
-    setChosen(code);
-    start(async () => {
-      const r = await setCurrencyAction(code);
-      if (!r.ok) {
-        setChosen(null);
-        setError(r.error);
-      }
-    });
+    setCurrency(code);
+    refresh();
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -104,16 +95,11 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
-          className={`size-3.5 transition-transform ${open ? "rotate-180" : ""} ${pending ? "animate-pulse" : ""}`}
+          className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`}
         >
           <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {error && (
-        <p role="alert" className="absolute top-full mt-1 whitespace-nowrap text-body-sm text-rose-400">
-          {error}
-        </p>
-      )}
       {open && (
         <div
           className={`absolute top-full z-50 mt-2 w-72 rounded-xl border border-white/10 bg-inset p-3 shadow-2xl sm:w-80 ${

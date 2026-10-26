@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { SealedThumb } from "@/components/sealed-thumb";
 import { SEALED_TYPE_LABELS, type Suggestion, type SuggestionKind } from "@/lib/add-types";
 import { money } from "@/lib/format";
+import { recentAdds, suggest } from "@/lib/add-search";
 
 const KINDS: { id: SuggestionKind; label: string }[] = [
   { id: "all", label: "All" },
@@ -98,9 +99,8 @@ export function AddAutocomplete({ onPick, onCustom, compact = false }: Props) {
         }
         setStatus("loading");
         try {
-          const res = await fetch(`/api/add/search?q=${encodeURIComponent(term)}&kind=${kind}`, { signal: ctrl.signal });
-          const json = await res.json();
-          if (!res.ok) throw new Error(json.error);
+          const json = { suggestions: term ? await suggest(term.slice(0, 100), kind) : await recentAdds(), recent: !term };
+          if (ctrl.signal.aborted) return; // a newer term is already being looked up
           if (term) cache.current.set(key, { items: json.suggestions, recent: json.recent });
           setItems(json.suggestions);
           setRecent(json.recent);

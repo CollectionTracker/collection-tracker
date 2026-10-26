@@ -1,20 +1,20 @@
-import { Suspense } from "react";
-import { connection } from "next/server";
+"use client";
+
+import { ClientData, useData } from "@/components/data-provider";
 import { CurrencySelector } from "@/components/currency-selector";
 import { getCurrency } from "@/lib/currency-pref";
 import { getFxRates } from "@/lib/forex";
 
-async function CurrencyMenuInner({ align }: { align?: "left" | "right" }) {
-  await connection(); // rates are read per request (and refreshed by date), never prerendered
-  const [currency, fx] = await Promise.all([getCurrency(), getFxRates()]);
-  return <CurrencySelector currency={currency} fx={fx} align={align} />;
+function CurrencyMenuInner({ align }: { align?: "left" | "right" }) {
+  const fx = useData(["fx"], () => getFxRates()); // refreshed by date on first read
+  return <CurrencySelector currency={getCurrency()} fx={fx} align={align} />;
 }
 
 /** Currency selector with the visitor's saved currency and today's rates; a same-size placeholder while it loads. */
 export function CurrencyMenu({ align }: { align?: "left" | "right" }) {
   return (
-    <Suspense fallback={<span aria-hidden className="block h-[30px] w-28 rounded-lg border border-white/10 bg-surface" />}>
+    <ClientData fallback={<span aria-hidden className="block h-[30px] w-28 rounded-lg border border-white/10 bg-surface" />}>
       <CurrencyMenuInner align={align} />
-    </Suspense>
+    </ClientData>
   );
 }
