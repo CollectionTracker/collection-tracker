@@ -60,7 +60,11 @@ export async function getSealed(asOf: string | null = null) {
            cur.market as unit, cur.low, cur.high
     from sealed_products p
     left join lateral (
-      select market, low, high from sealed_price_snapshots s
+      -- Only a hand-entered low/high is a valuation range; TCGCSV's are the cheapest and dearest listings.
+      select market,
+             case when price_source = 'manual' then low end as low,
+             case when price_source = 'manual' then high end as high
+      from sealed_price_snapshots s
       where s.sealed_product_id = p.id and s.market is not null
         and (${asOf}::date is null or s.day <= ${asOf}::date)
       order by day desc limit 1) cur on true`);

@@ -2,7 +2,7 @@ import Papa from "papaparse";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { collectionEntries } from "@/db/schema";
-import { type ApiCard, fetchCardsByIds, resolveCard } from "./pokemontcg";
+import { type CatalogCard, linkTcgplayer, newClients, priceCards, resolveByIds, resolveCard } from "./catalog";
 import { snapshotPrices, upsertCards } from "./sync";
 
 const ALIASES: Record<string, string[]> = {
@@ -78,24 +78,25 @@ export type ImportResult = { imported: number; copies: number; failed: { row: nu
 export async function importCsv(text: string): Promise<ImportResult> {
   const rows = mapRows(text);
   const failed: ImportResult["failed"] = [];
-  const resolved: (ApiCard | null)[] = new Array(rows.length).fill(null);
+  const resolved: (CatalogCard | null)[] = new Array(rows.length).fill(null);
+  const clients = newClients();
 
-  // Rows that carry a Pokémon TCG id resolve in bulk; the rest are searched one by one.
+  // Rows that carry a card id (ours, TCGdex's or the Pokémon TCG API's) resolve directly; the rest are searched one by one.
   const ids = [...new Set(rows.map((r) => r.id).filter((x): x is string => !!x))];
-  const byId = new Map((await fetchCardsByIds(ids)).map((c) => [c.id, c]));
+  const byId = await resolveByIds(ids, clients);
   const queue: number[] = [];
   rows.forEach((r, i) => {
     if (r.id && byId.has(r.id)) resolved[i] = byId.get(r.id)!;
     else queue.push(i);
   });
-  const cache = new Map<string, ApiCard | null>();
+  const cache = new Map<string, CatalogCard | null>();
   await Promise.all(
     Array.from({ length: 4 }, async () => {
       for (let i = queue.shift(); i !== undefined; i = queue.shift()) {
         const r = rows[i];
         const key = [r.name, r.setId, r.setName, r.number].join("|").toLowerCase();
         try {
-          if (!cache.has(key)) cache.set(key, await resolveCard(r));
+          if (!cache.has(key)) cache.set(key, await resolveCard(r, clients));
           resolved[i] = cache.get(key) ?? null;
         } catch (e) {
           failed.push({ row: i + 2, reason: `lookup failed: ${e}` });
@@ -105,7 +106,10 @@ export async function importCsv(text: string): Promise<ImportResult> {
     }),
   );
 
-  const matched = [...new Map(resolved.filter((c): c is ApiCard => !!c).map((c) => [c.id, c])).values()];
+  const byCard = new Map(resolved.filter((c): c is CatalogCard => !!c).map((c) => [c.id, c]));
+  const matched = [...byCard.values()];
+  await linkTcgplayer(matched, clients);
+  await priceCards(matched, clients);
   await upsertCards(matched);
   await snapshotPrices(matched);
 
@@ -113,9 +117,10 @@ export async function importCsv(text: string): Promise<ImportResult> {
   const merged = new Map<string, typeof collectionEntries.$inferInsert>();
   let copies = 0;
   rows.forEach((r, i) => {
-    const card = resolved[i];
+    // Rows for one card may hold different lookups of it; only the copy in `byCard` was priced.
+    const card = resolved[i] && byCard.get(resolved[i].id);
     if (!card) return;
-    const variants = Object.keys(card.tcgplayer?.prices ?? {});
+    const variants = Object.keys(card.prices);
     const variant = r.variant && (!variants.length || variants.includes(r.variant))
       ? r.variant
       : variants.includes("normal") ? "normal" : (variants[0] ?? "normal");
