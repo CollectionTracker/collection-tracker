@@ -1,0 +1,231 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Add button options</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a122a;--inset:#050d25;--s1:#131a33;--s2:#171e37;--s3:#212942;--s4:#2c344d;--tx:#dbe1ff;--mut:#bacac5;--line:#3c4a46;--mint:#57f1db;--mintc:#2dd4bf;--onm:#003731;--sky:#7bd0ff;--vio:#d7acff}
+*{box-sizing:border-box;margin:0}
+body{background:#060b1e;color:var(--tx);font:14px/1.4 "Plus Jakarta Sans",system-ui,sans-serif;padding:32px 24px 80px}
+h1{font-size:28px;font-weight:800;letter-spacing:-.03em}
+.lead{color:var(--mut);margin:6px 0 36px;max-width:640px}
+section{margin-bottom:64px}
+.opt h2{font-size:20px;font-weight:800;letter-spacing:-.02em;display:flex;gap:10px;align-items:center}
+.tag{background:var(--mint);color:var(--onm);font-size:11px;font-weight:800;border-radius:6px;padding:2px 8px;letter-spacing:.05em}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:10px 0 18px;max-width:760px}
+.pc p{color:var(--mut);font-size:13px}.pc b{color:var(--tx);display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.row{max-width:100%;display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.cap{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:8px;font-weight:700}
+/* frames */
+.desk{width:760px;max-width:100%;background:var(--bg);border:1px solid var(--s4);border-radius:12px;overflow:hidden;position:relative;height:380px}
+.mob{width:300px;height:560px;background:var(--bg);border:6px solid var(--s3);border-radius:32px;overflow:hidden;position:relative}
+.hdr{background:var(--inset);border-bottom:1px solid #ffffff12;display:flex;align-items:center;gap:14px;padding:12px 20px}
+.logo{font-weight:800;font-size:17px;letter-spacing:-.03em}.logo i{font-style:normal;color:var(--mint);font-size:9px;letter-spacing:.14em;margin-left:6px;text-transform:uppercase}
+.tabs{display:flex;gap:4px;margin:0 auto 0 12px}.tabs span{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;color:#8e9ac0}.tabs .on{color:var(--mint);background:var(--s2)}
+.chip{border:1px solid var(--s4);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--mut)}
+.btn{background:var(--mint);color:var(--onm);font-weight:800;border-radius:9px;padding:8px 14px;font-size:13px;display:inline-flex;gap:6px;align-items:center;box-shadow:0 0 18px #57f1db40}
+.btn.sm{padding:6px 10px;font-size:12px}
+.btn.ghost{background:transparent;color:var(--mint);border:1px solid #57f1db66;box-shadow:none}
+.body{padding:18px 20px}
+.eyebrow{color:var(--mint);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.title{font-size:26px;font-weight:800;letter-spacing:-.03em;margin:4px 0 14px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--s2);border-radius:12px;padding:12px;height:78px}
+.tile small{color:var(--mut);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.tile b{display:block;font-size:20px;margin-top:6px}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px}.sec b{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.list div{background:var(--s1);border-radius:8px;height:30px;margin-bottom:6px}
+/* fab */
+.fab{position:absolute;right:20px;bottom:20px;width:54px;height:54px;border-radius:18px;background:var(--mint);color:var(--onm);font-size:30px;font-weight:700;display:grid;place-items:center;box-shadow:0 8px 28px #57f1db55}
+.dial{position:absolute;right:20px;bottom:86px;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.dial span{display:flex;gap:10px;align-items:center;background:var(--s3);border:1px solid var(--s4);border-radius:12px;padding:9px 14px;font-weight:700;font-size:13px;box-shadow:0 6px 20px #0008}
+.dial em{font-style:normal;color:var(--mint)}.dial kbd{font:inherit;font-size:10px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+.scrim{position:absolute;inset:0;background:#050d25b0}
+/* bottom bar */
+.bar{position:absolute;left:0;right:0;bottom:0;background:var(--inset);border-top:1px solid #ffffff12;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:8px 0 14px;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8e9ac0;text-align:center}
+.bar .on{color:var(--mint)}
+.bar .plus{width:50px;height:50px;border-radius:50%;background:var(--mint);color:var(--onm);font-size:28px;display:grid;place-items:center;margin:-26px auto 2px;border:4px solid var(--bg);box-shadow:0 0 20px #57f1db55}
+.bar.four{grid-template-columns:repeat(4,1fr)}
+/* sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--s2);border-radius:22px 22px 0 0;border-top:1px solid var(--s4);padding:10px 16px 18px}
+.grab{width:36px;height:4px;border-radius:4px;background:var(--s4);margin:0 auto 12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--inset);border-radius:10px;padding:3px;margin-bottom:10px}
+.seg span{text-align:center;padding:7px;border-radius:8px;font-weight:800;font-size:12px;color:#8e9ac0}.seg .on{background:var(--s4);color:var(--mint)}
+.search{background:var(--inset);border:1px solid var(--mint);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px;box-shadow:0 0 0 3px #57f1db22}
+.res{display:flex;gap:10px;align-items:center;padding:7px;border-radius:9px;font-size:12px}
+.res.hl{background:var(--s3)}.res .im{width:30px;height:42px;border-radius:4px;background:linear-gradient(135deg,#2dd4bf,#7bd0ff 60%,#d7acff)}
+.res.sealed .im{height:34px;background:linear-gradient(135deg,#d7acff,#00a6e0)}
+.res small{color:var(--mut);display:block}.res b.p{margin-left:auto;color:var(--mint)}
+.fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+.fields div{background:var(--inset);border-radius:9px;padding:7px 10px;font-size:12px;font-weight:700}.fields small{display:block;color:var(--mut);font-size:9px;letter-spacing:.1em;text-transform:uppercase}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:var(--mut)}
+.modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:440px;background:var(--s2);border:1px solid var(--s4);border-radius:18px;padding:16px;box-shadow:0 30px 80px #000a}
+.pal{position:absolute;left:50%;top:40px;transform:translateX(-50%);width:460px;background:var(--s2);border:1px solid var(--s4);border-radius:16px;padding:12px;box-shadow:0 30px 80px #000a}
+.note{max-width:760px;color:var(--mut);margin-top:10px;font-size:13px}
+.rec{border:1px solid var(--mint);border-radius:14px;padding:16px;max-width:760px;background:#57f1db0d}
+.menu{position:absolute;right:20px;top:54px;width:210px;background:var(--s3);border:1px solid var(--s4);border-radius:12px;padding:6px;box-shadow:0 18px 50px #000a}
+.menu span{display:flex;justify-content:space-between;padding:9px 10px;border-radius:8px;font-weight:700;font-size:13px}.menu .hl{background:var(--s4)}
+
+.stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:700px;max-width:96%;background:var(--s2);border:1px solid var(--s4);border-radius:18px;padding:16px;box-shadow:0 30px 80px #000a}
+.stage h3{font-size:16px;font-weight:800;letter-spacing:-.02em}
+.drop{border:1.5px dashed #57f1db77;border-radius:12px;padding:14px;text-align:center;color:var(--mut);font-size:12px;background:#57f1db0a}
+.tbl{margin:10px 0}
+.tr{display:grid;grid-template-columns:22px 1.9fr .9fr 52px 62px 66px 70px;gap:8px;align-items:center;padding:6px 8px;border-radius:9px;font-size:11px}
+.tr.h{color:var(--mut);font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding-bottom:2px}
+.tr:not(.h){background:var(--s1);margin-bottom:4px}.tr.warn{background:#ffb4ab14;outline:1px solid #ffb4ab66}
+.tr .nm{display:flex;gap:8px;align-items:center;font-weight:700}.tr .nm small{display:block;color:var(--mut);font-weight:500}
+.tr .th{width:22px;height:30px;border-radius:3px;background:linear-gradient(135deg,#2dd4bf,#7bd0ff 60%,#d7acff);flex:none}
+.tr .th.s{background:linear-gradient(135deg,#d7acff,#00a6e0)}.tr .th.q{background:var(--s4)}
+.cell{background:var(--inset);border-radius:6px;padding:4px 6px;font-weight:700}
+.ok{color:var(--mint);font-weight:800}.bad{color:#ffb4ab;font-weight:800}
+.pill{display:inline-block;border-radius:99px;padding:1px 8px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.pill.g{background:#57f1db22;color:var(--mint)}.pill.r{background:#ffb4ab22;color:#ffb4ab}
+.steps{display:flex;gap:8px;font-size:11px;color:var(--mut);margin:8px 0;font-weight:700}.steps .on{color:var(--mint)}
+
+.ac{background:var(--s3);border:1px solid var(--s4);border-radius:12px;padding:4px;margin:-4px 0 8px;box-shadow:0 14px 40px #0009}
+.ac .grp{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:6px 8px 2px}
+.ac mark{background:none;color:var(--mint);font-weight:800}
+.ac .res.hl{background:var(--s4)}
+.hint{display:flex;gap:12px;justify-content:space-between;color:var(--mut);font-size:10px;padding:6px 8px 3px;border-top:1px solid var(--s4);margin-top:4px}
+.hint kbd{font:inherit;border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.fchips{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}.fchips span{border:1px solid var(--s4);border-radius:99px;padding:2px 10px;font-size:10px;font-weight:700;color:var(--mut)}.fchips .on{border-color:var(--mint);color:var(--mint)}
+</style></head><body>
+<h1>Quick-add: placement options</h1>
+<p class="lead">Four ways to put an “Add” entry point into PokeVault, all opening the same fast add flow (shown at the bottom). Mockups use the existing dark/mint tokens and the current header + bottom tab bar.</p>
+
+<!-- A -->
+<section class="opt"><h2><span class="tag">A</span> Header “+ Add” button</h2>
+<div class="pc"><p><b>Pros</b>Always visible on every page, zero new chrome on desktop; matches the current header.</p><p><b>Cons</b>On mobile it has to live in the header or drawer, so it is further from the thumb.</p></div>
+<div class="row"><div><div class="cap">Desktop · menu open</div>
+<div class="desk"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div><div class="tabs"><span class="on">Overview</span><span>Sealed</span><span>Raw cards</span><span>Scenarios</span></div><span class="chip">USD ($)</span><span class="btn">＋ Add</span></div>
+<div class="menu"><span class="hl">Add card <kbd style="font:inherit;color:var(--mut)">C</kbd></span><span>Add sealed product <kbd style="font:inherit;color:var(--mut)">S</kbd></span><span style="color:var(--mut)">Bulk import CSV</span></div>
+<div class="body"><div class="eyebrow">Executive dashboard</div><div class="title">Collection, at a glance</div><div class="tiles"><div class="tile"><small>Total</small><b>$19,080</b></div><div class="tile"><small>Sealed</small><b>$14,132</b></div><div class="tile"><small>Raw</small><b>$4,947</b></div></div></div></div></div>
+<div><div class="cap">Mobile</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">PokeVault</div><span style="margin-left:auto" class="btn sm">＋ Add</span><span class="chip">☰</span></div>
+<div class="body" style="padding:14px"><div class="eyebrow">Executive dashboard</div><div class="title" style="font-size:22px">Collection, at a glance</div><div class="tile" style="margin-bottom:10px"><small>Total</small><b>$19,080</b></div><div class="tile"><small>Sealed</small><b>$14,132</b></div></div>
+<div class="bar four"><span class="on">Overview</span><span>Sealed</span><span>Raw</span><span>Scenarios</span></div></div></div></div></section>
+
+<!-- B -->
+<section class="opt"><h2><span class="tag">B</span> Floating action button + speed dial</h2>
+<div class="pc"><p><b>Pros</b>Most “quick”: one tap from anywhere, thumb-reachable, expands to Card / Sealed.</p><p><b>Cons</b>Floats over content (tables, charts) and adds a persistent overlay element.</p></div>
+<div class="row"><div><div class="cap">Desktop · dial open</div>
+<div class="desk"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div><div class="tabs"><span>Overview</span><span>Sealed</span><span class="on">Raw cards</span><span>Scenarios</span></div><span class="chip">USD ($)</span></div>
+<div class="body"><div class="eyebrow">Raw cards</div><div class="title">262 cards · 34 sets</div><div class="list"><div></div><div></div><div></div><div></div></div></div>
+<div class="scrim" style="top:50px"></div><div class="dial"><span>Add sealed product <em>S</em></span><span>Add card <em>C</em></span></div><div class="fab" style="transform:rotate(45deg)">+</div></div></div>
+<div><div class="cap">Mobile · closed</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">PokeVault</div><span class="chip" style="margin-left:auto">☰</span></div>
+<div class="body" style="padding:14px"><div class="eyebrow">Raw cards</div><div class="title" style="font-size:22px">262 cards</div><div class="list"><div></div><div></div><div></div><div></div><div></div></div></div>
+<div class="fab" style="bottom:84px;right:16px">+</div>
+<div class="bar four"><span>Overview</span><span>Sealed</span><span class="on">Raw</span><span>Scenarios</span></div></div></div></div></section>
+
+<!-- C -->
+<section class="opt"><h2><span class="tag">C</span> Raised “+” in the tab bar (mobile) / header split-button (desktop)</h2>
+<div class="pc"><p><b>Pros</b>Native-app feel; dedicated, always-reachable slot with no overlap on content. Desktop gets a split button: primary action + dropdown.</p><p><b>Cons</b>Changes the tab bar from 4 to 5 slots; “+” is not a real destination.</p></div>
+<div class="row"><div><div class="cap">Desktop · split button</div>
+<div class="desk"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div><div class="tabs"><span>Overview</span><span class="on">Sealed</span><span>Raw cards</span><span>Scenarios</span></div><span class="chip">USD ($)</span>
+<span class="btn" style="padding:0;overflow:hidden"><span style="padding:8px 12px">＋ Add sealed</span><span style="padding:8px 10px;border-left:1px solid #00373155">▾</span></span></div>
+<div class="body"><div class="eyebrow">Sealed inventory</div><div class="title">34 units · 21 SKUs</div><div class="tiles"><div class="tile"><small>Value</small><b>$14,132</b></div><div class="tile"><small>Cases</small><b>8</b></div><div class="tile"><small>ETBs</small><b>23</b></div></div></div></div>
+<p class="note">Button label adapts to the current tab: Sealed tab → “Add sealed”, Raw tab → “Add card”, elsewhere → “Add”.</p></div>
+<div><div class="cap">Mobile</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">PokeVault</div><span class="chip" style="margin-left:auto">☰</span></div>
+<div class="body" style="padding:14px"><div class="eyebrow">Sealed inventory</div><div class="title" style="font-size:22px">34 units</div><div class="list"><div></div><div></div><div></div><div></div><div></div></div></div>
+<div class="bar"><span>Overview</span><span class="on">Sealed</span><span><div class="plus">+</div>Add</span><span>Raw</span><span>Scenarios</span></div></div></div></div></section>
+
+<!-- D -->
+<section class="opt"><h2><span class="tag">D</span> Contextual buttons + ⌘K / “A” shortcut</h2>
+<div class="pc"><p><b>Pros</b>Context-aware: the button sits where the list is (“All products”, “All cards”). Power users get a keyboard command palette.</p><p><b>Cons</b>Not available on Overview / Scenarios without a second entry point; less discoverable on mobile.</p></div>
+<div class="row"><div><div class="cap">Desktop · in section header + command palette</div>
+<div class="desk"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div><div class="tabs"><span>Overview</span><span class="on">Sealed</span><span>Raw cards</span><span>Scenarios</span></div><span class="chip">⌘K</span><span class="chip">USD ($)</span></div>
+<div class="body"><div class="eyebrow">Sealed inventory</div><div class="title">34 units · 21 SKUs</div>
+<div class="sec"><b>All products</b><span class="btn sm">＋ Add product</span></div><div class="list"><div></div><div></div><div></div></div></div>
+<div class="scrim" style="top:50px"></div>
+<div class="pal"><div class="search">add 151 etb…</div>
+<div class="res hl"><span>＋</span><div>Add “151 etb” as sealed product<small>Search TCGplayer</small></div><b class="p">↵</b></div>
+<div class="res"><span>＋</span><div>Add card<small>Search by name or set</small></div></div>
+<div class="res"><span>↗</span><div>Go to Raw cards</div></div></div></div></div>
+<div><div class="cap">Mobile · inline header button</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">PokeVault</div><span class="chip" style="margin-left:auto">☰</span></div>
+<div class="body" style="padding:14px"><div class="eyebrow">Sealed inventory</div><div class="title" style="font-size:22px">34 units</div>
+<div class="sec"><b>All products</b><span class="btn sm ghost">＋ Add</span></div><div class="list"><div></div><div></div><div></div><div></div><div></div></div></div>
+<div class="bar four"><span>Overview</span><span class="on">Sealed</span><span>Raw</span><span>Scenarios</span></div></div></div></div></section>
+
+<!-- Flow -->
+<section class="opt"><h2><span class="tag" style="background:var(--vio)">FLOW</span> The add dialog (same for A–D)</h2>
+<p class="note" style="margin:6px 0 14px">One search box, type-to-find, pick a result, set quantity/condition/price paid, save. “Save &amp; add another” keeps the dialog open for fast batch entry. Desktop is a centered modal; mobile is a bottom sheet.</p>
+<div class="row"><div><div class="cap">Desktop modal</div>
+<div class="desk" style="height:430px"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div></div><div class="scrim" style="top:50px"></div>
+<div class="modal"><div class="seg"><span class="on">Card</span><span>Sealed product</span></div>
+<div class="search">ascended heroes mega gengar…</div>
+<div class="res hl"><div class="im"></div><div>Mega Gengar ex<small>Ascended Heroes · 284/217 · SIR</small></div><b class="p">$818.38</b></div>
+<div class="res"><div class="im"></div><div>Mega Gengar ex<small>Ascended Heroes · 055/217 · Double Rare</small></div><b class="p">$2.10</b></div>
+<div class="fields"><div><small>Qty</small>− 1 +</div><div><small>Condition</small>NM ▾</div><div><small>Paid (opt.)</small>$ —</div></div>
+<div class="foot"><span>Esc to close</span><span style="display:flex;gap:8px"><span class="btn sm ghost">Save &amp; add another</span><span class="btn sm">Add to collection</span></span></div></div></div></div>
+<div><div class="cap">Mobile bottom sheet · sealed</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">PokeVault</div></div><div class="scrim" style="top:44px"></div>
+<div class="sheet"><div class="grab"></div><div class="seg"><span>Card</span><span class="on">Sealed</span></div><div class="search">151 elite trainer…</div>
+<div class="res sealed hl"><div class="im"></div><div>151 Pokémon Center ETB<small>Scarlet &amp; Violet 151 · ETB</small></div><b class="p">$7,000</b></div>
+<div class="res sealed"><div class="im"></div><div>151 Booster Bundle<small>Scarlet &amp; Violet 151</small></div><b class="p">$46</b></div>
+<div class="fields"><div><small>Qty</small>− 1 +</div><div><small>Sealed</small>Yes ▾</div><div><small>Paid</small>$ —</div></div>
+<span class="btn" style="display:flex;justify-content:center">Add to collection</span></div></div></div></div></section>
+
+
+<section class="opt"><h2><span class="tag" style="background:var(--vio)">UPDATED</span> One dialog: manual adds and bulk import share a review list</h2>
+<p class="note" style="margin:6px 0 14px">Header “+ Add” opens the dialog. Typing a search adds rows to the list (“Save &amp; add another” = “Add to list”). “Import file” fills the <b>same list</b> from a CSV: every column the manual form has (name, set, number, type, qty, condition, paid, sealed/graded) is auto-read, matched against the catalog, and filled in with art and live price. Nothing is saved until you press <i>Add N items</i>, and every cell is editable.</p>
+<div class="row"><div><div class="cap">1 · Header button menu</div>
+<div class="desk" style="height:240px"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div><div class="tabs"><span class="on">Overview</span><span>Sealed</span><span>Raw cards</span><span>Scenarios</span></div><span class="chip">USD ($)</span><span class="btn">＋ Add</span></div>
+<div class="menu"><span class="hl">Add card or sealed <kbd style="font:inherit;color:var(--mut)">A</kbd></span><span>Import from CSV / file</span><span style="color:var(--mut)">Download CSV template</span></div></div></div></div>
+<div class="row" style="margin-top:22px"><div><div class="cap">2 · Import: drop file</div>
+<div class="desk" style="height:300px"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div></div><div class="scrim" style="top:50px"></div>
+<div class="modal" style="width:480px"><h3 style="font-size:16px;font-weight:800">Add to collection</h3><div class="steps"><span class="on">1 Source</span><span>2 Review</span><span>3 Done</span></div>
+<div class="seg" style="grid-template-columns:1fr 1fr 1fr"><span>Search</span><span class="on">Import file</span><span>Paste list</span></div>
+<div class="drop"><b style="color:var(--tx);font-size:13px">Drop CSV or Excel file here</b><br>or <u style="color:var(--mint)">browse</u> · columns are detected automatically<br><span style="font-size:10px">Missing columns are fine: you can fill them in on the next screen.</span></div></div></div></div></div>
+<div class="row" style="margin-top:22px"><div><div class="cap">3 · Review list (same screen after manual “Add to list”)</div>
+<div class="desk" style="height:470px"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div></div><div class="scrim" style="top:50px"></div>
+<div class="stage"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Review 6 items <span class="pill g">5 matched</span> <span class="pill r">1 needs attention</span></h3><span class="chip">＋ Add another / Import more</span></div>
+<div class="tbl"><div class="tr h"><span></span><span>Item</span><span>Type</span><span>Qty</span><span>Cond.</span><span>Paid</span><span>Value</span></div>
+<div class="tr"><span class="ok">✓</span><div class="nm"><div class="th"></div><div>Mega Gengar ex<small>Ascended Heroes · 284/217</small></div></div><span class="cell">Card</span><span class="cell">1</span><span class="cell">NM</span><span class="cell">$—</span><b class="ok">$818</b></div>
+<div class="tr"><span class="ok">✓</span><div class="nm"><div class="th"></div><div>Pikachu ex<small>Ascended Heroes · 276/217</small></div></div><span class="cell">Card</span><span class="cell">2</span><span class="cell">NM</span><span class="cell">$410</span><b class="ok">$754</b></div>
+<div class="tr"><span class="ok">✓</span><div class="nm"><div class="th s"></div><div>151 Pokémon Center ETB<small>Scarlet &amp; Violet 151</small></div></div><span class="cell">Sealed</span><span class="cell">1</span><span class="cell">Sealed</span><span class="cell">$250</span><b class="ok">$7,000</b></div>
+<div class="tr"><span class="ok">✓</span><div class="nm"><div class="th"></div><div>Charizard<small>30th Celebration · 101/…</small></div></div><span class="cell">Card</span><span class="cell">1</span><span class="cell">LP ▾</span><span class="cell">$90</span><b class="ok">$135</b></div>
+<div class="tr"><span class="ok">✓</span><div class="nm"><div class="th s"></div><div>Booster Bundle<small>Prismatic Evolutions</small></div></div><span class="cell">Sealed</span><span class="cell">6</span><span class="cell">Sealed</span><span class="cell">$—</span><b class="ok">$222</b></div>
+<div class="tr warn"><span class="bad">!</span><div class="nm"><div class="th q"></div><div>“Eevee ex” <small style="color:#ffb4ab">3 possible matches · pick one ▾</small></div></div><span class="cell">Card</span><span class="cell">1</span><span class="cell">NM</span><span class="cell">$—</span><b style="color:var(--mut)">—</b></div></div>
+<div class="foot"><span>Edit any cell · ✕ remove a row · duplicates are merged into quantity</span><span style="display:flex;gap:8px"><span class="btn sm ghost">Cancel</span><span class="btn sm">Add 5 items (fix 1 to add all)</span></span></div></div></div></div>
+<div><div class="cap">Mobile · review list as full-screen sheet</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">Review 6 items</div><span class="chip" style="margin-left:auto">✕</span></div>
+<div class="body" style="padding:12px"><div style="margin-bottom:8px"><span class="pill g">5 matched</span> <span class="pill r">1 needs attention</span></div>
+<div class="res hl"><div class="im"></div><div>Mega Gengar ex<small>Ascended Heroes · NM · ×1</small></div><b class="p">$818</b></div>
+<div class="res"><div class="im"></div><div>Pikachu ex<small>Ascended Heroes · NM · ×2</small></div><b class="p">$754</b></div>
+<div class="res sealed"><div class="im"></div><div>151 Pokémon Center ETB<small>Sealed · ×1 · paid $250</small></div><b class="p">$7,000</b></div>
+<div class="res" style="background:#ffb4ab14;outline:1px solid #ffb4ab66"><div class="im" style="background:var(--s4)"></div><div>“Eevee ex”<small style="color:#ffb4ab">Pick a match ▾</small></div></div></div>
+<div class="sheet" style="padding:12px 14px"><span class="btn" style="display:flex;justify-content:center">Add 5 items</span></div></div></div></div>
+<p class="note">Row tap on mobile expands to the same editable fields (qty, condition, paid). Rows that can't be matched are highlighted and don't block the rest.</p>
+</section>
+
+<section class="opt"><h2><span class="tag" style="background:var(--sky)">AUTOCOMPLETE</span> Type-ahead when adding manually</h2>
+<p class="note" style="margin:6px 0 14px">The search box suggests as you type (after 2 characters, debounced ~150 ms). Cards and sealed are searched together by default, with a Card / Sealed filter. Matching is forgiving: partial words, missing punctuation, set name, and card number (“mega gengar 284”, “151 etb”, “pris evo bb”). Results are grouped, show art, set, number, rarity and current price, and are fully keyboard-driven. Picking one drops it into the review list and returns focus to the search box for the next card.</p>
+<div class="row"><div><div class="cap">Desktop · typing “mega ge”</div>
+<div class="desk" style="height:520px"><div class="hdr"><div class="logo">PokeVault<i>Analytics</i></div></div><div class="scrim" style="top:50px"></div>
+<div class="modal" style="width:520px;top:46%"><h3 style="font-size:16px;font-weight:800;margin-bottom:8px">Add to collection</h3>
+<div class="fchips"><span class="on">All</span><span>Cards</span><span>Sealed</span><span>Set: any ▾</span></div>
+<div class="search">mega ge<span style="color:var(--mint)">|</span></div>
+<div class="ac"><div class="grp">Cards</div>
+<div class="res hl"><div class="im"></div><div><mark>Mega Ge</mark>ngar ex<small>Ascended Heroes · 284/217 · SIR</small></div><b class="p">$818.38</b></div>
+<div class="res"><div class="im"></div><div><mark>Mega Ge</mark>ngar ex<small>Ascended Heroes · 055/217 · Double Rare</small></div><b class="p">$2.10</b></div>
+<div class="res"><div class="im"></div><div><mark>Mega Ge</mark>ngar ex<small>Phantasmal Flames · 012/094</small></div><b class="p">$1.80</b></div>
+<div class="grp">Sealed</div>
+<div class="res sealed"><div class="im"></div><div><mark>Mega Ge</mark>ngar ex Box<small>Ascended Heroes · Collection box</small></div><b class="p">$34</b></div>
+<div class="hint"><span><kbd>↑</kbd> <kbd>↓</kbd> navigate · <kbd>↵</kbd> add to list · <kbd>Tab</kbd> edit qty</span><span>Can't find it? <u style="color:var(--mint)">Add custom item</u></span></div></div></div></div></div>
+<div><div class="cap">Mobile · typing “151 e”</div>
+<div class="mob"><div class="hdr" style="padding:10px 14px"><div class="logo" style="font-size:15px">Add</div><span class="chip" style="margin-left:auto">✕</span></div>
+<div class="body" style="padding:12px"><div class="fchips"><span class="on">All</span><span>Cards</span><span>Sealed</span></div>
+<div class="search">151 e<span style="color:var(--mint)">|</span></div>
+<div class="ac"><div class="grp">Sealed</div>
+<div class="res sealed hl"><div class="im"></div><div>151 <mark>E</mark>lite Trainer Box<small>Scarlet &amp; Violet 151</small></div><b class="p">$62</b></div>
+<div class="res sealed"><div class="im"></div><div>151 Pokémon Center <mark>E</mark>TB<small>Scarlet &amp; Violet 151</small></div><b class="p">$7,000</b></div>
+<div class="grp">Cards</div>
+<div class="res"><div class="im"></div><div><mark>E</mark>kans<small>151 · 023/165</small></div><b class="p">$0.20</b></div>
+<div class="res"><div class="im"></div><div><mark>E</mark>xeggutor ex<small>151 · 186/165</small></div><b class="p">$14</b></div></div>
+<div class="note" style="font-size:11px">Last chosen set and condition are remembered between adds.</div></div>
+<div class="bar four" style="display:none"></div></div></div></div>
+<div class="row" style="margin-top:18px"><div style="max-width:760px"><div class="cap">Behaviors</div>
+<p class="note" style="margin:0">• <b style="color:var(--tx)">Recent &amp; frequent:</b> empty search shows the last 5 items you added.<br>• <b style="color:var(--tx)">Already owned:</b> results you already own show an “Owned ×2” badge, and adding bumps the quantity.<br>• <b style="color:var(--tx)">Empty state:</b> “No matches for ‘xyz’. Add as custom item” (name, set, price entered by hand).<br>• <b style="color:var(--tx)">Source:</b> same catalog the pricing already uses (TCGdex cards, TCGCSV sealed), queried through a server route so keys stay private; results cached for speed.<br>• <b style="color:var(--tx)">Import rows</b> use the same matcher, so a typed “Eevee ex” in a CSV gets the same suggestions in its dropdown.</p></div></div>
+</section>
+<div class="rec"><b>Direction:</b> header “+ Add” button (A) with a menu for Add card or sealed and Import file, opening one dialog with a shared review list for manual and bulk adds.</div>
+</body></html>

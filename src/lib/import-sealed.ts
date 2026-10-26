@@ -22,14 +22,14 @@ const TYPES: [RegExp, SealedProductType][] = [
   [/tin/i, "tin"],
 ];
 
-function normType(v: string | undefined): SealedProductType | null {
+export function normType(v: string | undefined): SealedProductType | null {
   if (!v) return null;
   const s = v.trim().toLowerCase().replace(/[\s-]+/g, "_");
   if ((SEALED_PRODUCT_TYPES as readonly string[]).includes(s)) return s as SealedProductType;
   return TYPES.find(([re]) => re.test(v))?.[1] ?? null;
 }
 
-type Row = {
+export type SealedRow = {
   name: string;
   type: SealedProductType;
   group: string | null;
@@ -37,6 +37,9 @@ type Row = {
   quantity: number;
   price: number | null;
   notes: string | null;
+  /** TCGplayer product and group when the product was picked from the catalog. */
+  tcgplayerProductId?: number | null;
+  tcgplayerGroupId?: number | null;
 };
 
 export type SealedImportResult = {
@@ -45,13 +48,13 @@ export type SealedImportResult = {
   failed: { row: number; reason: string }[];
 };
 
-function mapRows(text: string, failed: SealedImportResult["failed"]): { row: number; data: Row }[] {
+function mapRows(text: string, failed: SealedImportResult["failed"]): { row: number; data: SealedRow }[] {
   const parsed = Papa.parse<Record<string, string>>(text.trim(), {
     header: true,
     skipEmptyLines: true,
     transformHeader: (h) => h.trim().toLowerCase(),
   });
-  const out: { row: number; data: Row }[] = [];
+  const out: { row: number; data: SealedRow }[] = [];
   parsed.data.forEach((raw, i) => {
     const row = i + 2; // header is row 1
     const get = (k: string) => {
@@ -78,13 +81,17 @@ function mapRows(text: string, failed: SealedImportResult["failed"]): { row: num
 
 export async function importSealedCsv(text: string): Promise<SealedImportResult> {
   const failed: SealedImportResult["failed"] = [];
-  const rows = mapRows(text, failed);
+  const { imported, units } = await saveSealed(mapRows(text, failed).map((r) => r.data));
+  return { imported, units, failed: failed.sort((a, b) => a.row - b.row) };
+}
 
+/** Add sealed products to the inventory: rows for one product merge, and a product already stored gains the quantity. */
+export async function saveSealed(rows: SealedRow[]) {
   // Merge duplicate rows (same product) before writing; the unit price is the quantity-weighted mean.
-  const merged = new Map<string, Row & { priced: number }>();
+  const merged = new Map<string, SealedRow & { priced: number }>();
   let units = 0;
-  for (const { data: r } of rows) {
-    const key = [r.name, r.type, r.group ?? "", r.sku ?? ""].join("|").toLowerCase();
+  for (const r of rows) {
+    const key = r.tcgplayerProductId != null ? `tcg:${r.tcgplayerProductId}` : [r.name, r.type, r.group ?? "", r.sku ?? ""].join("|").toLowerCase();
     units += r.quantity;
     const prev = merged.get(key);
     if (!prev) {
@@ -102,13 +109,16 @@ export async function importSealedCsv(text: string): Promise<SealedImportResult>
 
   const db = await getDb();
   for (const r of merged.values()) {
-    const where = and(
+    const byName = and(
       sql`lower(${sealedProducts.name}) = ${r.name.toLowerCase()}`,
       eq(sealedProducts.productType, r.type),
       r.group === null ? isNull(sealedProducts.setGroup) : eq(sealedProducts.setGroup, r.group),
       r.sku === null ? isNull(sealedProducts.sku) : eq(sealedProducts.sku, r.sku),
     );
-    const [existing] = await db.select().from(sealedProducts).where(where).limit(1);
+    const byProduct = r.tcgplayerProductId == null ? undefined : eq(sealedProducts.tcgplayerProductId, r.tcgplayerProductId);
+    const [existing] =
+      (byProduct && (await db.select().from(sealedProducts).where(byProduct).limit(1))) ||
+      (await db.select().from(sealedProducts).where(byName).limit(1));
     if (existing) {
       await db
         .update(sealedProducts)
@@ -116,6 +126,8 @@ export async function importSealedCsv(text: string): Promise<SealedImportResult>
           quantity: existing.quantity + r.quantity,
           purchasePrice: r.price ?? existing.purchasePrice,
           notes: existing.notes ?? r.notes,
+          tcgplayerProductId: existing.tcgplayerProductId ?? r.tcgplayerProductId ?? null,
+          tcgplayerGroupId: existing.tcgplayerGroupId ?? r.tcgplayerGroupId ?? null,
         })
         .where(eq(sealedProducts.id, existing.id));
     } else {
@@ -127,8 +139,10 @@ export async function importSealedCsv(text: string): Promise<SealedImportResult>
         quantity: r.quantity,
         purchasePrice: r.price,
         notes: r.notes,
+        tcgplayerProductId: r.tcgplayerProductId ?? null,
+        tcgplayerGroupId: r.tcgplayerGroupId ?? null,
       });
     }
   }
-  return { imported: merged.size, units, failed: failed.sort((a, b) => a.row - b.row) };
+  return { imported: merged.size, units };
 }

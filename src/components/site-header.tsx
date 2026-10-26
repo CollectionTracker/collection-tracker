@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AddMenu } from "@/components/add-menu";
 import { CurrencyMenu } from "@/components/currency-menu";
 import { HeaderDrawer } from "@/components/header-drawer";
 import { ViewTabs } from "@/components/view-tabs";
@@ -12,10 +13,13 @@ export function SiteHeader() {
           <span className="font-label text-label-eyebrow uppercase text-mint">Analytics</span>
         </Link>
         <ViewTabs />
-        <div className="hidden lg:block">
-          <CurrencyMenu />
+        <div className="flex items-center gap-3">
+          <div className="hidden lg:block">
+            <CurrencyMenu />
+          </div>
+          <AddMenu />
+          <HeaderDrawer currency={<CurrencyMenu align="left" />} />
         </div>
-        <HeaderDrawer currency={<CurrencyMenu align="left" />} />
       </div>
     </header>
   );
