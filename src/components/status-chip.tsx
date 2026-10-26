@@ -4,7 +4,7 @@ import type { CSSProperties, ReactNode } from "react";
 export const chipTones = {
   mint: "var(--color-mint)",
   sky: "var(--color-sky)",
-  violet: "var(--color-violet)",
+  violet: "var(--color-violet-soft)",
   amber: "var(--color-amber)",
   rose: "var(--color-rose-400)",
   neutral: "var(--color-slate-2)",

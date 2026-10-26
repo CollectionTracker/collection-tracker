@@ -91,7 +91,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
         aria-label={`Display currency: ${info.name}. Change currency`}
         title="Change display currency"
         onClick={toggle}
-        className="group flex items-center gap-2 rounded-lg border border-white/10 bg-surface px-3 py-1.5 text-xs text-slate-2 transition-colors hover:border-mint/60 hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-mint"
+        className="group flex items-center gap-2 rounded-lg border border-white/10 bg-surface px-3 py-1.5 text-xs text-slate-2 transition-colors hover:border-mint/60 hover:text-ink"
       >
         <span className="inline-flex items-center gap-1 rounded border border-mint/20 bg-mint/10 px-1.5 py-0.5 font-semibold text-mint group-hover:border-mint/40">
           <span aria-hidden>{info.flag}</span>
@@ -183,7 +183,7 @@ export function CurrencySelector({ currency, fx, align = "right" }: Props) {
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
-                    <span className="font-label text-label-sm text-slate-2">{rateText(code, fx.rates[code])}</span>
+                    <span className="font-label text-label-sm text-slate-2 tabular-nums">{rateText(code, fx.rates[code])}</span>
                     <svg aria-hidden viewBox="0 0 20 20" fill="currentColor" className={`size-4 text-mint ${isSelected ? "" : "invisible"}`}>
                       <path
                         fillRule="evenodd"

@@ -1,9 +1,11 @@
 import { type Money, wholeMoney } from "@/lib/format";
 import { PROJECTION_YEARS, type Scenario, assumptionText, multiplierText, scenarioColor } from "@/lib/scenarios";
-import { StatusChip } from "@/components/status-chip";
+import { type ChipTone, StatusChip } from "@/components/status-chip";
 
 const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
+// Badge tones per scenario; the chip's violet is lightened so the High badge text stays readable.
+const badgeTone: Record<string, ChipTone> = { conservative: "amber", moderate: "mint", high: "violet" };
 
 /** One card per scenario: its year-10 value, the assumptions behind it and a "× start" multiplier badge. */
 export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Money }) {
@@ -22,7 +24,7 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                   {s.label}
                 </div>
                 {badge && (
-                  <StatusChip tone={color} className="px-2" title={`Year ${PROJECTION_YEARS} value is ${badge} the starting midpoint`}>
+                  <StatusChip tone={badgeTone[s.id] ?? color} className="px-2" title={`Year ${PROJECTION_YEARS} value is ${badge} the starting midpoint`}>
                     {badge}
                   </StatusChip>
                 )}
