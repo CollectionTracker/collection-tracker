@@ -36,7 +36,7 @@ export function Scenarios() {
   const cards: GridCard[] = [
     { id: "summary", label: "Valuation summary", span: "col-span-full", node: <ScenarioSummary valuation={d.combined.valuation} bands={bands} basis={basis} m={m} /> },
     { id: "projection", label: "Projection", span: "col-span-full lg:col-span-9", node: projection },
-    { id: "year-ten", label: "Year 10 outcomes", span: "col-span-full lg:col-span-3", node: <YearTenOutcomes scenarios={shown} m={m} /> },
+    { id: "year-ten", label: "Year 10 stress tests", span: "col-span-full lg:col-span-3", node: <YearTenOutcomes scenarios={shown} m={m} /> },
     { id: "risk", label: "Simulated chances", span: "col-span-full", node: <ScenarioRisk simulation={simulation} start={start} breakeven={breakeven} basis={basis} /> },
     { id: "assumptions", label: "Valuation context & assumptions", span: "col-span-full", node: <ScenarioAssumptions /> },
   ];

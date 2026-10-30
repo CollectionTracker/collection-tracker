@@ -1,12 +1,13 @@
 # Scenarios and simulation
 
-The Scenarios & Growth view shows two things: three what-if lines and a simulated range. Both are illustrative, not predictions. The logic is in `src/lib/scenarios.ts` and `src/lib/simulation.ts`.
+The Scenarios & Growth view shows two things: three stress tests and a simulated range. Both are illustrative, not predictions. The logic is in `src/lib/scenarios.ts` and `src/lib/simulation.ts`.
 
-## Scenarios
+## Stress tests
 
 - Raw cards and sealed products are projected separately from their midpoints, then added together.
-- Each scenario sets a year 1 shift and an annual rate per segment (`DEFAULT_SCENARIOS`).
-- The rate holds through year 2, then fades towards `LONG_RUN_RATE` (3.5 %), halving the gap every 3 years. A rate below the long-run rate fades up.
+- Both follow a central growth path (`SEGMENT_GROWTH`). The rate holds through year 2, then fades towards `LONG_RUN_RATE` (3.5 %), halving the gap every 3 years.
+- Each stress test (`DEFAULT_SCENARIOS`) adds one-off market moves in chosen years, per segment: Market correction, Reprint wave and Boom then bust. Without those moves it would follow the central path, which is close to the simulated median.
+- They are what-ifs, not cases ranked by likelihood. The moves are hand-set, not measured from past events.
 
 ## Simulation
 
@@ -16,7 +17,7 @@ The Scenarios & Growth view shows two things: three what-if lines and a simulate
 growth + beta × market move + segment noise + holding noise × √(concentration)
 ```
 
-- **Growth** is the Moderate scenario's rate, faded as above (`SEGMENT_GROWTH`).
+- **Growth** is the central path above.
 - **Market move** comes from the regime and is shared, so raw and sealed fall together. It is centred on zero, so the median path stays close to the growth path.
 - **Concentration** is the segment's Herfindahl index (sum of squared value shares). It is an approximation of simulating each holding: a collection dominated by one card gets a wider range.
 

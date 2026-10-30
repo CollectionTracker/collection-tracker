@@ -1,22 +1,21 @@
 import { SELLING_FEE_PCT } from "./valuation";
 
 /**
- * Illustrative 10-year value scenarios, not a prediction. Raw cards and sealed products are projected separately and
- * added together: year 1 applies a one-off market shift, then the annual rate compounds and fades towards
- * `LONG_RUN_RATE`. See docs/scenarios.md.
+ * Illustrative 10-year stress tests, not predictions. Raw cards and sealed products are projected separately and added
+ * together: both follow the central growth path, which fades towards `LONG_RUN_RATE`, and each stress test adds one-off
+ * market moves in chosen years. See docs/scenarios.md.
  */
 export type SegmentId = "raw" | "sealed";
 export type SegmentValues = Record<SegmentId, number>;
 
-export type SegmentAssumption = {
-  year1Shift: number; // e.g. -0.15 for −15 % in year 1
-  annualRate: number; // e.g. 0.03 for 3 % a year from year 2, before it fades
-};
+/** One-off market moves by year on top of growth, e.g. { 2: -0.3 } for −30 % in year 2. */
+export type Shocks = Record<number, number>;
 
 export type ScenarioInput = {
   id: string;
   label: string;
-  segments: Record<SegmentId, SegmentAssumption>;
+  description: string;
+  shocks: Record<SegmentId, Shocks>;
 };
 
 export type Scenario = ScenarioInput & {
@@ -40,29 +39,32 @@ export const LONG_RUN_RATE = 0.035;
 export const FADE_HALF_LIFE_YEARS = 3;
 export const INFLATION_RATE = 0.025;
 
-/** Typical annual growth from year 2: the Moderate scenario, and the central case of the simulation. */
+/** Typical annual growth before it fades: the central path of the stress tests and the simulation. */
 export const SEGMENT_GROWTH: SegmentValues = { raw: 0.06, sealed: 0.09 };
 
 export const DEFAULT_SCENARIOS: readonly ScenarioInput[] = [
   {
-    id: "conservative",
-    label: "Conservative",
-    segments: { raw: { year1Shift: -0.15, annualRate: 0.02 }, sealed: { year1Shift: -0.2, annualRate: 0.04 } },
+    id: "correction",
+    label: "Market correction",
+    description: "A two-year slide with a partial rebound",
+    shocks: { raw: { 2: -0.3, 3: -0.1, 5: 0.15 }, sealed: { 2: -0.35, 3: -0.1, 5: 0.2 } },
   },
   {
-    id: "moderate",
-    label: "Moderate",
-    segments: { raw: { year1Shift: -0.05, annualRate: SEGMENT_GROWTH.raw }, sealed: { year1Shift: -0.05, annualRate: SEGMENT_GROWTH.sealed } },
+    id: "reprint",
+    label: "Reprint wave",
+    description: "Heavy reprints hit sealed far harder than cards",
+    shocks: { raw: { 1: -0.05 }, sealed: { 1: -0.25, 2: -0.1 } },
   },
   {
-    id: "high",
-    label: "High",
-    segments: { raw: { year1Shift: 0.1, annualRate: 0.12 }, sealed: { year1Shift: 0.1, annualRate: 0.16 } },
+    id: "boom-bust",
+    label: "Boom then bust",
+    description: "A hype spike that gives its gains back",
+    shocks: { raw: { 1: 0.25, 2: 0.15, 4: -0.3, 5: -0.15 }, sealed: { 1: 0.3, 2: 0.2, 4: -0.35, 5: -0.15 } },
   },
 ];
 
-/** Colour per scenario id; matches the render (amber conservative, mint moderate, violet high). */
-export const SCENARIO_COLORS: Record<string, string> = { conservative: "#f59e0b", moderate: "#2dd4bf", high: "#a855f7" };
+/** Colour per scenario id. */
+export const SCENARIO_COLORS: Record<string, string> = { correction: "#f59e0b", reprint: "#2dd4bf", "boom-bust": "#a855f7" };
 export const scenarioColor = (id: string) => SCENARIO_COLORS[id] ?? "#94a3b8";
 
 /** The rate applied in `year`: the full rate through year 2, then fading towards the long-run rate. */
@@ -70,11 +72,10 @@ export function fadedRate(rate: number, year: number) {
   return LONG_RUN_RATE + (rate - LONG_RUN_RATE) * 0.5 ** (Math.max(0, year - 2) / FADE_HALF_LIFE_YEARS);
 }
 
-/** Value after `year` years from `start`: year 0 is the start, year 1 applies the shift, later years compound. */
-export function valueAtYear(start: number, { year1Shift, annualRate }: SegmentAssumption, year: number) {
-  if (year <= 0) return start;
-  let value = start * (1 + year1Shift);
-  for (let y = 2; y <= year; y++) value *= 1 + fadedRate(annualRate, y);
+/** Value after `year` years from `start`: growth compounds each year, and that year's shock applies on top. */
+export function valueAtYear(start: number, growth: number, shocks: Shocks, year: number) {
+  let value = start;
+  for (let y = 1; y <= year; y++) value *= (1 + fadedRate(growth, y)) * (1 + (shocks[y] ?? 0));
   return value;
 }
 
@@ -83,7 +84,7 @@ export const totalOf = (start: SegmentValues) => start.raw + start.sealed;
 export function projectScenario(start: SegmentValues, input: ScenarioInput, horizon = PROJECTION_YEARS): Scenario {
   const values = Array.from(
     { length: horizon + 1 },
-    (_, year) => valueAtYear(start.raw, input.segments.raw, year) + valueAtYear(start.sealed, input.segments.sealed, year),
+    (_, year) => valueAtYear(start.raw, SEGMENT_GROWTH.raw, input.shocks.raw, year) + valueAtYear(start.sealed, SEGMENT_GROWTH.sealed, input.shocks.sealed, year),
   );
   return withValues(input, values, totalOf(start));
 }
@@ -98,7 +99,7 @@ function withValues(input: ScenarioInput, values: number[], start: number): Scen
   };
 }
 
-/** Project every scenario from the current raw and sealed midpoints. */
+/** Project every stress test from the current raw and sealed midpoints. */
 export function projectScenarios(start: SegmentValues, inputs: readonly ScenarioInput[] = DEFAULT_SCENARIOS, horizon = PROJECTION_YEARS) {
   return inputs.map((input) => projectScenario(start, input, horizon));
 }
@@ -118,12 +119,14 @@ export function basisText({ afterFees, real }: Basis) {
   return `${afterFees ? `after ${SELLING_FEE_PCT}% selling fees` : "before selling fees"}, ${real ? "in today's money" : "not adjusted for inflation"}`;
 }
 
-const pctText = (n: number, signed: boolean) =>
-  `${signed ? (n > 0 ? "+" : n < 0 ? "−" : "") : n < 0 ? "−" : ""}${Number((Math.abs(n) * 100).toFixed(1))}%`;
+const pctText = (n: number) => `${n > 0 ? "+" : n < 0 ? "−" : ""}${Number((Math.abs(n) * 100).toFixed(1))}%`;
 
-/** Plain-language assumptions, e.g. "Y1 −15%, then 3% annually". */
-export function assumptionText({ year1Shift, annualRate }: SegmentAssumption) {
-  return `Y1 ${pctText(year1Shift, true)}, then ${pctText(annualRate, false)} annually`;
+/** Plain-language shocks, e.g. "Y2 −30%, Y3 −10%". */
+export function assumptionText(shocks: Shocks) {
+  return Object.entries(shocks)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([year, shock]) => `Y${year} ${pctText(shock)}`)
+    .join(", ");
 }
 
 /** Multiplier badge text, e.g. "3.87×"; null when there is no multiplier. */

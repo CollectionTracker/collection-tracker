@@ -17,9 +17,10 @@ export function ScenarioAssumptions() {
       </h2>
       <div className="max-w-5xl space-y-1.5 text-xs leading-relaxed text-slate-2">
         <p>
-          Raw cards and sealed products are projected separately from today&apos;s midpoints, then added together. Each scenario
-          applies a one-off market shift in year 1, then compounds at its annual rate, which fades towards {rate(LONG_RUN_RATE)} a
-          year: the gap halves every {FADE_HALF_LIFE_YEARS} years.
+          Raw cards and sealed products are projected separately from today&apos;s midpoints, then added together. Both follow a
+          central growth path whose rate fades towards {rate(LONG_RUN_RATE)} a year: the gap to it halves every{" "}
+          {FADE_HALF_LIFE_YEARS} years. The dashed stress tests are that same path with one-off market moves added. They are
+          what-ifs with no stated likelihood, and their moves are hand-set rather than taken from past events.
         </p>
         <p>
           The shaded fan is {SIMULATION_PATHS.toLocaleString("en-US")} simulated paths over {PROJECTION_YEARS} years, with booms,

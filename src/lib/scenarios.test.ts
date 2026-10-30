@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   DEFAULT_SCENARIOS,
   LONG_RUN_RATE,
+  SEGMENT_GROWTH,
   assumptionText,
   basisFactor,
   basisText,
@@ -15,26 +16,29 @@ import {
 } from "./scenarios";
 
 const START = { raw: 12_000, sealed: 8_000 };
-const flat = { year1Shift: 0, annualRate: 0 };
+const central = (year: number) => valueAtYear(START.raw, SEGMENT_GROWTH.raw, {}, year) + valueAtYear(START.sealed, SEGMENT_GROWTH.sealed, {}, year);
 
-test("scenarios project raw and sealed separately and add them up", () => {
+test("stress tests project raw and sealed separately and add them up", () => {
   const scenarios = projectScenarios(START);
-  assert.deepEqual(scenarios.map((s) => s.id), ["conservative", "moderate", "high"]);
+  assert.deepEqual(scenarios.map((s) => s.id), ["correction", "reprint", "boom-bust"]);
   for (const s of scenarios) {
     assert.deepEqual(s.milestones.map((m) => m.year), [0, 1, 3, 5, 10]);
     assert.equal(s.values[0], 20_000);
-    for (const year of [1, 5, 10]) {
-      const expected = valueAtYear(START.raw, s.segments.raw, year) + valueAtYear(START.sealed, s.segments.sealed, year);
-      assert.ok(Math.abs(s.values[year] - expected) < 1e-9);
-    }
+    const expected = valueAtYear(START.raw, SEGMENT_GROWTH.raw, s.shocks.raw, 10) + valueAtYear(START.sealed, SEGMENT_GROWTH.sealed, s.shocks.sealed, 10);
+    assert.ok(Math.abs(s.values[10] - expected) < 1e-9);
   }
-  const finals = scenarios.map((s) => s.values[10]);
-  assert.ok(finals[0] < finals[1] && finals[1] < finals[2]);
 });
 
-test("a segment's mix changes the result", () => {
-  const input = { id: "x", label: "X", segments: { raw: flat, sealed: { year1Shift: 0.5, annualRate: 0 } } };
-  assert.ok(projectScenario({ raw: 0, sealed: 100 }, input).values[1] > projectScenario({ raw: 100, sealed: 0 }, input).values[1]);
+test("every stress test ends below the central path", () => {
+  for (const s of projectScenarios(START)) assert.ok(s.values[10] < central(10), s.id);
+});
+
+test("a reprint wave hurts sealed more than raw", () => {
+  const reprint = DEFAULT_SCENARIOS.find((s) => s.id === "reprint")!;
+  const sealedOnly = projectScenario({ raw: 0, sealed: 100 }, reprint).multiplier!;
+  const rawOnly = projectScenario({ raw: 100, sealed: 0 }, reprint).multiplier!;
+  const gap = (1 + SEGMENT_GROWTH.sealed) / (1 + SEGMENT_GROWTH.raw);
+  assert.ok(sealedOnly / rawOnly < gap);
 });
 
 test("rates hold through year 2, then fade towards the long-run rate from either side", () => {
@@ -45,23 +49,18 @@ test("rates hold through year 2, then fade towards the long-run rate from either
   assert.equal(fadedRate(LONG_RUN_RATE, 10), LONG_RUN_RATE);
 });
 
-test("year 1 applies the shift, later years compound the faded rate", () => {
-  const input = { year1Shift: -0.1, annualRate: 0.1 };
-  assert.equal(valueAtYear(100, input, 0), 100);
-  assert.equal(valueAtYear(100, input, 1), 90);
-  assert.ok(Math.abs(valueAtYear(100, input, 2) - 99) < 1e-9);
-  assert.ok(Math.abs(valueAtYear(100, input, 3) - 99 * (1 + fadedRate(0.1, 3))) < 1e-9);
+test("growth compounds each year and a shock applies on top in its year", () => {
+  assert.equal(valueAtYear(100, 0.1, { 2: -0.5 }, 0), 100);
+  assert.ok(Math.abs(valueAtYear(100, 0.1, { 2: -0.5 }, 1) - 110) < 1e-9);
+  assert.ok(Math.abs(valueAtYear(100, 0.1, { 2: -0.5 }, 2) - 60.5) < 1e-9);
+  assert.ok(Math.abs(valueAtYear(100, 0.1, { 2: -0.5 }, 3) - 60.5 * (1 + fadedRate(0.1, 3))) < 1e-9);
 });
 
 test("configurable inputs and horizon", () => {
-  const steady = { year1Shift: 0, annualRate: LONG_RUN_RATE };
-  const s = projectScenario({ raw: 1000, sealed: 0 }, { id: "steady", label: "Steady", segments: { raw: steady, sealed: steady } }, 4);
+  const s = projectScenario({ raw: 1000, sealed: 0 }, { id: "flat", label: "Flat", description: "", shocks: { raw: {}, sealed: {} } }, 4);
   assert.equal(s.values.length, 5);
   assert.deepEqual(s.milestones.map((m) => m.year), [0, 1, 3]);
-  assert.ok(Math.abs(s.values[4] - 1000 * (1 + LONG_RUN_RATE) ** 3) < 1e-9);
-
-  const custom = projectScenarios(START, [DEFAULT_SCENARIOS[2]]);
-  assert.equal(custom.length, 1);
+  assert.equal(projectScenarios(START, [DEFAULT_SCENARIOS[2]]).length, 1);
 });
 
 test("zero start gives zero values and no multiplier", () => {
@@ -85,9 +84,8 @@ test("basis takes fees off every year and deflates by year", () => {
 });
 
 test("assumption and multiplier text", () => {
-  assert.equal(assumptionText(DEFAULT_SCENARIOS[0].segments.raw), "Y1 −15%, then 2% annually");
-  assert.equal(assumptionText({ year1Shift: 0, annualRate: 0.025 }), "Y1 0%, then 2.5% annually");
-  assert.equal(assumptionText({ year1Shift: 0.07, annualRate: -0.02 }), "Y1 +7%, then −2% annually");
+  assert.equal(assumptionText(DEFAULT_SCENARIOS[0].shocks.raw), "Y2 −30%, Y3 −10%, Y5 +15%");
+  assert.equal(assumptionText({ 10: 0.025, 2: -0.5 }), "Y2 −50%, Y10 +2.5%");
   assert.equal(multiplierText(3.8698), "3.87×");
   assert.equal(multiplierText(null), null);
 });
