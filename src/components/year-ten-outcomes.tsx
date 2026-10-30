@@ -4,14 +4,14 @@ import { type ChipTone, StatusChip } from "@/components/status-chip";
 
 const panel = "card p-5";
 const heading = "font-label text-label-eyebrow uppercase text-ink";
-// Badge tones per scenario; the chip's violet is lightened so the High badge text stays readable.
-const badgeTone: Record<string, ChipTone> = { conservative: "amber", moderate: "mint", high: "violet" };
+// Badge tones per stress test; the chip's violet is lightened so the badge text stays readable.
+const badgeTone: Record<string, ChipTone> = { correction: "amber", reprint: "mint", "boom-bust": "violet" };
 
-/** One card per scenario: its year-10 value, the assumptions behind it and a "× start" multiplier badge. */
+/** One card per stress test: its year-10 value, the shocks behind it and a "× start" multiplier badge. */
 export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Money }) {
   return (
     <section className={panel}>
-      <h2 className={`${heading} mb-4`}>Year {PROJECTION_YEARS} outcomes</h2>
+      <h2 className={`${heading} mb-4`}>Year {PROJECTION_YEARS} stress tests</h2>
       <ul className="space-y-3">
         {scenarios.map((s) => {
           const color = scenarioColor(s.id);
@@ -30,7 +30,9 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                 )}
               </div>
               <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeMoney(s.values[PROJECTION_YEARS], m)}</div>
-              <div className="mt-0.5 text-body-sm text-slate-2">{assumptionText(s)}</div>
+              <div className="mt-0.5 text-body-sm text-slate-2">{s.description}</div>
+              <div className="mt-1 text-body-sm text-slate-2">Raw: {assumptionText(s.shocks.raw)}</div>
+              <div className="text-body-sm text-slate-2">Sealed: {assumptionText(s.shocks.sealed)}</div>
             </li>
           );
         })}

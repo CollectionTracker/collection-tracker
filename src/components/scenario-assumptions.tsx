@@ -1,7 +1,9 @@
-import { PROJECTION_YEARS } from "@/lib/scenarios";
-import { DEFAULT_SPREAD } from "@/lib/valuation";
+import { FADE_HALF_LIFE_YEARS, INFLATION_RATE, LONG_RUN_RATE, PROJECTION_YEARS } from "@/lib/scenarios";
+import { SIMULATION_PATHS } from "@/lib/simulation";
+import { DEFAULT_SPREAD, SELLING_FEE_PCT } from "@/lib/valuation";
 
 const pct = (n: number) => `±${Math.round(n * 100)}%`;
+const rate = (n: number) => `${Number((n * 100).toFixed(1))}%`;
 
 /** How the projections are built and what they leave out. */
 export function ScenarioAssumptions() {
@@ -15,16 +17,25 @@ export function ScenarioAssumptions() {
       </h2>
       <div className="max-w-5xl space-y-1.5 text-xs leading-relaxed text-slate-2">
         <p>
-          Every scenario starts from today&apos;s combined midpoint; raw cards and sealed products are modelled together. Year 1
-          applies a one-off market shift, then years 2–{PROJECTION_YEARS} compound at the scenario&apos;s annual rate.
+          Raw cards and sealed products are projected separately from today&apos;s midpoints, then added together. Both follow a
+          central growth path whose rate fades towards {rate(LONG_RUN_RATE)} a year: the gap to it halves every{" "}
+          {FADE_HALF_LIFE_YEARS} years. The dashed stress tests are that same path with one-off market moves added. They are
+          what-ifs with no stated likelihood, and their moves are hand-set rather than taken from past events.
+        </p>
+        <p>
+          The shaded fan is {SIMULATION_PATHS.toLocaleString("en-US")} simulated paths over {PROJECTION_YEARS} years, with booms,
+          flat years and busts that hit raw and sealed together, plus extra swings when value sits in a few holdings. Its
+          growth, volatility and regime settings are hand-set judgement, not measured from price history, so read it as a
+          rough range. It can&apos;t tell you the long-run growth rate.
         </p>
         <p>
           Low and high use the low/high entered with a sealed price, otherwise a default spread around the market value (raw{" "}
           {pct(DEFAULT_SPREAD.raw)}, sealed {pct(DEFAULT_SPREAD.sealed)}); see docs/valuation.md.
         </p>
         <p>
-          Illustrative, not a prediction. Nominal values with no inflation adjustment, before selling fees, taxes and shipping.
-          Condition or grading changes, thin markets and preorders can move real outcomes well outside these lines.
+          After fees takes off an illustrative {SELLING_FEE_PCT}% selling fee in every year. Today&apos;s money deflates by{" "}
+          {rate(INFLATION_RATE)} a year. Taxes and shipping are not deducted. Condition or grading changes, reprints, thin markets
+          and preorders can move real outcomes well outside this range.
         </p>
       </div>
     </section>
