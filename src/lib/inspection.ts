@@ -1,15 +1,9 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import type { Range } from "./valuation";
+import { type Range, SELLING_FEE_PCT } from "./valuation";
 
 /** Days of snapshot history the volatility readout looks back over. */
 export const VOLATILITY_WINDOW_DAYS = 90;
-
-/**
- * Illustrative selling cost for the liquidation projection: marketplace final value fee plus payment processing,
- * roughly what eBay or TCGplayer take. Shipping and taxes are left out, as elsewhere in the app.
- */
-export const SELLING_FEE_PCT = 13;
 
 export type Point = { day: string; value: number };
 

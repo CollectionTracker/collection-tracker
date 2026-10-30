@@ -1,22 +1,22 @@
 import { compactMoney, money, type Money, wholeMoney } from "@/lib/format";
-import { PROJECTION_YEARS, type Scenario, multiplierText } from "@/lib/scenarios";
+import { type Basis, basisText, multiplierText, PROJECTION_YEARS } from "@/lib/scenarios";
+import type { Band } from "@/lib/simulation";
 import type { Range } from "@/lib/valuation";
 
 const card = "col-span-4 card p-5";
 const labelStyle = "font-label text-label-eyebrow uppercase text-slate-2";
 const value = "mt-1 text-metric-display tabular-nums";
 
-/** Header strip for the Scenarios view: where projections start, today's range, and the year-10 spread. */
-export function ScenarioSummary({ valuation, scenarios, m }: { valuation: Range; scenarios: Scenario[]; m: Money }) {
-  const finals = scenarios.map((s) => s.values[PROJECTION_YEARS]);
-  const multipliers = scenarios.map((s) => s.multiplier).filter((m) => m !== null);
+/** Header strip for the Scenarios view: where projections start, today's range, and the simulated year-10 range. */
+export function ScenarioSummary({ valuation, bands, basis, m }: { valuation: Range; bands: Band[]; basis: Basis; m: Money }) {
+  const { p10, p90 } = bands[PROJECTION_YEARS];
   return (
     <section className="page-grid">
       <div className={card}>
         <div className="mb-3 h-1 w-8 rounded-full bg-mint" />
         <div className={labelStyle}>Starting midpoint</div>
         <div className={value}>{money(valuation.mid, m)}</div>
-        <div className="mt-1 text-xs text-slate-2">Raw cards and sealed combined; every scenario starts here</div>
+        <div className="mt-1 text-xs text-slate-2">Market value of raw cards and sealed; projections start here</div>
       </div>
       <div className={card}>
         <div className="mb-3 h-1 w-8 rounded-full bg-amber" />
@@ -42,11 +42,11 @@ export function ScenarioSummary({ valuation, scenarios, m }: { valuation: Range;
         <div className="mb-3 h-1 w-8 rounded-full bg-violet" />
         <div className={labelStyle}>Year {PROJECTION_YEARS} range</div>
         <div className={value}>
-          {compactMoney(Math.min(...finals), m)} – {compactMoney(Math.max(...finals), m)}
+          {compactMoney(p10, m)} – {compactMoney(p90, m)}
         </div>
         <div className="mt-1 text-xs text-slate-2 tabular-nums">
-          {multiplierText(Math.min(...multipliers))} to {multiplierText(Math.max(...multipliers))} the midpoint across{" "}
-          {scenarios.length} scenarios
+          {valuation.mid > 0 ? `${multiplierText(p10 / valuation.mid)} to ${multiplierText(p90 / valuation.mid)} the midpoint; ` : ""}
+          middle 80% of simulations, {basisText(basis)}
         </div>
       </div>
     </section>

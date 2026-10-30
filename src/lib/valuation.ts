@@ -6,6 +6,12 @@ export type Range = { low: number; mid: number; high: number };
  */
 export const DEFAULT_SPREAD = { raw: 0.1, sealed: 0.15 } as const;
 
+/**
+ * Illustrative selling cost for projections and liquidation: marketplace final value fee plus payment processing,
+ * roughly what eBay or TCGplayer take. Shipping and taxes are left out, as elsewhere in the app.
+ */
+export const SELLING_FEE_PCT = 13;
+
 /** Low/mid/high for a value: the midpoint is the market value, an entered low/high wins over the spread. */
 export function rangeOf(mid: number, spread: number, low?: number | null, high?: number | null): Range {
   return {

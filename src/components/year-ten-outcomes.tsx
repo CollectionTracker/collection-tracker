@@ -30,7 +30,8 @@ export function YearTenOutcomes({ scenarios, m }: { scenarios: Scenario[]; m: Mo
                 )}
               </div>
               <div className="mt-1 text-2xl font-black tracking-tight tabular-nums">{wholeMoney(s.values[PROJECTION_YEARS], m)}</div>
-              <div className="mt-0.5 text-body-sm text-slate-2">{assumptionText(s)}</div>
+              <div className="mt-0.5 text-body-sm text-slate-2">Raw: {assumptionText(s.segments.raw)}</div>
+              <div className="text-body-sm text-slate-2">Sealed: {assumptionText(s.segments.sealed)}</div>
             </li>
           );
         })}
